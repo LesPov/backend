@@ -18,7 +18,7 @@ const usuariosModel_1 = __importDefault(require("../../models/usuarios/usuariosM
 const usuariosRolModel_1 = __importDefault(require("../../models/usuarios_rols/usuariosRolModel"));
 const rolModel_1 = __importDefault(require("../../models/rol/rolModel"));
 const verificationsModel_1 = __importDefault(require("../../models/verificaciones/verificationsModel"));
-const generateCode_1 = require("../generateCode");
+const generateCode_1 = require("../paswword_generate/generateCode");
 const VERIFICATION_CODE_EXPIRATION_HOURS = 24;
 /**
  * Maneja errores internos del servidor.

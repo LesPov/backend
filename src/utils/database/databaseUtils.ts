@@ -4,7 +4,7 @@ import Usuario from '../../models/usuarios/usuariosModel';
 import UsuarioRol from '../../models/usuarios_rols/usuariosRolModel';
 import Rol from '../../models/rol/rolModel';
 import Verificacion from '../../models/verificaciones/verificationsModel';
-import { generateVerificationCode } from '../generateCode';
+import { generateVerificationCode } from '../paswword_generate/generateCode';
 
 const VERIFICATION_CODE_EXPIRATION_HOURS = 24;
 
