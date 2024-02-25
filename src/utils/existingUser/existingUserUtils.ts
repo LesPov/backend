@@ -20,13 +20,16 @@ export const handleExistingUserError = (error: string | null, res: Response) => 
  * @param usuario Nombre de usuario.
  * @param email Dirección de correo electrónico.
  * @returns Mensaje de error si el usuario o correo electrónico ya existe, de lo contrario, null.
- */
-export const checkExistingUser = async (usuario: string, email: string): Promise<string | null> => {
-    return (
-        (await checkExistingUsername(usuario)) ||
-        (await checkExistingEmail(email)) ||
-        null
-    );
+ */export const checkExistingUser = async (usuario: string, email: string): Promise<string | null> => {
+    const usernameError = await checkExistingUsername(usuario);
+    const emailError = await checkExistingEmail(email);
+
+    if (usernameError && emailError) {
+        // Ambos existen, puedes combinar los mensajes de error o manejarlos de acuerdo a tus necesidades
+        return `${usernameError}. ${emailError}`;
+    }
+
+    return usernameError || emailError || null;
 };
 
 /**

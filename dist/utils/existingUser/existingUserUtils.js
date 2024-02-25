@@ -33,11 +33,14 @@ exports.handleExistingUserError = handleExistingUserError;
  * @param usuario Nombre de usuario.
  * @param email Dirección de correo electrónico.
  * @returns Mensaje de error si el usuario o correo electrónico ya existe, de lo contrario, null.
- */
-const checkExistingUser = (usuario, email) => __awaiter(void 0, void 0, void 0, function* () {
-    return ((yield checkExistingUsername(usuario)) ||
-        (yield checkExistingEmail(email)) ||
-        null);
+ */ const checkExistingUser = (usuario, email) => __awaiter(void 0, void 0, void 0, function* () {
+    const usernameError = yield checkExistingUsername(usuario);
+    const emailError = yield checkExistingEmail(email);
+    if (usernameError && emailError) {
+        // Ambos existen, puedes combinar los mensajes de error o manejarlos de acuerdo a tus necesidades
+        return `${usernameError}. ${emailError}`;
+    }
+    return usernameError || emailError || null;
 });
 exports.checkExistingUser = checkExistingUser;
 /**
