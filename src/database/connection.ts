@@ -1,5 +1,5 @@
 import { Sequelize } from "sequelize";
-import * as config from '../config'; // Importa tu archivo de configuración
+import * as config from '../utils/emailsend/config'; // Importa tu archivo de configuración
 
 const sequelize = new Sequelize(
     config.DB_DATABASE,
