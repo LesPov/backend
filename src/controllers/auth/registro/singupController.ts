@@ -1,15 +1,13 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
-import express from 'express';
-import cors from 'cors';
-import path from 'path';
-import { sendVerificationEmail } from '../../../utils/emailsend/emailUtils';
+
 import { successMessages } from '../../../middleware/successMessages';
 
 import { validateInput, handleInputValidationErrors, validatePassword, handlePasswordValidationErrors, validateEmail } from '../../../utils/validation/validationUtils';
 import { handleExistingUserError, checkExistingUser } from '../../../utils/existingUser/existingUserUtils';
 import { handleServerError, createNewUserWithRole , initializeUserProfile, generateAndSaveVerificationCode } from '../../../utils/database/databaseUtils';
 import { getRoleMessage } from '../../../utils/role/roleUtils';
+import { sendVerificationEmail } from '../../../utils/emailsend/emailUtils';
 
 
 /**

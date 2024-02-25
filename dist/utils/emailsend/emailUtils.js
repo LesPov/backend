@@ -61,7 +61,7 @@ exports.sendPasswordResetEmail = sendPasswordResetEmail;
 const sendVerificationEmail = (email, username, verificationCode) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         // Obtiene la ruta absoluta del archivo de plantilla de correo electrónico
-        const templatePath = path_1.default.join(__dirname, '..', 'controllers', 'templates', 'verificationEmail.html');
+        const templatePath = path_1.default.join(__dirname, '..', '..', 'controllers', 'templates', 'verificationEmail.html');
         // Lee la plantilla de correo electrónico desde el archivo
         const emailTemplate = fs_1.default.readFileSync(templatePath, 'utf-8');
         // Reemplaza los marcadores {{ username }} y {{ verificationCode }} con los valores reales
