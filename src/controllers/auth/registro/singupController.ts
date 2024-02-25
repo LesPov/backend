@@ -1,6 +1,9 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
-import { sendVerificationEmail } from '../../../utils/emailUtils';
+import express from 'express';
+import cors from 'cors';
+import path from 'path';
+import { sendVerificationEmail } from '../../../utils/emailsend/emailUtils';
 import { successMessages } from '../../../middleware/successMessages';
 
 import { validateInput, handleInputValidationErrors, validatePassword, handlePasswordValidationErrors, validateEmail } from '../../../utils/validation/validationUtils';

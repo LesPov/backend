@@ -14,7 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.newUser = void 0;
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
-const emailUtils_1 = require("../../../utils/emailUtils");
+const emailUtils_1 = require("../../../utils/emailsend/emailUtils");
 const successMessages_1 = require("../../../middleware/successMessages");
 const validationUtils_1 = require("../../../utils/validation/validationUtils");
 const existingUserUtils_1 = require("../../../utils/existingUser/existingUserUtils");

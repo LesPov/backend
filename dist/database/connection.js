@@ -24,7 +24,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_1 = require("sequelize");
-const config = __importStar(require("../utils/emailsend/config")); // Importa tu archivo de configuración
+const config = __importStar(require("../config")); // Importa tu archivo de configuración
 const sequelize = new sequelize_1.Sequelize(config.DB_DATABASE, config.DB_USER, config.DB_PASSWORD, {
     host: config.DB_HOST,
     dialect: 'mysql',
