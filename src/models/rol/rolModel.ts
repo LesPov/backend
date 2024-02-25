@@ -24,7 +24,7 @@ export const Rol = sequelize.define<RolModel>('rol', {
         allowNull: false,
     },
     sigla: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING, 
         allowNull: true,
     },
     fecha_registro: {
@@ -36,8 +36,9 @@ export const Rol = sequelize.define<RolModel>('rol', {
         defaultValue: DataTypes.NOW,
     },
     estado: {
-        type: DataTypes.STRING,
+        type: DataTypes.ENUM('Activado', 'Desactivado'), // Define un enum para limitar los valores posibles
         allowNull: false,
+        defaultValue: 'Activado',
     },
 }, {
     timestamps: false, // Desactivar las columnas createdAt y updatedAt

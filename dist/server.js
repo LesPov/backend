@@ -26,6 +26,7 @@ const usuariosRolModel_1 = require("./models/usuarios_rols/usuariosRolModel");
 const permisosModel_1 = require("./models/permisos/permisosModel");
 const permisosRolModel_1 = require("./models/permisos_rols/permisosRolModel");
 const verificationsModel_1 = require("./models/verificaciones/verificationsModel");
+const singupRoutes_1 = __importDefault(require("./routers/auth/registro/singupRoutes")); // Importar las rutas de signin
 exports.DB_DATABASE = process.env.DB_DATABASE || 'root';
 class Server {
     /**
@@ -51,7 +52,7 @@ class Server {
      * Configura las rutas de la aplicación.
      */
     routes() {
-        // this.app.use('/api/auth', signinRoutes, loginRoutes, passwordResetRouter, emailVerificationRoutes, phoneVerificationRouter, countryRoutes);
+        this.app.use('/api/auth', singupRoutes_1.default);
         // this.app.use('/api/admin', adminRoutes, imageRoutes); // Utiliza las rutas específicas para operaciones administrativas
     }
     /**

@@ -33,10 +33,6 @@ exports.UsuarioRol = connection_1.default.define('usuario_rol', {
         type: sequelize_1.DataTypes.DATE,
         defaultValue: sequelize_1.DataTypes.NOW,
     },
-    estado: {
-        type: sequelize_1.DataTypes.STRING,
-        allowNull: false,
-    },
 }, {
     timestamps: false, // Desactivar las columnas createdAt y updatedAt
 });

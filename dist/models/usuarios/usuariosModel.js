@@ -23,23 +23,23 @@ exports.Usuario = connection_1.default.define('usuarios', {
     },
     nombre: {
         type: sequelize_1.DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
     },
     apellido_paterno: {
         type: sequelize_1.DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
     },
     apellido_materno: {
         type: sequelize_1.DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
     },
     sexo: {
         type: sequelize_1.DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
     },
     dni: {
         type: sequelize_1.DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
         unique: true,
     },
     direccion: {
@@ -58,7 +58,7 @@ exports.Usuario = connection_1.default.define('usuarios', {
     },
     fecha_nacimiento: {
         type: sequelize_1.DataTypes.DATE,
-        allowNull: false,
+        allowNull: true,
     },
     fecha_registro: {
         type: sequelize_1.DataTypes.DATE,
@@ -69,8 +69,9 @@ exports.Usuario = connection_1.default.define('usuarios', {
         defaultValue: sequelize_1.DataTypes.NOW,
     },
     estado: {
-        type: sequelize_1.DataTypes.STRING,
+        type: sequelize_1.DataTypes.ENUM('Activado', 'Desactivado'), // Define un enum para limitar los valores posibles
         allowNull: false,
+        defaultValue: 'Activado',
     },
 }, {
     timestamps: false, // Desactivar las columnas createdAt y updatedAt

@@ -39,23 +39,23 @@ export const Usuario = sequelize.define<UsuarioModel>('usuarios', {
     },
     nombre: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
     },
     apellido_paterno: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
     },
     apellido_materno: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
     },
     sexo: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
     },
     dni: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
         unique: true,
     },
     direccion: {
@@ -74,7 +74,7 @@ export const Usuario = sequelize.define<UsuarioModel>('usuarios', {
     },
     fecha_nacimiento: {
         type: DataTypes.DATE,
-        allowNull: false,
+        allowNull: true,
     },
     fecha_registro: {
         type: DataTypes.DATE,
@@ -85,10 +85,12 @@ export const Usuario = sequelize.define<UsuarioModel>('usuarios', {
         defaultValue: DataTypes.NOW,
     },
     estado: {
-        type: DataTypes.STRING,
-        allowNull: false,
+        type: DataTypes.ENUM('Activado', 'Desactivado'), // Define un enum para limitar los valores posibles
+    allowNull: false,
+    defaultValue: 'Activado',
     },
 }, {
     timestamps: false, // Desactivar las columnas createdAt y updatedAt
 });
 export default Usuario;
+ 

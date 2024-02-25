@@ -29,8 +29,9 @@ exports.Rol = connection_1.default.define('rol', {
         defaultValue: sequelize_1.DataTypes.NOW,
     },
     estado: {
-        type: sequelize_1.DataTypes.STRING,
+        type: sequelize_1.DataTypes.ENUM('Activado', 'Desactivado'), // Define un enum para limitar los valores posibles
         allowNull: false,
+        defaultValue: 'Activado',
     },
 }, {
     timestamps: false, // Desactivar las columnas createdAt y updatedAt
