@@ -44,7 +44,7 @@ export const validatePassword = (contrasena: string): string[] => {
  * @param contrasena La contraseña a validar.
  * @param errors Lista de errores de validación.
  */
-const validateLength = (contrasena: string, errors: string[]) => {
+export const validateLength = (contrasena: string, errors: string[]) => {
     if (contrasena.length < PASSWORD_MIN_LENGTH) {
         errors.push(errorMessages.passwordTooShort);
     }
@@ -57,7 +57,7 @@ const validateLength = (contrasena: string, errors: string[]) => {
  * @param errorMessage Mensaje de error si no se encuentra el carácter de la clase.
  * @param errors Lista de errores de validación.
  */
-const validateCharacterClass = (contrasena: string, characterClass: RegExp, errorMessage: string, errors: string[]) => {
+export const validateCharacterClass = (contrasena: string, characterClass: RegExp, errorMessage: string, errors: string[]) => {
     if (!characterClass.test(contrasena)) {
         errors.push(errorMessage);
     }

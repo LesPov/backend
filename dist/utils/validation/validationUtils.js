@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.handleInputValidationErrors = exports.handlePasswordValidationErrors = exports.validateEmail = exports.validatePassword = exports.validateInput = void 0;
+exports.handleInputValidationErrors = exports.handlePasswordValidationErrors = exports.validateEmail = exports.validateCharacterClass = exports.validateLength = exports.validatePassword = exports.validateInput = void 0;
 const errorMesages_1 = require("../../middleware/errorMesages");
 const PASSWORD_MIN_LENGTH = 10;
 const PASSWORD_REGEX_NUMBER = /\d/;
@@ -30,10 +30,10 @@ exports.validateInput = validateInput;
  */
 const validatePassword = (contrasena) => {
     const errors = [];
-    validateLength(contrasena, errors);
-    validateCharacterClass(contrasena, PASSWORD_REGEX_NUMBER, errorMesages_1.errorMessages.passwordNoNumber, errors);
-    validateCharacterClass(contrasena, PASSWORD_REGEX_UPPERCASE, errorMesages_1.errorMessages.passwordNoUppercase, errors);
-    validateCharacterClass(contrasena, PASSWORD_REGEX_LOWERCASE, errorMesages_1.errorMessages.passwordNoLowercase, errors);
+    (0, exports.validateLength)(contrasena, errors);
+    (0, exports.validateCharacterClass)(contrasena, PASSWORD_REGEX_NUMBER, errorMesages_1.errorMessages.passwordNoNumber, errors);
+    (0, exports.validateCharacterClass)(contrasena, PASSWORD_REGEX_UPPERCASE, errorMesages_1.errorMessages.passwordNoUppercase, errors);
+    (0, exports.validateCharacterClass)(contrasena, PASSWORD_REGEX_LOWERCASE, errorMesages_1.errorMessages.passwordNoLowercase, errors);
     return errors;
 };
 exports.validatePassword = validatePassword;
@@ -47,6 +47,7 @@ const validateLength = (contrasena, errors) => {
         errors.push(errorMesages_1.errorMessages.passwordTooShort);
     }
 };
+exports.validateLength = validateLength;
 /**
  * Valida si la contraseña contiene al menos un carácter de la clase especificada.
  * @param contrasena La contraseña a validar.
@@ -59,6 +60,7 @@ const validateCharacterClass = (contrasena, characterClass, errorMessage, errors
         errors.push(errorMessage);
     }
 };
+exports.validateCharacterClass = validateCharacterClass;
 /**
  * Valida el formato del correo electrónico.
  * @param email El correo electrónico a validar.
