@@ -1,9 +1,9 @@
 // Importa la función handleInputValidationErrors desde el módulo de utilidades de validación
-import { handleInputValidationErrors, validateInput, validatePassword } from "../utils/validation/validationUtils";
+import { handleInputValidationErrors, validateInput, validateLength, validatePassword } from "../utils/validation/validationUtils";
 import { Response as ExpressResponse } from 'express'; // Importa la interfaz Response desde Express
 
 // Importa los mensajes de error desde el middleware correspondiente
-const { errorMessages } = require('../middleware/errorMesages');
+import  { errorMessages }  from "../middleware/errorMesages";
 // Constante para la longitud mínima de la contraseña
 const PASSWORD_MIN_LENGTH = 8;
 
@@ -98,6 +98,23 @@ describe('Validation Utils', () => {
       const password = 'PASSWORDWITHOUTLOWERCASE'; // Contraseña sin letras minúsculas
       const errors = validatePassword(password);
       expect(errors).toContain(errorMessages.passwordNoLowercase); // Debería contener el mensaje de error correspondiente
+    });
+  });
+  
+   // Describe el conjunto de pruebas para la función validateLength
+   describe('validateLength Function', () => {
+    it('debería agregar un mensaje de error si la contraseña es demasiado corta', () => {
+      const password = 'Short'; // Contraseña demasiado corta
+      const errors: string[] = [];
+      validateLength(password, errors);
+      expect(errors).toContain(errorMessages.passwordTooShort); // Debería contener el mensaje de error correspondiente
+    });
+  
+    it('no debería agregar ningún mensaje de error si la contraseña cumple con la longitud mínima', () => {
+      const password = 'LongEnoughPassword'; // Contraseña con longitud suficiente
+      const errors: string[] = [];
+      validateLength(password, errors);
+      expect(errors).not.toContain(errorMessages.passwordTooShort); // No debería contener el mensaje de error correspondiente
     });
   });
   

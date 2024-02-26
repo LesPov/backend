@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 // Importa la función handleInputValidationErrors desde el módulo de utilidades de validación
 const validationUtils_1 = require("../utils/validation/validationUtils");
 // Importa los mensajes de error desde el middleware correspondiente
-const { errorMessages } = require('../middleware/errorMesages');
+const errorMesages_1 = require("../middleware/errorMesages");
 // Constante para la longitud mínima de la contraseña
 const PASSWORD_MIN_LENGTH = 8;
 // Describe el conjunto de pruebas para las funciones de validación
@@ -15,7 +15,7 @@ describe('Validation Utils', () => {
         // Asegúrate de que haya exactamente un error en la lista de errores
         expect(errors).toHaveLength(1);
         // Asegúrate de que el error coincida con el mensaje de campo requerido
-        expect(errors[0]).toBe(errorMessages.requiredFields);
+        expect(errors[0]).toBe(errorMesages_1.errorMessages.requiredFields);
     });
     // Describe el conjunto de pruebas para la función handleInputValidationErrors
     describe('handleInputValidationErrors Function', () => {
@@ -63,21 +63,36 @@ describe('validatePassword Function', () => {
     it('debería devolver una lista de errores si la contraseña es demasiado corta', () => {
         const password = 'Short'; // Contraseña demasiado corta
         const errors = (0, validationUtils_1.validatePassword)(password);
-        expect(errors).toContain(errorMessages.passwordTooShort); // Debería contener el mensaje de error correspondiente
+        expect(errors).toContain(errorMesages_1.errorMessages.passwordTooShort); // Debería contener el mensaje de error correspondiente
     });
     it('debería devolver una lista de errores si la contraseña no contiene números', () => {
         const password = 'PasswordWithoutNumber'; // Contraseña sin números
         const errors = (0, validationUtils_1.validatePassword)(password);
-        expect(errors).toContain(errorMessages.passwordNoNumber); // Debería contener el mensaje de error correspondiente
+        expect(errors).toContain(errorMesages_1.errorMessages.passwordNoNumber); // Debería contener el mensaje de error correspondiente
     });
     it('debería devolver una lista de errores si la contraseña no contiene letras mayúsculas', () => {
         const password = 'passwordwithoutuppercase'; // Contraseña sin letras mayúsculas
         const errors = (0, validationUtils_1.validatePassword)(password);
-        expect(errors).toContain(errorMessages.passwordNoUppercase); // Debería contener el mensaje de error correspondiente
+        expect(errors).toContain(errorMesages_1.errorMessages.passwordNoUppercase); // Debería contener el mensaje de error correspondiente
     });
     it('debería devolver una lista de errores si la contraseña no contiene letras minúsculas', () => {
         const password = 'PASSWORDWITHOUTLOWERCASE'; // Contraseña sin letras minúsculas
         const errors = (0, validationUtils_1.validatePassword)(password);
-        expect(errors).toContain(errorMessages.passwordNoLowercase); // Debería contener el mensaje de error correspondiente
+        expect(errors).toContain(errorMesages_1.errorMessages.passwordNoLowercase); // Debería contener el mensaje de error correspondiente
+    });
+});
+// Describe el conjunto de pruebas para la función validateLength
+describe('validateLength Function', () => {
+    it('debería agregar un mensaje de error si la contraseña es demasiado corta', () => {
+        const password = 'Short'; // Contraseña demasiado corta
+        const errors = [];
+        (0, validationUtils_1.validateLength)(password, errors);
+        expect(errors).toContain(errorMesages_1.errorMessages.passwordTooShort); // Debería contener el mensaje de error correspondiente
+    });
+    it('no debería agregar ningún mensaje de error si la contraseña cumple con la longitud mínima', () => {
+        const password = 'LongEnoughPassword'; // Contraseña con longitud suficiente
+        const errors = [];
+        (0, validationUtils_1.validateLength)(password, errors);
+        expect(errors).not.toContain(errorMesages_1.errorMessages.passwordTooShort); // No debería contener el mensaje de error correspondiente
     });
 });
