@@ -5,7 +5,6 @@ import { Response as ExpressResponse } from 'express'; // Importa la interfaz Re
 // Importa los mensajes de error desde el middleware correspondiente
 import { errorMessages } from "../../middleware/errorMesages";
 // Constante para la longitud mínima de la contraseña
-const PASSWORD_MIN_LENGTH = 8;
 
 // Describe el conjunto de pruebas para las funciones de validación
 describe('Validation Utils', () => {
