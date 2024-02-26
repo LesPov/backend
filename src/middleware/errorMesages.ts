@@ -10,6 +10,7 @@ export const errorMessages = {
   passwordNoLowercase: 'La contraseña debe contener al menos una letra minúscula',
   userEmailExists: (email: string) => `Ya existe un correo ${email}`,
   invalidRole: `rol invalido`,
+  passwordNoSpecialChar: 'La contraseña debe contener al menos un carácter especial',
 
 
 

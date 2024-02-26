@@ -56,7 +56,7 @@ describe('Validation Utils', () => {
 // Describe el conjunto de pruebas para la función validatePassword
 describe('validatePassword Function', () => {
     it('debería devolver una lista vacía si la contraseña cumple con todos los requisitos', () => {
-        const password = 'Test123456';
+        const password = 'Test123456-';
         const errors = (0, validationUtils_1.validatePassword)(password);
         expect(errors).toHaveLength(0);
     });
@@ -75,6 +75,11 @@ describe('validatePassword Function', () => {
         const errors = (0, validationUtils_1.validatePassword)(password);
         expect(errors).toContain(errorMesages_1.errorMessages.passwordNoUppercase); // Debería contener el mensaje de error correspondiente
     });
+    it('debería devolver errores para una contraseña sin un carácter especial', () => {
+        const passwordWithoutSpecialChar = 'PasswordWithoutSpecialChar123';
+        const errors = (0, validationUtils_1.validatePassword)(passwordWithoutSpecialChar);
+        expect(errors).toContain(errorMesages_1.errorMessages.passwordNoSpecialChar);
+    });
     it('debería devolver una lista de errores si la contraseña no contiene letras minúsculas', () => {
         const password = 'PASSWORDWITHOUTLOWERCASE'; // Contraseña sin letras minúsculas
         const errors = (0, validationUtils_1.validatePassword)(password);
@@ -83,16 +88,39 @@ describe('validatePassword Function', () => {
 });
 // Describe el conjunto de pruebas para la función validateLength
 describe('validateLength Function', () => {
+    // Prueba específica: debería agregar un mensaje de error si la contraseña es demasiado corta
     it('debería agregar un mensaje de error si la contraseña es demasiado corta', () => {
-        const password = 'Short'; // Contraseña demasiado corta
+        // Contraseña que no cumple con la longitud mínima
+        const contrasena = 'Short';
+        // Lista de errores inicialmente vacía
         const errors = [];
-        (0, validationUtils_1.validateLength)(password, errors);
-        expect(errors).toContain(errorMesages_1.errorMessages.passwordTooShort); // Debería contener el mensaje de error correspondiente
+        // Llama a la función validateLength
+        (0, validationUtils_1.validateLength)(contrasena, errors);
+        // Asegúrate de que haya exactamente un error en la lista de errores
+        expect(errors).toHaveLength(1);
+        // Asegúrate de que el error coincida con el mensaje de error esperado
+        expect(errors[0]).toBe(errorMesages_1.errorMessages.passwordTooShort);
     });
-    it('no debería agregar ningún mensaje de error si la contraseña cumple con la longitud mínima', () => {
-        const password = 'LongEnoughPassword'; // Contraseña con longitud suficiente
+    // Puedes agregar más casos de prueba según sea necesario para cubrir diferentes escenarios
+});
+// Describe el conjunto de pruebas para la función validateCharacterClass
+describe('validateCharacterClass Function', () => {
+    // Prueba específica: debería agregar un mensaje de error si la contraseña no contiene un carácter de la clase especificada
+    it('debería agregar un mensaje de error si la contraseña no contiene un carácter de la clase especificada', () => {
+        // Contraseña sin un carácter especial
+        const contrasena = 'PasswordWithoutSpecialChar123';
+        // Expresión regular para carácter especial
+        const characterClass = /[!@#$%^&*()_+{}\[\]:;<>,.?~\\/-]/;
+        // Lista de errores inicialmente vacía
         const errors = [];
-        (0, validationUtils_1.validateLength)(password, errors);
-        expect(errors).not.toContain(errorMesages_1.errorMessages.passwordTooShort); // No debería contener el mensaje de error correspondiente
+        // Mensaje de error esperado
+        const errorMessage = errorMesages_1.errorMessages.passwordNoSpecialChar;
+        // Llama a la función validateCharacterClass
+        (0, validationUtils_1.validateCharacterClass)(contrasena, characterClass, errorMessage, errors);
+        // Asegúrate de que haya exactamente un error en la lista de errores
+        expect(errors).toHaveLength(1);
+        // Asegúrate de que el error coincida con el mensaje de error esperado
+        expect(errors[0]).toBe(errorMessage);
     });
+    // Puedes agregar más casos de prueba según sea necesario para cubrir diferentes escenarios
 });

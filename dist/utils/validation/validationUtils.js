@@ -1,12 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.handlePasswordValidationErrors = exports.validateEmail = exports.validateCharacterClass = exports.validateLength = exports.validatePassword = exports.handleInputValidationErrors = exports.validateInput = void 0;
+exports.validateEmail = exports.handlePasswordValidationErrors = exports.validateCharacterClass = exports.validateLength = exports.validatePassword = exports.handleInputValidationErrors = exports.validateInput = void 0;
 const errorMesages_1 = require("../../middleware/errorMesages");
 const PASSWORD_MIN_LENGTH = 10;
 const PASSWORD_REGEX_NUMBER = /\d/;
 const PASSWORD_REGEX_UPPERCASE = /[A-Z]/;
 const PASSWORD_REGEX_LOWERCASE = /[a-z]/;
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const SPECIAL_CHARACTERS_REGEX = /[!@#$%^&*()_+{}\[\]:;<>,.?~\\/-]/;
 /**
  * Valida que los campos de entrada no estén vacíos.
  * @param usuario Nombre de usuario.
@@ -54,6 +55,7 @@ const validatePassword = (contrasena) => {
     (0, exports.validateCharacterClass)(contrasena, PASSWORD_REGEX_NUMBER, errorMesages_1.errorMessages.passwordNoNumber, errors);
     (0, exports.validateCharacterClass)(contrasena, PASSWORD_REGEX_UPPERCASE, errorMesages_1.errorMessages.passwordNoUppercase, errors);
     (0, exports.validateCharacterClass)(contrasena, PASSWORD_REGEX_LOWERCASE, errorMesages_1.errorMessages.passwordNoLowercase, errors);
+    (0, exports.validateCharacterClass)(contrasena, SPECIAL_CHARACTERS_REGEX, errorMesages_1.errorMessages.passwordNoSpecialChar, errors);
     return errors;
 };
 exports.validatePassword = validatePassword;
@@ -82,16 +84,6 @@ const validateCharacterClass = (contrasena, characterClass, errorMessage, errors
 };
 exports.validateCharacterClass = validateCharacterClass;
 /**
- * Valida el formato del correo electrónico.
- * @param email El correo electrónico a validar.
- */
-const validateEmail = (email) => {
-    if (!EMAIL_REGEX.test(email)) {
-        throw new Error(errorMesages_1.errorMessages.invalidEmail);
-    }
-};
-exports.validateEmail = validateEmail;
-/**
  * Maneja los errores de validación de la contraseña.
  * @param errors Lista de errores de validación de la contraseña.
  * @param res La respuesta HTTP saliente.
@@ -106,3 +98,13 @@ const handlePasswordValidationErrors = (errors, res) => {
     }
 };
 exports.handlePasswordValidationErrors = handlePasswordValidationErrors;
+/**
+ * Valida el formato del correo electrónico.
+ * @param email El correo electrónico a validar.
+ */
+const validateEmail = (email) => {
+    if (!EMAIL_REGEX.test(email)) {
+        throw new Error(errorMesages_1.errorMessages.invalidEmail);
+    }
+};
+exports.validateEmail = validateEmail;

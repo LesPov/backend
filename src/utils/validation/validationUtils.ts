@@ -6,6 +6,7 @@ const PASSWORD_REGEX_NUMBER = /\d/;
 const PASSWORD_REGEX_UPPERCASE = /[A-Z]/;
 const PASSWORD_REGEX_LOWERCASE = /[a-z]/;
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const SPECIAL_CHARACTERS_REGEX = /[!@#$%^&*()_+{}\[\]:;<>,.?~\\/-]/;
 
 /**
  * Valida que los campos de entrada no estén vacíos.
@@ -56,6 +57,7 @@ export const validatePassword = (contrasena: string): string[] => {
     validateCharacterClass(contrasena, PASSWORD_REGEX_NUMBER, errorMessages.passwordNoNumber, errors);
     validateCharacterClass(contrasena, PASSWORD_REGEX_UPPERCASE, errorMessages.passwordNoUppercase, errors);
     validateCharacterClass(contrasena, PASSWORD_REGEX_LOWERCASE, errorMessages.passwordNoLowercase, errors);
+    validateCharacterClass(contrasena, SPECIAL_CHARACTERS_REGEX, errorMessages.passwordNoSpecialChar, errors);
 
     return errors;
 };
@@ -85,16 +87,6 @@ export const validateCharacterClass = (contrasena: string, characterClass: RegEx
 };
 
 /**
- * Valida el formato del correo electrónico.
- * @param email El correo electrónico a validar.
- */
-export const validateEmail = (email: string) => {
-    if (!EMAIL_REGEX.test(email)) {
-        throw new Error(errorMessages.invalidEmail);
-    }
-};
-
-/**
  * Maneja los errores de validación de la contraseña.
  * @param errors Lista de errores de validación de la contraseña.
  * @param res La respuesta HTTP saliente.
@@ -110,3 +102,14 @@ export const handlePasswordValidationErrors = (errors: string[], res: Response) 
 };
 
 
+
+
+/**
+ * Valida el formato del correo electrónico.
+ * @param email El correo electrónico a validar.
+ */
+export const validateEmail = (email: string) => {
+    if (!EMAIL_REGEX.test(email)) {
+        throw new Error(errorMessages.invalidEmail);
+    }
+};
