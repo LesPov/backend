@@ -53,3 +53,31 @@ describe('Validation Utils', () => {
         // Puedes agregar más casos de prueba según sea necesario para cubrir diferentes escenarios
     });
 });
+// Describe el conjunto de pruebas para la función validatePassword
+describe('validatePassword Function', () => {
+    it('debería devolver una lista vacía si la contraseña cumple con todos los requisitos', () => {
+        const password = 'Test123456';
+        const errors = (0, validationUtils_1.validatePassword)(password);
+        expect(errors).toHaveLength(0);
+    });
+    it('debería devolver una lista de errores si la contraseña es demasiado corta', () => {
+        const password = 'Short'; // Contraseña demasiado corta
+        const errors = (0, validationUtils_1.validatePassword)(password);
+        expect(errors).toContain(errorMessages.passwordTooShort); // Debería contener el mensaje de error correspondiente
+    });
+    it('debería devolver una lista de errores si la contraseña no contiene números', () => {
+        const password = 'PasswordWithoutNumber'; // Contraseña sin números
+        const errors = (0, validationUtils_1.validatePassword)(password);
+        expect(errors).toContain(errorMessages.passwordNoNumber); // Debería contener el mensaje de error correspondiente
+    });
+    it('debería devolver una lista de errores si la contraseña no contiene letras mayúsculas', () => {
+        const password = 'passwordwithoutuppercase'; // Contraseña sin letras mayúsculas
+        const errors = (0, validationUtils_1.validatePassword)(password);
+        expect(errors).toContain(errorMessages.passwordNoUppercase); // Debería contener el mensaje de error correspondiente
+    });
+    it('debería devolver una lista de errores si la contraseña no contiene letras minúsculas', () => {
+        const password = 'PASSWORDWITHOUTLOWERCASE'; // Contraseña sin letras minúsculas
+        const errors = (0, validationUtils_1.validatePassword)(password);
+        expect(errors).toContain(errorMessages.passwordNoLowercase); // Debería contener el mensaje de error correspondiente
+    });
+});

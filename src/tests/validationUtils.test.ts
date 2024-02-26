@@ -1,5 +1,5 @@
 // Importa la función handleInputValidationErrors desde el módulo de utilidades de validación
-import { handleInputValidationErrors, validateInput } from "../utils/validation/validationUtils";
+import { handleInputValidationErrors, validateInput, validatePassword } from "../utils/validation/validationUtils";
 import { Response as ExpressResponse } from 'express'; // Importa la interfaz Response desde Express
 
 // Importa los mensajes de error desde el middleware correspondiente
@@ -23,7 +23,7 @@ describe('Validation Utils', () => {
     expect(errors[0]).toBe(errorMessages.requiredFields);
   });
 
-  
+
   // Describe el conjunto de pruebas para la función handleInputValidationErrors
   describe('handleInputValidationErrors Function', () => {
 
@@ -66,3 +66,38 @@ describe('Validation Utils', () => {
 
   });
 });
+
+  // Describe el conjunto de pruebas para la función validatePassword
+  describe('validatePassword Function', () => {
+    it('debería devolver una lista vacía si la contraseña cumple con todos los requisitos', () => {
+      const password = 'Test123456';
+      const errors = validatePassword(password);
+      expect(errors).toHaveLength(0);
+    });
+    
+  
+    it('debería devolver una lista de errores si la contraseña es demasiado corta', () => {
+      const password = 'Short'; // Contraseña demasiado corta
+      const errors = validatePassword(password);
+      expect(errors).toContain(errorMessages.passwordTooShort); // Debería contener el mensaje de error correspondiente
+    });
+  
+    it('debería devolver una lista de errores si la contraseña no contiene números', () => {
+      const password = 'PasswordWithoutNumber'; // Contraseña sin números
+      const errors = validatePassword(password);
+      expect(errors).toContain(errorMessages.passwordNoNumber); // Debería contener el mensaje de error correspondiente
+    });
+  
+    it('debería devolver una lista de errores si la contraseña no contiene letras mayúsculas', () => {
+      const password = 'passwordwithoutuppercase'; // Contraseña sin letras mayúsculas
+      const errors = validatePassword(password);
+      expect(errors).toContain(errorMessages.passwordNoUppercase); // Debería contener el mensaje de error correspondiente
+    });
+  
+    it('debería devolver una lista de errores si la contraseña no contiene letras minúsculas', () => {
+      const password = 'PASSWORDWITHOUTLOWERCASE'; // Contraseña sin letras minúsculas
+      const errors = validatePassword(password);
+      expect(errors).toContain(errorMessages.passwordNoLowercase); // Debería contener el mensaje de error correspondiente
+    });
+  });
+  
