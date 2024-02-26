@@ -1,5 +1,5 @@
 // Importa la función handleInputValidationErrors desde el módulo de utilidades de validación
-import { handleInputValidationErrors, validateCharacterClass, validateInput, validateLength, validatePassword } from "../utils/validation/validationUtils";
+import { handleInputValidationErrors, handlePasswordValidationErrors, validateCharacterClass, validateEmail, validateInput, validateLength, validatePassword } from "../utils/validation/validationUtils";
 import { Response as ExpressResponse } from 'express'; // Importa la interfaz Response desde Express
 
 // Importa los mensajes de error desde el middleware correspondiente
@@ -160,6 +160,77 @@ describe('validateCharacterClass Function', () => {
 
     // Asegúrate de que el error coincida con el mensaje de error esperado
     expect(errors[0]).toBe(errorMessage);
+  });
+
+  // Puedes agregar más casos de prueba según sea necesario para cubrir diferentes escenarios
+
+});
+
+// Describe el conjunto de pruebas para la función handlePasswordValidationErrors
+describe('handlePasswordValidationErrors Function', () => {
+
+  // Prueba específica: debería enviar una respuesta con errores de validación de contraseña
+  it('debería enviar una respuesta con errores de validación de contraseña', () => {
+
+    // Crea un objeto mock para la respuesta HTTP
+    const mockResponse: ExpressResponse = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    } as unknown as ExpressResponse;
+
+    // Lista de errores simulados de validación de contraseña
+    const errors = ['Error 1', 'Error 2'];
+
+    // Utiliza try-catch para manejar cualquier error lanzado por la función
+    try {
+      // Llama a la función handlePasswordValidationErrors
+      handlePasswordValidationErrors(errors, mockResponse);
+    } catch (error: unknown) {
+      // Asegúrate de que el mensaje de error lanzado sea el esperado
+      if (error instanceof Error) {
+        expect(error.message).toBe("Password validation failed");
+      } else {
+        // Handle unexpected types if needed
+        fail("Unexpected error type");
+      }
+    }
+
+    // Asegúrate de que la función status haya sido llamada con el código de estado 400
+    expect(mockResponse.status).toHaveBeenCalledWith(400);
+
+    // Asegúrate de que la función json haya sido llamada con el mensaje de error adecuado
+    expect(mockResponse.json).toHaveBeenCalledWith({
+      msg: ['Error 1', 'Error 2'],
+      errors: 'Error en la validación de la contraseña',
+    });
+  });
+
+  // Puedes agregar más casos de prueba según sea necesario para cubrir diferentes escenarios
+
+});
+
+// Describe el conjunto de pruebas para la función validateEmail
+describe('validateEmail Function', () => {
+
+  // Prueba específica: debería lanzar un error si el correo electrónico no tiene el formato correcto
+  it('debería lanzar un error si el correo electrónico no tiene el formato correcto', () => {
+
+    // Correo electrónico con formato incorrecto
+    const invalidEmail = 'invalidemail.com';
+
+    // Utiliza try-catch para manejar el error lanzado por la función
+    try {
+      // Llama a la función validateEmail
+      validateEmail(invalidEmail);
+    } catch (error: unknown) {
+      // Asegúrate de que el mensaje de error lanzado sea el esperado
+      if (error instanceof Error) {
+        expect(error.message).toBe(errorMessages.invalidEmail);
+      } else {
+        // Handle unexpected types if needed
+        fail("Unexpected error type");
+      }
+    }
   });
 
   // Puedes agregar más casos de prueba según sea necesario para cubrir diferentes escenarios
