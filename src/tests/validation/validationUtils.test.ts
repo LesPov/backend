@@ -1,9 +1,9 @@
 // Importa la función handleInputValidationErrors desde el módulo de utilidades de validación
-import { handleInputValidationErrors, handlePasswordValidationErrors, validateCharacterClass, validateEmail, validateInput, validateLength, validatePassword } from "../utils/validation/validationUtils";
+import { handleInputValidationErrors, handlePasswordValidationErrors, validateCharacterClass, validateEmail, validateInput, validateLength, validatePassword } from "../../utils/validation/validationUtils";
 import { Response as ExpressResponse } from 'express'; // Importa la interfaz Response desde Express
 
 // Importa los mensajes de error desde el middleware correspondiente
-import { errorMessages } from "../middleware/errorMesages";
+import { errorMessages } from "../../middleware/errorMesages";
 // Constante para la longitud mínima de la contraseña
 const PASSWORD_MIN_LENGTH = 8;
 
