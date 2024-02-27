@@ -1,4 +1,4 @@
-import { errorMessages } from "../../middleware/errorMesages";
+import { errorMessages } from "../../../middleware/errorMesages";
 import { Response } from 'express';
 
 const PASSWORD_MIN_LENGTH = 10;
@@ -90,7 +90,7 @@ export const validateCharacterClass = (contrasena: string, characterClass: RegEx
  * Maneja los errores de validación de la contraseña.
  * @param errors Lista de errores de validación de la contraseña.
  * @param res La respuesta HTTP saliente.
- */ 
+ */
 export const handlePasswordValidationErrors = (errors: string[], res: Response) => {
     if (errors.length > 0) {
         res.status(400).json({

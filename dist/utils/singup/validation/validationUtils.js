@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.validateEmail = exports.handlePasswordValidationErrors = exports.validateCharacterClass = exports.validateLength = exports.validatePassword = exports.handleInputValidationErrors = exports.validateInput = void 0;
-const errorMesages_1 = require("../../middleware/errorMesages");
+const errorMesages_1 = require("../../../middleware/errorMesages");
 const PASSWORD_MIN_LENGTH = 10;
 const PASSWORD_REGEX_NUMBER = /\d/;
 const PASSWORD_REGEX_UPPERCASE = /[A-Z]/;

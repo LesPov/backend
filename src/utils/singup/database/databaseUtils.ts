@@ -1,14 +1,15 @@
 import { Response } from 'express';
-import { errorMessages } from '../../middleware/errorMesages';
-import Usuario from '../../models/usuarios/usuariosModel';
-import UsuarioRol from '../../models/usuarios_rols/usuariosRolModel';
-import Rol from '../../models/rol/rolModel';
-import Verificacion from '../../models/verificaciones/verificationsModel';
+
 import { generateVerificationCode } from '../paswword_generate/generateCode';
+import { errorMessages } from '../../../middleware/errorMesages';
+import Rol from '../../../models/rol/rolModel';
+import Usuario from '../../../models/usuarios/usuariosModel';
+import UsuarioRol from '../../../models/usuarios_rols/usuariosRolModel';
+import Verificacion from '../../../models/verificaciones/verificationsModel';
 
 const VERIFICATION_CODE_EXPIRATION_HOURS = 24;
 
-/**
+/** 
  * Maneja errores internos del servidor.
  * @param error El error ocurrido.
  * @param res La respuesta HTTP saliente.

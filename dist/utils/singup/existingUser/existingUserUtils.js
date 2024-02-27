@@ -12,9 +12,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.checkExistingUser = exports.handleExistingUserError = void 0;
-const errorMesages_1 = require("../../middleware/errorMesages");
-const usuariosModel_1 = __importDefault(require("../../models/usuarios/usuariosModel"));
+exports.checkExistingUsername = exports.checkExistingUser = exports.handleExistingUserError = void 0;
+const errorMesages_1 = require("../../../middleware/errorMesages");
+const usuariosModel_1 = __importDefault(require("../../../models/usuarios/usuariosModel"));
 /**
  * Maneja los errores relacionados con la existencia de un usuario.
  * @param error Mensaje de error si el usuario ya existe, de lo contrario, null.
@@ -34,7 +34,7 @@ exports.handleExistingUserError = handleExistingUserError;
  * @param email Dirección de correo electrónico.
  * @returns Mensaje de error si el usuario o correo electrónico ya existe, de lo contrario, null.
  */ const checkExistingUser = (usuario, email) => __awaiter(void 0, void 0, void 0, function* () {
-    const usernameError = yield checkExistingUsername(usuario);
+    const usernameError = yield (0, exports.checkExistingUsername)(usuario);
     const emailError = yield checkExistingEmail(email);
     if (usernameError && emailError) {
         // Ambos existen, puedes combinar los mensajes de error o manejarlos de acuerdo a tus necesidades
@@ -53,6 +53,7 @@ const checkExistingUsername = (usuario) => __awaiter(void 0, void 0, void 0, fun
         ? errorMesages_1.errorMessages.userExists(usuario)
         : null;
 });
+exports.checkExistingUsername = checkExistingUsername;
 /**
  * Verifica si una dirección de correo electrónico ya existe.
  * @param email Dirección de correo electrónico a verificar.

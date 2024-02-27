@@ -1,6 +1,6 @@
 import { Response } from 'express';
-import { errorMessages } from '../../middleware/errorMesages';
-import Usuario from '../../models/usuarios/usuariosModel';
+import { errorMessages } from '../../../middleware/errorMesages';
+import Usuario from '../../../models/usuarios/usuariosModel';
 
 /**
  * Maneja los errores relacionados con la existencia de un usuario.
@@ -37,7 +37,7 @@ export const handleExistingUserError = (error: string | null, res: Response) => 
  * @param usuario Nombre de usuario a verificar.
  * @returns Mensaje de error si el nombre de usuario ya existe, de lo contrario, null.
  */
- const checkExistingUsername = async (usuario: string): Promise<string | null> => {
+export const checkExistingUsername = async (usuario: string): Promise<string | null> => {
     return (await findExistingUsername(usuario))
         ? errorMessages.userExists(usuario)
         : null;
@@ -48,7 +48,7 @@ export const handleExistingUserError = (error: string | null, res: Response) => 
  * @param email Dirección de correo electrónico a verificar.
  * @returns Mensaje de error si la dirección de correo electrónico ya existe, de lo contrario, null.
  */
- const checkExistingEmail = async (email: string): Promise<string | null> => {
+const checkExistingEmail = async (email: string): Promise<string | null> => {
     return (await findExistingEmail(email))
         ? errorMessages.userEmailExists(email)
         : null;

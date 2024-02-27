@@ -1,5 +1,5 @@
 // Importa la función handleInputValidationErrors desde el módulo de utilidades de validación
-import { handleInputValidationErrors, handlePasswordValidationErrors, validateCharacterClass, validateEmail, validateInput, validateLength, validatePassword } from "../../utils/validation/validationUtils";
+import { handleInputValidationErrors, handlePasswordValidationErrors, validateCharacterClass, validateEmail, validateInput, validateLength, validatePassword } from "../../utils/singup/validation/validationUtils";
 import { Response as ExpressResponse } from 'express'; // Importa la interfaz Response desde Express
 
 // Importa los mensajes de error desde el middleware correspondiente
@@ -113,7 +113,7 @@ describe('validateLength Function', () => {
   it('debería agregar un mensaje de error si la contraseña es demasiado corta', () => {
 
     // Contraseña que no cumple con la longitud mínima
-    const contrasena = 'Short'; 
+    const contrasena = 'Short';
 
     // Lista de errores inicialmente vacía
     const errors: string[] = [];
@@ -145,7 +145,7 @@ describe('validateCharacterClass Function', () => {
     // Expresión regular para carácter especial
     const characterClass = /[!@#$%^&*()_+{}\[\]:;<>,.?~\\/-]/;
 
-    // Lista de errores inicialmente vacía
+    // Lista de errores inicialmente vacía 
     const errors: string[] = [];
 
     // Mensaje de error esperado
@@ -234,4 +234,4 @@ describe('validateEmail Function', () => {
 
   // Puedes agregar más casos de prueba según sea necesario para cubrir diferentes escenarios
 
-});
+}); 

@@ -1,11 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 // Importa la función handleInputValidationErrors desde el módulo de utilidades de validación
-const validationUtils_1 = require("../../utils/validation/validationUtils");
+const validationUtils_1 = require("../../utils/singup/validation/validationUtils");
 // Importa los mensajes de error desde el middleware correspondiente
 const errorMesages_1 = require("../../middleware/errorMesages");
 // Constante para la longitud mínima de la contraseña
-const PASSWORD_MIN_LENGTH = 8;
 // Describe el conjunto de pruebas para las funciones de validación
 describe('Validation Utils', () => {
     // Prueba específica: debería lanzar un error y responder con un mensaje de validación
@@ -111,7 +110,7 @@ describe('validateCharacterClass Function', () => {
         const contrasena = 'PasswordWithoutSpecialChar123';
         // Expresión regular para carácter especial
         const characterClass = /[!@#$%^&*()_+{}\[\]:;<>,.?~\\/-]/;
-        // Lista de errores inicialmente vacía
+        // Lista de errores inicialmente vacía 
         const errors = [];
         // Mensaje de error esperado
         const errorMessage = errorMesages_1.errorMessages.passwordNoSpecialChar;

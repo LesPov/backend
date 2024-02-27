@@ -15,11 +15,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.newUser = void 0;
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const successMessages_1 = require("../../../middleware/successMessages");
-const validationUtils_1 = require("../../../utils/validation/validationUtils");
-const existingUserUtils_1 = require("../../../utils/existingUser/existingUserUtils");
-const databaseUtils_1 = require("../../../utils/database/databaseUtils");
-const roleUtils_1 = require("../../../utils/role/roleUtils");
-const emailUtils_1 = require("../../../utils/emailsend/emailUtils");
+const databaseUtils_1 = require("../../../utils/singup/database/databaseUtils");
+const emailUtils_1 = require("../../../utils/singup/emailsend/emailUtils");
+const existingUserUtils_1 = require("../../../utils/singup/existingUser/existingUserUtils");
+const roleUtils_1 = require("../../../utils/singup/role/roleUtils");
+const validationUtils_1 = require("../../../utils/singup/validation/validationUtils");
 /**
  * Controlador para registrar un nuevo usuario.
  * @param req La solicitud HTTP entrante.
