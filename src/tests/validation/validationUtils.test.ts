@@ -4,6 +4,7 @@ import { Response as ExpressResponse } from 'express'; // Importa la interfaz Re
 
 // Importa los mensajes de error desde el middleware correspondiente
 import { errorMessages } from "../../middleware/errorMesages";
+
 // Constante para la longitud mínima de la contraseña
 
 // Describe el conjunto de pruebas para las funciones de validación
@@ -235,3 +236,6 @@ describe('validateEmail Function', () => {
   // Puedes agregar más casos de prueba según sea necesario para cubrir diferentes escenarios
 
 }); 
+
+
+
