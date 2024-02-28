@@ -8,7 +8,7 @@ import UsuarioRol from '../../../models/usuarios_rols/usuariosRolModel';
 import Verificacion from '../../../models/verificaciones/verificationsModel';
 
 const VERIFICATION_CODE_EXPIRATION_HOURS = 24;
-
+const VERIFICATION_CODE_EXPIRATION_MINUTES = 1;
 /** 
  * Maneja errores internos del servidor.
  * @param error El error ocurrido.
@@ -89,7 +89,7 @@ export const initializeUserProfile = async (usuarioId: number) => {
 export const generateAndSaveVerificationCode = async (usuarioId: number, email: string) => {
     const verificationCode = generateVerificationCode();
     const expirationDate = new Date();
-    expirationDate.setHours(expirationDate.getHours() + VERIFICATION_CODE_EXPIRATION_HOURS);
+    expirationDate.setMinutes(expirationDate.getMinutes() + VERIFICATION_CODE_EXPIRATION_MINUTES);
 
     await Verificacion.create({
         usuario_id: usuarioId,

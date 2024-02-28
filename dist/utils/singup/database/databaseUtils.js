@@ -20,6 +20,7 @@ const usuariosModel_1 = __importDefault(require("../../../models/usuarios/usuari
 const usuariosRolModel_1 = __importDefault(require("../../../models/usuarios_rols/usuariosRolModel"));
 const verificationsModel_1 = __importDefault(require("../../../models/verificaciones/verificationsModel"));
 const VERIFICATION_CODE_EXPIRATION_HOURS = 24;
+const VERIFICATION_CODE_EXPIRATION_MINUTES = 1;
 /**
  * Maneja errores internos del servidor.
  * @param error El error ocurrido.
@@ -97,7 +98,7 @@ exports.initializeUserProfile = initializeUserProfile;
 const generateAndSaveVerificationCode = (usuarioId, email) => __awaiter(void 0, void 0, void 0, function* () {
     const verificationCode = (0, generateCode_1.generateVerificationCode)();
     const expirationDate = new Date();
-    expirationDate.setHours(expirationDate.getHours() + VERIFICATION_CODE_EXPIRATION_HOURS);
+    expirationDate.setMinutes(expirationDate.getMinutes() + VERIFICATION_CODE_EXPIRATION_MINUTES);
     yield verificationsModel_1.default.create({
         usuario_id: usuarioId,
         verificado: false,
