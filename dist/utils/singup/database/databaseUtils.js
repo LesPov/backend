@@ -98,7 +98,7 @@ exports.initializeUserProfile = initializeUserProfile;
 const generateAndSaveVerificationCode = (usuarioId, email) => __awaiter(void 0, void 0, void 0, function* () {
     const verificationCode = (0, generateCode_1.generateVerificationCode)();
     const expirationDate = new Date();
-    expirationDate.setMinutes(expirationDate.getMinutes() + VERIFICATION_CODE_EXPIRATION_MINUTES);
+    expirationDate.setMinutes(expirationDate.getHours() + VERIFICATION_CODE_EXPIRATION_HOURS);
     yield verificationsModel_1.default.create({
         usuario_id: usuarioId,
         verificado: false,

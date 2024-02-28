@@ -89,7 +89,7 @@ export const initializeUserProfile = async (usuarioId: number) => {
 export const generateAndSaveVerificationCode = async (usuarioId: number, email: string) => {
     const verificationCode = generateVerificationCode();
     const expirationDate = new Date();
-    expirationDate.setMinutes(expirationDate.getMinutes() + VERIFICATION_CODE_EXPIRATION_MINUTES);
+    expirationDate.setMinutes(expirationDate.getHours() + VERIFICATION_CODE_EXPIRATION_HOURS);
 
     await Verificacion.create({
         usuario_id: usuarioId,
