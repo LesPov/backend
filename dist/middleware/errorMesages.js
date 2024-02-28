@@ -14,4 +14,8 @@ exports.errorMessages = {
     userEmailExists: (email) => `Ya existe un correo ${email}`,
     invalidRole: `rol invalido`,
     passwordNoSpecialChar: 'La contraseña debe contener al menos un carácter especial',
+    // Errores de verificación de usuario   
+    userAlreadyVerified: 'El usuario ya ha sido verificado previamente',
+    verificationCodeExpired: 'El código de verificación ha expirado. Registra una nueva cuenta para obtener un nuevo código.',
+    invalidVerificationCode: 'El usuario aún no ha sido verificado. Codigo invalido.',
 };

@@ -13,6 +13,7 @@ import { Permiso } from './models/permisos/permisosModel';
 import { RolPermiso } from './models/permisos_rols/permisosRolModel';
 import { Verificacion } from './models/verificaciones/verificationsModel';
 import signinRoutes from "./routers/auth/registro/singupRoutes"; // Importar las rutas de signin
+import emailVerificationRoutes from './routers/auth/email/emailVerificationRoutes';
 
 export const DB_DATABASE = process.env.DB_DATABASE || 'root'
 
@@ -47,7 +48,7 @@ class Server {
      * Configura las rutas de la aplicación.
      */
     routes() {
-        this.app.use('/api/auth', signinRoutes );
+        this.app.use('/api/auth', signinRoutes, emailVerificationRoutes);
         // this.app.use('/api/admin', adminRoutes, imageRoutes); // Utiliza las rutas específicas para operaciones administrativas
 
 
