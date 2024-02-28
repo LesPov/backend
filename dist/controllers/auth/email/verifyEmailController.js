@@ -71,12 +71,12 @@ class UnauthorizedError extends Error {
         this.name = 'UnauthorizedError';
     }
 }
-class ForbiddenError extends Error {
-    constructor(message) {
-        super(message);
-        this.name = 'ForbiddenError';
-    }
-}
+// class ForbiddenError extends Error {
+//   constructor(message: string) {
+//     super(message);
+//     this.name = 'ForbiddenError';
+//   }
+// }
 class InvalidVerificationCodeError extends Error {
     constructor(message) {
         super(message);
