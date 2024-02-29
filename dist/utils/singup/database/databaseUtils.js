@@ -30,7 +30,7 @@ const handleServerError = (error, res) => {
     console.error("Error en el controlador newUser:", error);
     if (!res.headersSent) {
         res.status(400).json({
-            msg: errorMesages_1.errorMessages.databaseError,
+            msg: error.message || errorMesages_1.errorMessages.databaseError,
             error,
         });
     }

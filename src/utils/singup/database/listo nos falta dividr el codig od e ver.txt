@@ -1,0 +1,2 @@
+listo nos falta dividr el codig od e verifyemail listo y crear la ruta  y argragr en el sevrer la ruta para el reenvio del codigo y 
+crear el controlador listo 
