@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
-
 import { successMessages } from '../../../middleware/successMessages';
 import { createNewUserWithRole, initializeUserProfile, generateAndSaveVerificationCode, handleServerError } from '../../../utils/singup/database/databaseUtils';
 import { sendVerificationEmail } from '../../../utils/singup/emailsend/emailUtils';
@@ -28,7 +27,6 @@ export const newUser = async (req: Request, res: Response) => {
 
         // Validar el formato del correo electrónico
         validateEmail(email);
-
 
         // Verificar si el usuario o el correo electrónico ya existen
         const existingUserError = await checkExistingUser(usuario, email);

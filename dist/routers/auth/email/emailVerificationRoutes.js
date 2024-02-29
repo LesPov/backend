@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
-const verifyEmailController_1 = require("../../../controllers/auth/email/verifyEmailController");
+const verifyEmailController_1 = require("../../../controllers/auth/email/userVerification/verifyEmailController");
 const emailVerificationRoutes = (0, express_1.Router)();
 /**
  * PUT /api/user/verify/email

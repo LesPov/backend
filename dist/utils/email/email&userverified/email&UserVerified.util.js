@@ -14,7 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.handleVerification = exports.handleUserVerification = exports.handleEmailVerification = exports.markUserAsVerified = exports.markEmailAsVerified = void 0;
 const verificationsModel_1 = __importDefault(require("../../../models/verificaciones/verificationsModel"));
-const userVerification_1 = require("../userVerification/userVerification");
+const user_codeVerification_1 = require("../user&codeVerification/user&codeVerification");
 // Marca el correo electrónico del usuario como verificado
 const markEmailAsVerified = (usuario_id) => __awaiter(void 0, void 0, void 0, function* () {
     yield verificationsModel_1.default.update({ correo_verificado: true }, { where: { usuario_id } });
@@ -39,9 +39,9 @@ const handleUserVerification = (usuario_id, celular_verificado) => __awaiter(voi
 exports.handleUserVerification = handleUserVerification;
 // Maneja la verificación del usuario, verificando el correo electrónico y el usuario en sí
 const handleVerification = (user, codigo_verificacion, currentDate) => __awaiter(void 0, void 0, void 0, function* () {
-    (0, userVerification_1.checkUserVerificationStatus)(user);
-    (0, userVerification_1.checkVerificationCodeExpiration)(user, currentDate);
-    (0, userVerification_1.checkInvalidVerificationCode)(user, codigo_verificacion);
+    (0, user_codeVerification_1.checkUserVerificationStatus)(user);
+    (0, user_codeVerification_1.checkVerificationCodeExpiration)(user, currentDate);
+    (0, user_codeVerification_1.checkInvalidVerificationCode)(user, codigo_verificacion);
     yield (0, exports.handleEmailVerification)(user.usuario_id);
     yield (0, exports.handleUserVerification)(user.usuario_id, user.verificacion.celular_verificado);
 });

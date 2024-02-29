@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
-import { successMessages } from '../../../middleware/successMessages';
-import { handleInputValidationErrors } from '../../../utils/singup/validation/validationUtils';
-import { handleServerError } from '../../../utils/singup/database/databaseUtils';
-import { handleVerification } from '../../../utils/email/email&userverified/email&UserVerified.util';
-import { findUserByUsername, validateVerificationFields } from '../../../utils/email/verification/verificationUtils';
-import { checkUserVerificationStatus, checkVerificationCodeExpiration, checkInvalidVerificationCode } from '../../../utils/email/userVerification/userVerification';
+import { successMessages } from '../../../../middleware/successMessages';
+import { handleInputValidationErrors } from '../../../../utils/singup/validation/validationUtils';
+import { handleServerError } from '../../../../utils/singup/database/databaseUtils';
+import { handleVerification } from '../../../../utils/email/email&userverified/email&UserVerified.util';
+import { findUserByUsername, validateVerificationFields } from '../../../../utils/email/verification/verificationUtils';
+import { checkUserVerificationStatus, checkVerificationCodeExpiration, checkInvalidVerificationCode } from '../../../../utils/email/user&codeVerification/user&codeVerification';
 
 
 // Controlador principal para verificar al usuario

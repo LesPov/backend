@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { verifyUser } from "../../../controllers/auth/email/verifyEmailController";
+import { verifyUser } from "../../../controllers/auth/email/userVerification/verifyEmailController";
 
 const emailVerificationRoutes = Router();
 

@@ -10,12 +10,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.verifyUser = void 0;
-const successMessages_1 = require("../../../middleware/successMessages");
-const validationUtils_1 = require("../../../utils/singup/validation/validationUtils");
-const databaseUtils_1 = require("../../../utils/singup/database/databaseUtils");
-const email_UserVerified_util_1 = require("../../../utils/email/email&userverified/email&UserVerified.util");
-const verificationUtils_1 = require("../../../utils/email/verification/verificationUtils");
-const user_codeVerification_1 = require("../../../utils/email/user&codeVerification/user&codeVerification");
+const successMessages_1 = require("../../../../middleware/successMessages");
+const validationUtils_1 = require("../../../../utils/singup/validation/validationUtils");
+const databaseUtils_1 = require("../../../../utils/singup/database/databaseUtils");
+const email_UserVerified_util_1 = require("../../../../utils/email/email&userverified/email&UserVerified.util");
+const verificationUtils_1 = require("../../../../utils/email/verification/verificationUtils");
+const user_codeVerification_1 = require("../../../../utils/email/user&codeVerification/user&codeVerification");
 // Controlador principal para verificar al usuario
 const verifyUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
