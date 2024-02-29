@@ -25,7 +25,7 @@ const path_1 = __importDefault(require("path"));
  */
 const sendPasswordResetEmail = (email, username, randomPassword) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const templatePath = path_1.default.join(__dirname, '..', 'controllers', 'templates', 'randomPasswordEmail.html');
+        const templatePath = path_1.default.join(__dirname, '..', '..', '..', 'controllers', 'templates', 'randomPasswordEmail.html');
         const emailTemplate = fs_1.default.readFileSync(templatePath, 'utf-8');
         const personalizedEmail = emailTemplate.replace('{{ username }}', username).replace('{{ randomPassword }}', randomPassword);
         const transporter = nodemailer_1.default.createTransport({
@@ -58,14 +58,14 @@ exports.sendPasswordResetEmail = sendPasswordResetEmail;
  * @param {string} verificationCode - Código de verificación generado.
  * @returns {boolean} - True si el correo se envía con éxito, False si hay un error.
  */
-const sendVerificationEmail = (email, username, verificationCode) => __awaiter(void 0, void 0, void 0, function* () {
+const sendVerificationEmail = (email, usuario, codigo_verificacion) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         // Obtiene la ruta absoluta del archivo de plantilla de correo electrónico
         const templatePath = path_1.default.join(__dirname, '..', '..', '..', 'controllers', 'templates', 'verificationEmail.html');
         // Lee la plantilla de correo electrónico desde el archivo
         const emailTemplate = fs_1.default.readFileSync(templatePath, 'utf-8');
         // Reemplaza los marcadores {{ username }} y {{ verificationCode }} con los valores reales
-        const personalizedEmail = emailTemplate.replace('{{ username }}', username).replace('{{ verificationCode }}', verificationCode);
+        const personalizedEmail = emailTemplate.replace('{{ usuario }}', usuario).replace('{{ codigo_verificacion }}', codigo_verificacion);
         // Crea un transporte de nodemailer para reutilizarlo
         const transporter = nodemailer_1.default.createTransport({
             service: 'gmail',
@@ -76,7 +76,7 @@ const sendVerificationEmail = (email, username, verificationCode) => __awaiter(v
             secure: true,
         });
         // Registra en la consola el código de verificación enviado
-        console.log('Código de verificación enviado:', verificationCode);
+        console.log('Código de verificación enviado:', codigo_verificacion);
         const mailOptions = {
             from: process.env.MAIL_USER,
             to: email,

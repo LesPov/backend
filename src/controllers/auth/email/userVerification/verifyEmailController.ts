@@ -1,11 +1,10 @@
 import { Request, Response } from 'express';
 import { successMessages } from '../../../../middleware/successMessages';
-import { handleInputValidationErrors } from '../../../../utils/singup/validation/validationUtils';
+import { handleVerification } from '../../../../utils/email/userVerification/verifiedUser/email&userverified/email&UserVerified.util';
+import { validateVerificationFields, findUserByUsername } from '../../../../utils/email/userVerification/verifiedUser/verification/verificationUtils';
 import { handleServerError } from '../../../../utils/singup/database/databaseUtils';
-import { handleVerification } from '../../../../utils/email/email&userverified/email&UserVerified.util';
-import { findUserByUsername, validateVerificationFields } from '../../../../utils/email/verification/verificationUtils';
-import { checkUserVerificationStatus, checkVerificationCodeExpiration, checkInvalidVerificationCode } from '../../../../utils/email/user&codeVerification/user&codeVerification';
-
+import { handleInputValidationErrors } from '../../../../utils/singup/validation/validationUtils';
+import { checkInvalidVerificationCode, checkUserVerificationStatus, checkVerificationCodeExpiration } from '../../../../utils/email/userVerification/verifiedUser/user&codeVerification/userVerification';
 
 // Controlador principal para verificar al usuario
 export const verifyUser = async (req: Request, res: Response) => {

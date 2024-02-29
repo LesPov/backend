@@ -1,6 +1,6 @@
-import { errorMessages } from "../../../middleware/errorMesages";
-import Usuario from "../../../models/usuarios/usuariosModel";
-import Verificacion from "../../../models/verificaciones/verificationsModel";
+import { errorMessages } from "../../../../../middleware/errorMesages";
+import Usuario from "../../../../../models/usuarios/usuariosModel";
+import Verificacion from "../../../../../models/verificaciones/verificationsModel";
 import { Request, Response } from 'express';
 
 export const validateVerificationFields = (usuario: string, codigo_verificacion: string): string[] => {

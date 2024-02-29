@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
+const resendVerificationEmailCodeController_1 = require("../../../controllers/auth/email/userVerification/resendVerificationEmailCodeController");
 const verifyEmailController_1 = require("../../../controllers/auth/email/userVerification/verifyEmailController");
 const emailVerificationRoutes = (0, express_1.Router)();
 /**
@@ -14,5 +15,5 @@ emailVerificationRoutes.put('/verify/email', verifyEmailController_1.verifyUser)
  * Ruta para reenviar el código de verificación por correo electrónico.
  * Público
  */
-// emailVerificationRoutes.post('/verify/email/resend', resendVerificationCode);
+emailVerificationRoutes.post('/verify/email/resend', resendVerificationEmailCodeController_1.resendVerificationCode);
 exports.default = emailVerificationRoutes;

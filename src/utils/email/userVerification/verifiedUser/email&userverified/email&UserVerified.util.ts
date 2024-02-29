@@ -1,5 +1,5 @@
-import Verificacion from "../../../models/verificaciones/verificationsModel";
-import { checkUserVerificationStatus, checkVerificationCodeExpiration, checkInvalidVerificationCode } from "../user&codeVerification/user&codeVerification";
+import Verificacion from "../../../../../models/verificaciones/verificationsModel";
+import { checkUserVerificationStatus, checkVerificationCodeExpiration, checkInvalidVerificationCode } from "../user&codeVerification/userVerification";
 
 // Marca el correo electrónico del usuario como verificado
 export const markEmailAsVerified = async (usuario_id: number) => {

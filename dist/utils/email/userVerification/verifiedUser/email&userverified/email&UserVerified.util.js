@@ -13,7 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.handleVerification = exports.handleUserVerification = exports.handleEmailVerification = exports.markUserAsVerified = exports.markEmailAsVerified = void 0;
-const verificationsModel_1 = __importDefault(require("../../../models/verificaciones/verificationsModel"));
+const verificationsModel_1 = __importDefault(require("../../../../../models/verificaciones/verificationsModel"));
 const userVerification_1 = require("../user&codeVerification/userVerification");
 // Marca el correo electrónico del usuario como verificado
 const markEmailAsVerified = (usuario_id) => __awaiter(void 0, void 0, void 0, function* () {

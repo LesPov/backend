@@ -48,7 +48,7 @@ class Server {
      * Configura las rutas de la aplicación.
      */
     routes() {
-        this.app.use('/api/auth', signinRoutes, emailVerificationRoutes);
+        this.app.use('/api/auth', signinRoutes, emailVerificationRoutes,);
         // this.app.use('/api/admin', adminRoutes, imageRoutes); // Utiliza las rutas específicas para operaciones administrativas
 
 
@@ -59,7 +59,7 @@ class Server {
      */
     middlewares() {
         // Parseo body  
-        this.app.use(express.json());
+        this.app.use(express.json({ strict: false }));
 
         // Servir archivos estáticos desde la carpeta 'uploads'
         // Asegúrate de que la ruta sea correcta y termine con '/'
