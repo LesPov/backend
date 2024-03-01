@@ -13,6 +13,7 @@ export const verifyUser = async (req: Request, res: Response) => {
 
     // Validar campos
     const validationErrors = validateVerificationFields(usuario, codigo_verificacion);
+    
     handleInputValidationErrors(validationErrors, res);
 
 

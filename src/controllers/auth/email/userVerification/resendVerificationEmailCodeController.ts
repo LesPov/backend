@@ -1,12 +1,13 @@
 import { Request, Response } from 'express';
 import { errorMessages } from '../../../../middleware/errorMesages';
 import { successMessages } from '../../../../middleware/successMessages';
-import Usuario from '../../../../models/usuarios/usuariosModel';
+import Usuario, { UsuarioModel } from '../../../../models/usuarios/usuariosModel';
 import Verificacion from '../../../../models/verificaciones/verificationsModel';
 import { sendVerificationEmail } from '../../../../utils/singup/emailsend/emailUtils';
 import { generateVerificationCode } from '../../../../utils/singup/paswword_generate/generateCode';
 import { handleInputValidationErrors } from '../../../../utils/singup/validation/validationUtils';
 import { checkUserVerificationStatus } from '../../../../utils/email/userVerification/verifiedUser/user&codeVerification/userVerification';
+import { checkExistingUser } from '../../../../utils/singup/existingUser/existingUserUtils';
 
 /**
  * Constante que define la cantidad de horas antes de que expire un código de verificación.
@@ -60,22 +61,46 @@ const findOrCreateVerificationRecord = async (usuario_id: number) => {
  * @param expirationDate - Fecha de expiración del nuevo código de verificación.
  */
 const updateVerificationCodeInfo = async (verificationRecord: any, newVerificationCode: string, expirationDate: Date) => {
-    await verificationRecord.update({
-        codigo_verificacion: newVerificationCode,
-        expiracion_codigo_verificacion: expirationDate
-    });
+    try {
+        await verificationRecord.update({
+            codigo_verificacion: newVerificationCode,
+            expiracion_codigo_verificacion: expirationDate
+        });
+    } catch (error) {
+        // Manejar errores específicos de la actualización
+        throw new Error("Error actualizando el código de verificación");
+    }
 };
+
 
 /**
  * Función que utiliza la función `sendVerificationEmail` para enviar el nuevo código de verificación
  * por correo electrónico al usuario.
- * @param email - Correo electrónico del usuario.
+ * @param email - Correo electrónico del usuario. 
  * @param username - Nombre de usuario del usuario.
  * @param newVerificationCode - Nuevo código de verificación.
  * @returns Verdadero si el correo electrónico se envía correctamente, de lo contrario, falso.
  */
 const sendVerificationCodeByEmail = async (email: string, username: string, newVerificationCode: string) => {
     return sendVerificationEmail(email, username, newVerificationCode);
+};
+/**
+ * Función que verifica si el usuario existe en la base de datos.
+ * @param usuario - Nombre de usuario.
+ * @param res - Objeto de respuesta.
+ * @returns Usuario si existe, de lo contrario, devuelve un mensaje de error.
+ */
+const checkUserExistence = async (usuario: string, res: Response): Promise<UsuarioModel> => {
+    const user = await Usuario.findOne({ where: { usuario }, include: [Verificacion] });
+
+    if (!user) {
+        // Devuelve un error si el usuario no existe
+        res.status(400).json({ msg: errorMessages.userNotExists(usuario) });
+        // En este punto, puedes lanzar un error o devolver un objeto que indique la ausencia del usuario.
+        throw new Error("Usuario no encontrado");
+    }
+
+    return user as UsuarioModel;
 };
 
 
@@ -88,12 +113,12 @@ export const resendVerificationCode = async (req: Request, res: Response) => {
 
     try {
         const { usuario } = req.body;
-        // Validar campos
+        // Validar campos 
         const validationErrors = validateVerificationFieldsResend(usuario);
         handleInputValidationErrors(validationErrors, res);
 
         // Buscar al usuario en la base de datos junto con su registro de verificación.
-        const user: any = await Usuario.findOne({ where: { usuario }, include: [Verificacion] });
+        const user = await checkUserExistence(usuario, res);
         checkUserVerificationStatus(user);
 
         // Generar código y fecha de expiración
@@ -108,9 +133,9 @@ export const resendVerificationCode = async (req: Request, res: Response) => {
         // Enviar el nuevo código de verificación por correo electrónico.
         await sendVerificationCodeByEmail(user.email, user.usuario, verificationCode);
 
-        
-         // Responder con un mensaje de éxito si el correo electrónico se envía correctamente.
-         res.json({
+
+        // Responder con un mensaje de éxito si el correo electrónico se envía correctamente.
+        res.json({
             msg: successMessages.verificationCodeResent,
         });
     } catch (error) {

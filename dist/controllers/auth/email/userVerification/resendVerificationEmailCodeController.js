@@ -65,10 +65,16 @@ const findOrCreateVerificationRecord = (usuario_id) => __awaiter(void 0, void 0,
  * @param expirationDate - Fecha de expiración del nuevo código de verificación.
  */
 const updateVerificationCodeInfo = (verificationRecord, newVerificationCode, expirationDate) => __awaiter(void 0, void 0, void 0, function* () {
-    yield verificationRecord.update({
-        codigo_verificacion: newVerificationCode,
-        expiracion_codigo_verificacion: expirationDate
-    });
+    try {
+        yield verificationRecord.update({
+            codigo_verificacion: newVerificationCode,
+            expiracion_codigo_verificacion: expirationDate
+        });
+    }
+    catch (error) {
+        // Manejar errores específicos de la actualización
+        throw new Error("Error actualizando el código de verificación");
+    }
 });
 /**
  * Función que utiliza la función `sendVerificationEmail` para enviar el nuevo código de verificación
@@ -82,6 +88,22 @@ const sendVerificationCodeByEmail = (email, username, newVerificationCode) => __
     return (0, emailUtils_1.sendVerificationEmail)(email, username, newVerificationCode);
 });
 /**
+ * Función que verifica si el usuario existe en la base de datos.
+ * @param usuario - Nombre de usuario.
+ * @param res - Objeto de respuesta.
+ * @returns Usuario si existe, de lo contrario, devuelve un mensaje de error.
+ */
+const checkUserExistence = (usuario, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = yield usuariosModel_1.default.findOne({ where: { usuario }, include: [verificationsModel_1.default] });
+    if (!user) {
+        // Devuelve un error si el usuario no existe
+        res.status(400).json({ msg: errorMesages_1.errorMessages.userNotExists(usuario) });
+        // En este punto, puedes lanzar un error o devolver un objeto que indique la ausencia del usuario.
+        throw new Error("Usuario no encontrado");
+    }
+    return user;
+});
+/**
  * Controlador para reenviar el código de verificación a un usuario no verificado.
  * @param req - Objeto de solicitud.
  * @param res - Objeto de respuesta.
@@ -89,11 +111,11 @@ const sendVerificationCodeByEmail = (email, username, newVerificationCode) => __
 const resendVerificationCode = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { usuario } = req.body;
-        // Validar campos
+        // Validar campos 
         const validationErrors = validateVerificationFieldsResend(usuario);
         (0, validationUtils_1.handleInputValidationErrors)(validationErrors, res);
         // Buscar al usuario en la base de datos junto con su registro de verificación.
-        const user = yield usuariosModel_1.default.findOne({ where: { usuario }, include: [verificationsModel_1.default] });
+        const user = yield checkUserExistence(usuario, res);
         (0, userVerification_1.checkUserVerificationStatus)(user);
         // Generar código y fecha de expiración
         const { verificationCode, expirationDate } = generateVerificationData();
