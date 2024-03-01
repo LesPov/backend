@@ -10,10 +10,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.resendVerificationCode = void 0;
-const successMessages_1 = require("../../../../middleware/successMessages");
-const validationUtils_1 = require("../../../../utils/singup/validation/validationUtils");
-const userVerification_1 = require("../../../../utils/email/userVerification/verifiedUser/user&codeVerification/userVerification");
-const resendUser_1 = require("../../../../utils/email/userVerification/resendUserVerification/resendUser");
+const successMessages_1 = require("../../../../../middleware/successMessages");
+const validationUtils_1 = require("../../../../../utils/singup/validation/validationUtils");
+const userVerification_1 = require("../../../../../utils/email/userVerification/verifiedUser/user&codeVerification/userVerification");
+const resendUser_1 = require("../../../../../utils/email/userVerification/resendUserVerification/resendUser");
 /**
  * Controlador para reenviar el código de verificación a un usuario no verificado.
  * @param req - Objeto de solicitud.

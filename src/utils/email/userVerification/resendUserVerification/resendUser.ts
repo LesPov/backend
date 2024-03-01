@@ -1,8 +1,8 @@
-import { errorMessages } from "../../../middleware/errorMesages";
-import Usuario, { UsuarioModel } from "../../../models/usuarios/usuariosModel";
-import Verificacion from "../../../models/verificaciones/verificationsModel";
-import { sendVerificationEmail } from "../../singup/emailsend/emailUtils";
-import { generateVerificationCode } from "../../singup/paswword_generate/generateCode";
+import { errorMessages } from "../../../../middleware/errorMesages";
+import Usuario, { UsuarioModel } from "../../../../models/usuarios/usuariosModel";
+import Verificacion from "../../../../models/verificaciones/verificationsModel";
+import { sendVerificationEmail } from "../../../singup/emailsend/emailUtils";
+import { generateVerificationCode } from "../../../singup/paswword_generate/generateCode";
 import { Request, Response } from 'express';
 
 /**

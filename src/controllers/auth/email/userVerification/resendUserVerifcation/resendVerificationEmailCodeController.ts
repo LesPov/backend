@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
-import { successMessages } from '../../../../middleware/successMessages';
-import { handleInputValidationErrors } from '../../../../utils/singup/validation/validationUtils';
-import { checkUserVerificationStatus } from '../../../../utils/email/userVerification/verifiedUser/user&codeVerification/userVerification';
-import { validateVerificationFieldsResend, checkUserExistence, generateVerificationData, findOrCreateVerificationRecord, updateVerificationCodeInfo, sendVerificationCodeByEmail, handleemailServerError } from '../../../../utils/email/resendUserVerification/resendUser';
+import { successMessages } from '../../../../../middleware/successMessages';
+import { handleInputValidationErrors } from '../../../../../utils/singup/validation/validationUtils';
+import { checkUserVerificationStatus } from '../../../../../utils/email/userVerification/verifiedUser/user&codeVerification/userVerification';
+import { validateVerificationFieldsResend, checkUserExistence, generateVerificationData, findOrCreateVerificationRecord, updateVerificationCodeInfo, sendVerificationCodeByEmail, handleemailServerError } from '../../../../../utils/email/userVerification/resendUserVerification/resendUser';
 
 
 /**

@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { resendVerificationCode } from "../../../controllers/auth/email/userVerification/resendVerificationEmailCodeController";
-import { verifyUser } from "../../../controllers/auth/email/userVerification/verifyEmailController";
+import { resendVerificationCode } from "../../../controllers/auth/email/userVerification/resendUserVerifcation/resendVerificationEmailCodeController";
+import { verifyUser } from "../../../controllers/auth/email/userVerification/verifiedUser/verifyEmailController";
 
 const emailVerificationRoutes = Router();
 
@@ -17,7 +17,7 @@ emailVerificationRoutes.put('/verify/email', verifyUser);
  * Ruta para reenviar el código de verificación por correo electrónico.
  * Público
  */
- emailVerificationRoutes.post('/verify/email/resend', resendVerificationCode);
+emailVerificationRoutes.post('/verify/email/resend', resendVerificationCode);
 
 
 export default emailVerificationRoutes;
