@@ -53,6 +53,13 @@ const checkPhoneNumberAvailability = (celular, res) => __awaiter(void 0, void 0,
         (0, exports.handleServerErrorPhoneSend)(error, res);
     }
 });
+const checkUserPhoneNumberExists = (user, celular, res) => {
+    if (user.celular === celular) {
+        return res.status(400).json({
+            msg: errorMesages_1.errorMessages.phoneNumberInUse,
+        });
+    }
+};
 const sendVerificationCode = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { usuario, celular } = req.body;
@@ -62,6 +69,8 @@ const sendVerificationCode = (req, res) => __awaiter(void 0, void 0, void 0, fun
         // Buscar al usuario por nombre de usuario
         const user = yield findUserByUsernamePhoneSend(usuario, res);
         checkUserVerificationStatusPhoneSend(user);
+        // Verificar si el usuario ya tiene un número de teléfono asociado
+        checkUserPhoneNumberExists(user, celular, res);
         // Verificar si el teléfono ya está verificado
         yield checkPhoneNumberAvailability(celular, res);
     }

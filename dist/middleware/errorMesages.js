@@ -24,4 +24,9 @@ exports.errorMessages = {
     phoneNumberVerificationError: 'Error al enviar el código de verificación por SMS',
     emailVerificationError: 'Ocurrió un error al reenviar el código de verificación por correo electrónico',
     userEmailExists: (email) => `Ya existe un correo ${email}`,
+    // Errores de verificación de número de teléfono 
+    incorrectPhoneNumber: 'El número de teléfono no coincide con el registrado para este usuario',
+    phoneAlreadyVerified: 'El número de teléfono ya ha sido verificado previamente',
+    phoneNumberInUse: 'El número de teléfono ya ha sido registrado para este usuario',
+    phoneVerificationRequired: 'Es necesario ingresar tu numero celular',
 };

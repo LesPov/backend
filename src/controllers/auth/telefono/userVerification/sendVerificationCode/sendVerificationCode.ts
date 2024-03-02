@@ -34,19 +34,27 @@ const isUserAlreadyVerifiedPhoneSend = (user: any) => {
 };
 const checkPhoneNumberAvailability = async (celular: string, res: Response) => {
     try {
-      const existingUser = await Usuario.findOne({ where: { celular: celular } });
-  
-      if (existingUser) {
-        return res.status(400).json({
-          msg: errorMessages.phoneNumberExists,
-        });
-      }
+        const existingUser = await Usuario.findOne({ where: { celular: celular } });
+
+        if (existingUser) {
+            return res.status(400).json({
+                msg: errorMessages.phoneNumberExists,
+            });
+        }
     } catch (error) {
-      handleServerErrorPhoneSend(error, res);
+        handleServerErrorPhoneSend(error, res);
     }
-  };
-  
-  
+};
+const checkUserPhoneNumberExists = (user: any, celular: string, res: Response) => {
+    if (user.celular === celular) {
+        return res.status(400).json({
+            msg: errorMessages.phoneNumberInUse,
+        });
+    }
+};
+
+
+
 export const sendVerificationCode = async (req: Request, res: Response) => {
     try {
         const { usuario, celular } = req.body;
@@ -59,6 +67,8 @@ export const sendVerificationCode = async (req: Request, res: Response) => {
 
         checkUserVerificationStatusPhoneSend(user);
 
+        // Verificar si el usuario ya tiene un número de teléfono asociado
+        checkUserPhoneNumberExists(user, celular, res);
         // Verificar si el teléfono ya está verificado
         await checkPhoneNumberAvailability(celular, res);
 

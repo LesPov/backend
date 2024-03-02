@@ -13,17 +13,22 @@ export const errorMessages = {
 
   userNotExists: (username: string) => `No existe un usuario con el nombre ${username} en la base de datos`,
 
- // Errores de verificación de usuario   
- userAlreadyVerified: 'El usuario ya ha sido verificado previamente',
- verificationCodeExpired: 'El código de verificación ha expirado. Registra una nueva cuenta para obtener un nuevo código.',
- invalidVerificationCode: 'El usuario aún no ha sido verificado. Codigo invalido.',
+  // Errores de verificación de usuario   
+  userAlreadyVerified: 'El usuario ya ha sido verificado previamente',
+  verificationCodeExpired: 'El código de verificación ha expirado. Registra una nueva cuenta para obtener un nuevo código.',
+  invalidVerificationCode: 'El usuario aún no ha sido verificado. Codigo invalido.',
 
 
-   // Errores de envío de código de verificación por SMS 
-   phoneNumberNotProvided: 'El número de teléfono es obligatorio para enviar el código de verificación por SMS',
-   phoneNumberExists: 'El número de teléfono ya ha sido registrado en la base de datos. ingresa otro',
-   phoneNumberVerificationError: 'Error al enviar el código de verificación por SMS',
-   emailVerificationError: 'Ocurrió un error al reenviar el código de verificación por correo electrónico',
-   userEmailExists: (email: string) => `Ya existe un correo ${email}`,
-
+  // Errores de envío de código de verificación por SMS 
+  phoneNumberNotProvided: 'El número de teléfono es obligatorio para enviar el código de verificación por SMS',
+  phoneNumberExists: 'El número de teléfono ya ha sido registrado en la base de datos. ingresa otro',
+  phoneNumberVerificationError: 'Error al enviar el código de verificación por SMS',
+  emailVerificationError: 'Ocurrió un error al reenviar el código de verificación por correo electrónico',
+  userEmailExists: (email: string) => `Ya existe un correo ${email}`,
+  // Errores de verificación de número de teléfono 
+  incorrectPhoneNumber: 'El número de teléfono no coincide con el registrado para este usuario',
+  phoneAlreadyVerified: 'El número de teléfono ya ha sido verificado previamente',
+  phoneNumberInUse: 'El número de teléfono ya ha sido registrado para este usuario',
+  phoneVerificationRequired: 'Es necesario ingresar tu numero celular',
+  
 };
