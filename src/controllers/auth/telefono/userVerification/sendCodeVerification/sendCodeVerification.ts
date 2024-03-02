@@ -133,30 +133,88 @@ const sendVerificationCodeViaSMS = async (celular: string, codigo_verificacion: 
         throw error;
     }
 };
-// Actualizar la información del usuario después de enviar el código de verificación
+
+///////////////////////////////////////////////////////////////////////////////////////////
+/**
+ * Actualizar la información del usuario después de enviar el código de verificación.
+ * @param celular Número de teléfono.
+ * @param usuario Nombre de usuario.
+ * @param user Objeto de usuario.
+ * @returns Resultado de la actualización.
+ */
 const updateUserInfoAfterVerificationCodeSent = async (celular: string, usuario: string | null, user: any) => {
     try {
-        const updateResult = await Usuario.update(
-            {
-                celular: celular,
-                isPhoneVerified: false,
-            },
-            { where: { usuario: usuario || user.usuario } }
-        );
+        const updateData = buildUpdateData(celular);
+        const whereClause = buildWhereClause(usuario, user);
 
-        console.log('Resultado de la actualización de Auth:', updateResult);
+        const updateResult = await updateUserInfo(updateData, whereClause);
+
+        logUpdateResult(updateResult);
         return updateResult;
     } catch (error) {
-        console.error('Error al actualizar la información del usuario después de enviar el código de verificación:', error);
-        throw error;
+        handleUpdateError(error);
     }
 };
+
+/**
+ * Construir los datos de actualización para la información del usuario.
+ * @param celular Número de teléfono.
+ * @returns Objeto con datos de actualización.
+ */
+const buildUpdateData = (celular: string) => {
+    return {
+        celular: celular,
+        isPhoneVerified: false,
+    };
+};
+
+/**
+ * Construir la cláusula WHERE para la actualización.
+ * @param usuario Nombre de usuario.
+ * @param user Objeto de usuario.
+ * @returns Objeto con cláusula WHERE.
+ */
+const buildWhereClause = (usuario: string | null, user: any) => {
+    return {
+        where: { usuario: usuario || user.usuario },
+    };
+};
+
+/**
+ * Actualizar la información del usuario en la base de datos.
+ * @param updateData Datos de actualización.
+ * @param whereClause Cláusula WHERE.
+ * @returns Resultado de la actualización.
+ * @throws Error si ocurre un error durante la actualización.
+ */
+const updateUserInfo = async (updateData: any, whereClause: any) => {
+    const updateResult = await Usuario.update(updateData, whereClause);
+    return updateResult;
+};
+
+/**
+ * Registrar el resultado de la actualización en la consola.
+ * @param updateResult Resultado de la actualización.
+ */
+const logUpdateResult = (updateResult: any) => {
+    console.log('Resultado de la actualización de Usuarios:', updateResult);
+};
+
+/**
+ * Manejar errores durante la actualización de la información del usuario.
+ * @param error Error ocurrido durante la actualización.
+ */
+const handleUpdateError = (error: any) => {
+    console.error('Error al actualizar la información del usuario después de enviar el código de verificación:', error);
+    throw error;
+};
+
 /**
  * Enviar código de verificación por SMS.
  * @param req Objeto de solicitud HTTP.
  * @param res Objeto de respuesta HTTP.
  */
-export const sendVerificationCode = async (req: Request, res: Response) => {
+export const sendCodeVerification = async (req: Request, res: Response) => {
     try {
         const { usuario, celular } = req.body;
 

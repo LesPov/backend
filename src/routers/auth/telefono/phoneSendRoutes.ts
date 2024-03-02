@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { sendVerificationCode } from "../../../controllers/auth/telefono/userVerification/sendVerificationCode/sendVerificationCode";
+import { sendCodeVerification } from "../../../controllers/auth/telefono/userVerification/sendCodeVerification/sendCodeVerification";
 
 const phoneVerificationRouter  = Router();
 
@@ -8,7 +8,7 @@ const phoneVerificationRouter  = Router();
  * Ruta para enviar el código de verificación por SMS.
  * Público
  */
-phoneVerificationRouter .post("/verify/send", sendVerificationCode);
+phoneVerificationRouter .post("/verify/send", sendCodeVerification);
 
 
 // /**

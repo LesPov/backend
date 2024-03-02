@@ -2,14 +2,14 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const resendVerificationEmailCodeController_1 = require("../../../controllers/auth/email/userVerification/resendUserVerifcation/resendVerificationEmailCodeController");
-const verifyEmailController_1 = require("../../../controllers/auth/email/userVerification/verifiedUser/verifyEmailController");
+const verifyEmailCodeController_1 = require("../../../controllers/auth/email/userVerification/verifiedUser/verifyEmailCodeController");
 const emailVerificationRoutes = (0, express_1.Router)();
 /**
  * PUT /api/user/verify/email
  * Ruta para verificar el correo electrónico.
  * Público
  */
-emailVerificationRoutes.put('/verify/email', verifyEmailController_1.verifyUser);
+emailVerificationRoutes.put('/verify/email', verifyEmailCodeController_1.verifyUser);
 /**
  * POST /api/user/verify/email/resend
  * Ruta para reenviar el código de verificación por correo electrónico.

@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { resendVerificationCode } from "../../../controllers/auth/email/userVerification/resendUserVerifcation/resendVerificationEmailCodeController";
-import { verifyUser } from "../../../controllers/auth/email/userVerification/verifiedUser/verifyEmailController";
+import { verifyUser } from "../../../controllers/auth/email/userVerification/verifiedUser/verifyEmailCodeController";
 
 const emailVerificationRoutes = Router();
 
