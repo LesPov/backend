@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { sendCodeVerification } from "../../../controllers/auth/telefono/userVerification/sendCodeVerification/sendCodeVerificationController";
+import { verifyPhoneNumber } from "../../../controllers/auth/telefono/userVerification/verifyUserCode/verifyUserCodePhoneController";
 
 const phoneVerificationRouter  = Router();
 
@@ -24,6 +25,6 @@ phoneVerificationRouter .post("/verify/send", sendCodeVerification);
 //  * Ruta para verificar el número de teléfono.
 //  * Público
 //  */
-// phoneVerificationRouter .put('/verify/phone', verifyPhoneNumber);
+phoneVerificationRouter .put('/verify/phone', verifyPhoneNumber);
 
 export default phoneVerificationRouter ;
