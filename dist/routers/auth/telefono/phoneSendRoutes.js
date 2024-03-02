@@ -1,13 +1,14 @@
 "use strict";
-// import { Router } from "express";
-// import { resendVerificationCodeSMS, sendVerificationCode, verifyPhoneNumber } from "../../../controllers/authentication/phone/phoneVerificationController";
-// const phoneVerificationRouter  = Router();
-// /**
-//  * POST /api/user/verify/send
-//  * Ruta para enviar el código de verificación por SMS.
-//  * Público
-//  */
-// phoneVerificationRouter .post("/verify/send", sendVerificationCode);
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const sendVerificationCode_1 = require("../../../controllers/auth/telefono/userVerification/sendVerificationCode/sendVerificationCode");
+const phoneVerificationRouter = (0, express_1.Router)();
+/**
+ * POST /api/user/verify/send
+ * Ruta para enviar el código de verificación por SMS.
+ * Público
+ */
+phoneVerificationRouter.post("/verify/send", sendVerificationCode_1.sendVerificationCode);
 // /**
 //  * POST /api/user/verify/resend 
 //  * Ruta para reenviar el código de verificación por SMS.
@@ -20,4 +21,4 @@
 //  * Público
 //  */
 // phoneVerificationRouter .put('/verify/phone', verifyPhoneNumber);
-// export default phoneVerificationRouter ;
+exports.default = phoneVerificationRouter;
