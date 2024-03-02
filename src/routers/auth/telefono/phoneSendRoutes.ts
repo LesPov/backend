@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { sendCodeVerification } from "../../../controllers/auth/telefono/userVerification/sendCodeVerification/sendCodeVerification";
+import { sendCodeVerification } from "../../../controllers/auth/telefono/userVerification/sendCodeVerification/sendCodeVerificationController";
 
 const phoneVerificationRouter  = Router();
 
