@@ -40,6 +40,19 @@ const checkUserVerificationStatusPhoneSend = (user) => {
 const isUserAlreadyVerifiedPhoneSend = (user) => {
     return user.verificacion.verificado || user.verificacion.correo_verificado;
 };
+const checkPhoneNumberAvailability = (celular, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const existingUser = yield usuariosModel_1.default.findOne({ where: { celular: celular } });
+        if (existingUser) {
+            return res.status(400).json({
+                msg: errorMesages_1.errorMessages.phoneNumberExists,
+            });
+        }
+    }
+    catch (error) {
+        (0, exports.handleServerErrorPhoneSend)(error, res);
+    }
+});
 const sendVerificationCode = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { usuario, celular } = req.body;
@@ -49,6 +62,8 @@ const sendVerificationCode = (req, res) => __awaiter(void 0, void 0, void 0, fun
         // Buscar al usuario por nombre de usuario
         const user = yield findUserByUsernamePhoneSend(usuario, res);
         checkUserVerificationStatusPhoneSend(user);
+        // Verificar si el teléfono ya está verificado
+        yield checkPhoneNumberAvailability(celular, res);
     }
     catch (error) {
         (0, exports.handleServerErrorPhoneSend)(error, res);

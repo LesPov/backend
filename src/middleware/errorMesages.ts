@@ -8,7 +8,6 @@ export const errorMessages = {
   passwordNoNumber: 'La contraseña debe contener al menos un número',
   passwordNoUppercase: 'La contraseña debe contener al menos una letra mayúscula',
   passwordNoLowercase: 'La contraseña debe contener al menos una letra minúscula',
-  userEmailExists: (email: string) => `Ya existe un correo ${email}`,
   invalidRole: `rol invalido`,
   passwordNoSpecialChar: 'La contraseña debe contener al menos un carácter especial',
 
@@ -22,8 +21,9 @@ export const errorMessages = {
 
    // Errores de envío de código de verificación por SMS 
    phoneNumberNotProvided: 'El número de teléfono es obligatorio para enviar el código de verificación por SMS',
-   phoneNumberExists: 'El número de teléfono ya ha sido registrado para este usuario',
+   phoneNumberExists: 'El número de teléfono ya ha sido registrado en la base de datos. ingresa otro',
    phoneNumberVerificationError: 'Error al enviar el código de verificación por SMS',
    emailVerificationError: 'Ocurrió un error al reenviar el código de verificación por correo electrónico',
-   
+   userEmailExists: (email: string) => `Ya existe un correo ${email}`,
+
 };

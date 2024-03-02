@@ -28,10 +28,25 @@ const checkUserVerificationStatusPhoneSend = (user: any) => {
 
 };
 
+
 const isUserAlreadyVerifiedPhoneSend = (user: any) => {
     return user.verificacion.verificado || user.verificacion.correo_verificado;
 };
-
+const checkPhoneNumberAvailability = async (celular: string, res: Response) => {
+    try {
+      const existingUser = await Usuario.findOne({ where: { celular: celular } });
+  
+      if (existingUser) {
+        return res.status(400).json({
+          msg: errorMessages.phoneNumberExists,
+        });
+      }
+    } catch (error) {
+      handleServerErrorPhoneSend(error, res);
+    }
+  };
+  
+  
 export const sendVerificationCode = async (req: Request, res: Response) => {
     try {
         const { usuario, celular } = req.body;
@@ -43,6 +58,9 @@ export const sendVerificationCode = async (req: Request, res: Response) => {
         const user = await findUserByUsernamePhoneSend(usuario, res);
 
         checkUserVerificationStatusPhoneSend(user);
+
+        // Verificar si el teléfono ya está verificado
+        await checkPhoneNumberAvailability(celular, res);
 
     } catch (error: any) {
         handleServerErrorPhoneSend(error, res);
@@ -59,7 +77,7 @@ export const handleServerErrorPhoneSend = (error: any, res: Response) => {
     console.error("Error en el controlador phonesend:", error);
     if (!res.headersSent) {
         res.status(400).json({
-            msg: error.message ||  errorMessages.databaseError,
+            msg: error.message || errorMessages.databaseError,
             error,
         });
     }
