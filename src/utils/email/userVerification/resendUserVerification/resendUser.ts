@@ -45,7 +45,7 @@ export const checkUserExistence = async (usuario: string, res: Response): Promis
 export const generateVerificationData = () => {
     const verificationCode = generateVerificationCode();
     const expirationDate = new Date();
-    expirationDate.setMinutes(expirationDate.getMinutes() + VERIFICATION_CODE_EXPIRATION_HOURS * 60);
+    expirationDate.setMinutes(expirationDate.getHours() + VERIFICATION_CODE_EXPIRATION_HOURS );
     return { verificationCode, expirationDate };
 };
 

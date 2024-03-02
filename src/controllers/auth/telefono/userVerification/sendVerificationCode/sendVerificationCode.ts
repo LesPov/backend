@@ -3,6 +3,10 @@ import Usuario from "../../../../../models/usuarios/usuariosModel";
 import { Request, Response } from 'express';
 import { handleInputValidationErrors } from "../../../../../utils/singup/validation/validationUtils";
 import Verificacion from "../../../../../models/verificaciones/verificationsModel";
+import { generateVerificationCode } from "../../../../../utils/singup/paswword_generate/generateCode";
+import { updateVerificationCodeInfo } from "../../../../../utils/email/userVerification/resendUserVerification/resendUser";
+import twilio from "twilio";
+const VERIFICATION_CODE_EXPIRATION_HOURS = 24;
 
 /**
  * Validar campos requeridos para el envío de códigos de verificación por SMS.
@@ -57,18 +61,13 @@ const isUserAlreadyVerifiedPhoneSend = (user: any) => {
  * Verificar la disponibilidad del número de teléfono en la base de datos.
  * @param celular Número de teléfono a verificar.
  * @param res Objeto de respuesta HTTP.
+ * @throws Error si el número de teléfono ya está registrado.
  */
-const checkPhoneNumberAvailability = async (celular: string, res: Response) => {
-    try {
-        const existingUser = await Usuario.findOne({ where: { celular: celular } });
+const checkPhoneNumberAvailability = async (celular: string) => {
+    const existingUser = await Usuario.findOne({ where: { celular: celular } });
 
-        if (existingUser) {
-            return res.status(400).json({
-                msg: errorMessages.phoneNumberExists,
-            });
-        }
-    } catch (error) {
-        handleServerErrorPhoneSend(error, res);
+    if (existingUser) {
+        throw new Error(errorMessages.phoneNumberExists);
     }
 };
 
@@ -76,16 +75,82 @@ const checkPhoneNumberAvailability = async (celular: string, res: Response) => {
  * Verificar si el número de teléfono ya está asociado al usuario actual.
  * @param user Usuario actual.
  * @param celular Número de teléfono a verificar.
- * @param res Objeto de respuesta HTTP.
+ * @throws Error si el número de teléfono ya está asociado al usuario actual.
  */
-const checkUserPhoneNumberExists = (user: any, celular: string, res: Response) => {
+const checkUserPhoneNumberExistsPhoneSend = (user: any, celular: string) => {
     if (user.celular === celular) {
-        return res.status(400).json({
-            msg: errorMessages.phoneNumberInUse,
-        });
+        throw new Error(errorMessages.phoneNumberInUse);
     }
 };
 
+
+/**
+ * Función que calcula y devuelve la fecha de expiración para un código de verificación,
+ * establecida en 2 minutos después de la generación.
+ * @returns Fecha de expiración del código de verificación.
+ */
+const generateVerificationDataPhoneSend = () => {
+    const verificationCode = generateVerificationCode();
+    const expirationDate = new Date();
+    expirationDate.setMinutes(expirationDate.getHours() + VERIFICATION_CODE_EXPIRATION_HOURS);
+    return { verificationCode, expirationDate };
+};
+
+
+
+/**
+ * Buscar o crear un registro de verificación para el usuario.
+ * @param user Usuario encontrado.
+ * @returns Registro de verificación.
+ */
+const findOrCreateVerificationRecordPhoneSend = async (user: any) => {
+    const usuario_id = user.usuario_id;
+
+    let verificationRecord = await Verificacion.findOne({ where: { usuario_id } });
+
+    if (!verificationRecord) {
+        verificationRecord = await Verificacion.create({ usuario_id });
+    }
+
+    return verificationRecord;
+};
+
+// Función para enviar el código de verificación por SMS usando Twilio
+const sendVerificationCodeViaSMS = async (celular: string, codigo_verificacion: string) => {
+    const client = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
+
+    try {
+        const message = await client.messages.create({
+            body: `Tu código de verificación es: ${codigo_verificacion}`,
+            from: process.env.TWILIO_PHONE_NUMBER,
+            to: celular,
+        });
+
+        console.log('Código de verificación enviado por SMS:', message.sid);
+        return true; // Indica que el mensaje se envió correctamente
+    } catch (error) {
+        console.error('Error al enviar el código de verificación por SMS:', error);
+        throw error;
+    }
+};
+// Actualizar la información del usuario después de enviar el código de verificación
+const updateUserInfoAfterVerificationCodeSent = async (celular: string, usuario: string | null, user: any) => {
+    try {
+        const updateResult = await Usuario.update(
+            {
+                celular: celular,
+                isPhoneVerified: false,
+            },
+            { where: { usuario: usuario || user.usuario } }
+        );
+
+        console.log('Resultado de la actualización de Auth:', updateResult);
+        return updateResult;
+    } catch (error) {
+        console.error('Error al actualizar la información del usuario después de enviar el código de verificación:', error);
+        throw error;
+    }
+};
 /**
  * Enviar código de verificación por SMS.
  * @param req Objeto de solicitud HTTP.
@@ -106,10 +171,25 @@ export const sendVerificationCode = async (req: Request, res: Response) => {
         checkUserVerificationStatusPhoneSend(user);
 
         // Verificar si el usuario ya tiene un número de teléfono asociado
-        checkUserPhoneNumberExists(user, celular, res);
+        checkUserPhoneNumberExistsPhoneSend(user,celular);
 
         // Verificar si el teléfono ya está verificado
-        await checkPhoneNumberAvailability(celular, res);
+        await checkPhoneNumberAvailability(celular);
+
+        // Generar un código de verificación
+        const { verificationCode, expirationDate } = generateVerificationDataPhoneSend();
+
+        // Buscar o crear un registro de verificación para el usuario.
+        const verificationRecord = await findOrCreateVerificationRecordPhoneSend(user);
+
+        // Actualizar la información del código de verificación en la base de datos.
+        await updateVerificationCodeInfo(verificationRecord, verificationCode, expirationDate);
+
+        // Enviar el código de verificación por SMS
+        await sendVerificationCodeViaSMS(celular, verificationCode);
+
+        // Actualizar la información del usuario después de enviar el código de verificación
+        await updateUserInfoAfterVerificationCodeSent(celular, usuario, user);
 
         // Resto de la lógica para enviar el código de verificación por SMS
 

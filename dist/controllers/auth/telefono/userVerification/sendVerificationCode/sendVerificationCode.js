@@ -17,6 +17,10 @@ const errorMesages_1 = require("../../../../../middleware/errorMesages");
 const usuariosModel_1 = __importDefault(require("../../../../../models/usuarios/usuariosModel"));
 const validationUtils_1 = require("../../../../../utils/singup/validation/validationUtils");
 const verificationsModel_1 = __importDefault(require("../../../../../models/verificaciones/verificationsModel"));
+const generateCode_1 = require("../../../../../utils/singup/paswword_generate/generateCode");
+const resendUser_1 = require("../../../../../utils/email/userVerification/resendUserVerification/resendUser");
+const twilio_1 = __importDefault(require("twilio"));
+const VERIFICATION_CODE_EXPIRATION_HOURS = 24;
 /**
  * Validar campos requeridos para el envío de códigos de verificación por SMS.
  * @param usuario Nombre de usuario.
@@ -65,33 +69,81 @@ const isUserAlreadyVerifiedPhoneSend = (user) => {
  * Verificar la disponibilidad del número de teléfono en la base de datos.
  * @param celular Número de teléfono a verificar.
  * @param res Objeto de respuesta HTTP.
+ * @throws Error si el número de teléfono ya está registrado.
  */
-const checkPhoneNumberAvailability = (celular, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const existingUser = yield usuariosModel_1.default.findOne({ where: { celular: celular } });
-        if (existingUser) {
-            return res.status(400).json({
-                msg: errorMesages_1.errorMessages.phoneNumberExists,
-            });
-        }
-    }
-    catch (error) {
-        (0, exports.handleServerErrorPhoneSend)(error, res);
+const checkPhoneNumberAvailability = (celular) => __awaiter(void 0, void 0, void 0, function* () {
+    const existingUser = yield usuariosModel_1.default.findOne({ where: { celular: celular } });
+    if (existingUser) {
+        throw new Error(errorMesages_1.errorMessages.phoneNumberExists);
     }
 });
 /**
  * Verificar si el número de teléfono ya está asociado al usuario actual.
  * @param user Usuario actual.
  * @param celular Número de teléfono a verificar.
- * @param res Objeto de respuesta HTTP.
+ * @throws Error si el número de teléfono ya está asociado al usuario actual.
  */
-const checkUserPhoneNumberExists = (user, celular, res) => {
+const checkUserPhoneNumberExistsPhoneSend = (user, celular) => {
     if (user.celular === celular) {
-        return res.status(400).json({
-            msg: errorMesages_1.errorMessages.phoneNumberInUse,
-        });
+        throw new Error(errorMesages_1.errorMessages.phoneNumberInUse);
     }
 };
+/**
+ * Función que calcula y devuelve la fecha de expiración para un código de verificación,
+ * establecida en 2 minutos después de la generación.
+ * @returns Fecha de expiración del código de verificación.
+ */
+const generateVerificationDataPhoneSend = () => {
+    const verificationCode = (0, generateCode_1.generateVerificationCode)();
+    const expirationDate = new Date();
+    expirationDate.setMinutes(expirationDate.getHours() + VERIFICATION_CODE_EXPIRATION_HOURS);
+    return { verificationCode, expirationDate };
+};
+/**
+ * Buscar o crear un registro de verificación para el usuario.
+ * @param user Usuario encontrado.
+ * @returns Registro de verificación.
+ */
+const findOrCreateVerificationRecordPhoneSend = (user) => __awaiter(void 0, void 0, void 0, function* () {
+    const usuario_id = user.usuario_id;
+    let verificationRecord = yield verificationsModel_1.default.findOne({ where: { usuario_id } });
+    if (!verificationRecord) {
+        verificationRecord = yield verificationsModel_1.default.create({ usuario_id });
+    }
+    return verificationRecord;
+});
+// Función para enviar el código de verificación por SMS usando Twilio
+const sendVerificationCodeViaSMS = (celular, codigo_verificacion) => __awaiter(void 0, void 0, void 0, function* () {
+    const client = (0, twilio_1.default)(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
+    try {
+        const message = yield client.messages.create({
+            body: `Tu código de verificación es: ${codigo_verificacion}`,
+            from: process.env.TWILIO_PHONE_NUMBER,
+            to: celular,
+        });
+        console.log('Código de verificación enviado por SMS:', message.sid);
+        return true; // Indica que el mensaje se envió correctamente
+    }
+    catch (error) {
+        console.error('Error al enviar el código de verificación por SMS:', error);
+        throw error;
+    }
+});
+// Actualizar la información del usuario después de enviar el código de verificación
+const updateUserInfoAfterVerificationCodeSent = (celular, usuario, user) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const updateResult = yield usuariosModel_1.default.update({
+            celular: celular,
+            isPhoneVerified: false,
+        }, { where: { usuario: usuario || user.usuario } });
+        console.log('Resultado de la actualización de Auth:', updateResult);
+        return updateResult;
+    }
+    catch (error) {
+        console.error('Error al actualizar la información del usuario después de enviar el código de verificación:', error);
+        throw error;
+    }
+});
 /**
  * Enviar código de verificación por SMS.
  * @param req Objeto de solicitud HTTP.
@@ -108,9 +160,19 @@ const sendVerificationCode = (req, res) => __awaiter(void 0, void 0, void 0, fun
         // Verificar estado de verificación del usuario
         checkUserVerificationStatusPhoneSend(user);
         // Verificar si el usuario ya tiene un número de teléfono asociado
-        checkUserPhoneNumberExists(user, celular, res);
+        checkUserPhoneNumberExistsPhoneSend(user, celular);
         // Verificar si el teléfono ya está verificado
-        yield checkPhoneNumberAvailability(celular, res);
+        yield checkPhoneNumberAvailability(celular);
+        // Generar un código de verificación
+        const { verificationCode, expirationDate } = generateVerificationDataPhoneSend();
+        // Buscar o crear un registro de verificación para el usuario.
+        const verificationRecord = yield findOrCreateVerificationRecordPhoneSend(user);
+        // Actualizar la información del código de verificación en la base de datos.
+        yield (0, resendUser_1.updateVerificationCodeInfo)(verificationRecord, verificationCode, expirationDate);
+        // Enviar el código de verificación por SMS
+        yield sendVerificationCodeViaSMS(celular, verificationCode);
+        // Actualizar la información del usuario después de enviar el código de verificación
+        yield updateUserInfoAfterVerificationCodeSent(celular, usuario, user);
         // Resto de la lógica para enviar el código de verificación por SMS
     }
     catch (error) {
