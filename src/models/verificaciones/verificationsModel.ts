@@ -26,7 +26,7 @@ export const Verificacion = sequelize.define<VerificacionModel>('verificacion', 
             model: Usuario,
             key: 'usuario_id'
         }
-    },
+    }, 
     verificado: {
         type: DataTypes.BOOLEAN,
         allowNull: false,

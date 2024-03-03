@@ -18,7 +18,7 @@ export const checkUserVerificationStatusPhoneSend = (user: any) => {
  * @returns true si el usuario ya ha sido verificado, false de lo contrario.
  */
 export const isUserAlreadyVerifiedPhoneSend = (user: any) => {
-    return user.verificacion.verificado || user.verificacion.correo_verificado;
+    return user.verificacion.verificado || user.verificacion.celular_verificado;
 };
 
 /**

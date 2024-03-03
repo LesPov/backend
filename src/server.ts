@@ -68,7 +68,7 @@ class Server {
 
         // Cors
         this.app.use(cors());
-    }
+    } 
 
     /**
      * Conecta a la base de datos y sincroniza los modelos de Product y User.

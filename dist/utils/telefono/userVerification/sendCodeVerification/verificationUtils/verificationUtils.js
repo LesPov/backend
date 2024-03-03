@@ -32,7 +32,7 @@ exports.checkUserVerificationStatusPhoneSend = checkUserVerificationStatusPhoneS
  * @returns true si el usuario ya ha sido verificado, false de lo contrario.
  */
 const isUserAlreadyVerifiedPhoneSend = (user) => {
-    return user.verificacion.verificado || user.verificacion.correo_verificado;
+    return user.verificacion.verificado || user.verificacion.celular_verificado;
 };
 exports.isUserAlreadyVerifiedPhoneSend = isUserAlreadyVerifiedPhoneSend;
 /**
