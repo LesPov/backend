@@ -9,26 +9,25 @@ import { verifySMSCodePhoneVerify } from '../../../../../utils/telefono/userVeri
 import { checkUserVerificationStatusPhoneVerify } from '../../../../../utils/telefono/userVerification/verifyUserCodeVerication/verificationUtils/verificationUtils';
 
 
-
-
-
-///////////////////////////////////////////////////////////////////////
 /**
- * Enviar código de verificación por SMS. 
+ * Verificar el  código de verificación enviado por SMS. 
  * @param req Objeto de solicitud HTTP.
  * @param res Objeto de respuesta HTTP.
  */
 export const verifyPhoneNumber = async (req: Request, res: Response) => {
     try {
         const { usuario, celular, codigo_verificacion } = req.body;
+
         // Validar campos
         const validationErrors = validateVerificationFieldsPhoneVerify(usuario, celular, codigo_verificacion);
         handleInputValidationErrors(validationErrors, res);
 
         // Buscar al usuario por nombre de usuario
         const user = await findUserByUsernamePhoneSend(usuario, res);
+
         // Verificar estado de verificación del usuario
         checkUserVerificationStatusPhoneVerify(user);
+
         // Validar si el código de verificación ha expirado
         const currentDate = new Date();
         checkVerificationCodeExpiration(user, currentDate);
@@ -39,7 +38,7 @@ export const verifyPhoneNumber = async (req: Request, res: Response) => {
         // Verificar el código de verificación por SMS
         await verifySMSCodePhoneVerify(user, codigo_verificacion, res);
 
-
+        // Respuesta de éxito
         res.status(200).json({ msg: successMessages.phoneVerified });
 
     } catch (error: any) {

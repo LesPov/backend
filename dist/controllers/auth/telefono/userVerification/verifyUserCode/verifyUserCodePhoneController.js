@@ -17,9 +17,8 @@ const userVerification_1 = require("../../../../../utils/email/userVerification/
 const validationUtils_3 = require("../../../../../utils/telefono/userVerification/verifyUserCodeVerication/validationUtils/validationUtils");
 const userUtils_1 = require("../../../../../utils/telefono/userVerification/verifyUserCodeVerication/userUtils/userUtils");
 const verificationUtils_1 = require("../../../../../utils/telefono/userVerification/verifyUserCodeVerication/verificationUtils/verificationUtils");
-///////////////////////////////////////////////////////////////////////
 /**
- * Enviar código de verificación por SMS.
+ * Verificar el  código de verificación enviado por SMS.
  * @param req Objeto de solicitud HTTP.
  * @param res Objeto de respuesta HTTP.
  */
@@ -40,6 +39,7 @@ const verifyPhoneNumber = (req, res) => __awaiter(void 0, void 0, void 0, functi
         (0, validationUtils_3.validatePhoneNumberMatchPhoneVerify)(user, celular, res);
         // Verificar el código de verificación por SMS
         yield (0, userUtils_1.verifySMSCodePhoneVerify)(user, codigo_verificacion, res);
+        // Respuesta de éxito
         res.status(200).json({ msg: successMessages_1.successMessages.phoneVerified });
     }
     catch (error) {
