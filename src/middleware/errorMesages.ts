@@ -30,6 +30,5 @@ export const errorMessages = {
   incorrectPhoneNumber: 'El número de teléfono no coincide con el registrado para este usuario',
   phoneAlreadyVerified: 'El número de teléfono ya ha sido verificado previamente',
   phoneNumberInUse: 'El número de teléfono ya ha sido registrado para este usuario',
-  phoneVerificationRequired: 'Es necesario ingresar tu numero celular',
-  
+  phoneVerificationRequired: 'El usuario aún no ha sido verificado. Verifica tu numero celular para activar tu cuenta.',
 };
