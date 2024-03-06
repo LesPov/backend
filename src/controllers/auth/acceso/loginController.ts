@@ -54,24 +54,39 @@ export const findUserByUsernameLogin = async (usuario: string, res: Response) =>
 
 ///////////////////////////////////////////////////////////////////////////
 /**
- * Verifica el estado de verificación del usuario.
+ * Verifica si el correo electrónico del usuario está verificado.
  * @param user Usuario encontrado.
  * @param res Objeto de respuesta HTTP.
  */
-export const checkUserVerificationStatusLogin = (user: any, res: Response) => {
-    // Verificar si el correo electrónico del usuario está verificado
+const checkEmailVerification = (user: any, res: Response) => {
     if (!user.verificacion.correo_verificado) {
         return res.status(400).json({
             msg: errorMessages.userNotVerified,
         });
     }
+};
 
-    // Verificar si el teléfono del usuario está verificado
+/**
+ * Verifica si el teléfono del usuario está verificado.
+ * @param user Usuario encontrado.
+ * @param res Objeto de respuesta HTTP.
+ */
+const checkPhoneVerification = (user: any, res: Response) => {
     if (!user.verificacion.celular_verificado) {
         return res.status(400).json({
             msg: errorMessages.phoneVerificationRequired,
         });
     }
+};
+
+/**
+ * Verifica el estado de verificación del usuario.
+ * @param user Usuario encontrado.
+ * @param res Objeto de respuesta HTTP.
+ */
+export const checkUserVerificationStatusLogin = (user: any, res: Response) => {
+    checkEmailVerification(user, res);
+    checkPhoneVerification(user, res);
 };
 /////////////////////////////////////////////////////////////////////////
 

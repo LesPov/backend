@@ -63,23 +63,37 @@ const findUserByUsernameLogin = (usuario, res) => __awaiter(void 0, void 0, void
 exports.findUserByUsernameLogin = findUserByUsernameLogin;
 ///////////////////////////////////////////////////////////////////////////
 /**
- * Verifica el estado de verificación del usuario.
+ * Verifica si el correo electrónico del usuario está verificado.
  * @param user Usuario encontrado.
  * @param res Objeto de respuesta HTTP.
  */
-const checkUserVerificationStatusLogin = (user, res) => {
-    // Verificar si el correo electrónico del usuario está verificado
+const checkEmailVerification = (user, res) => {
     if (!user.verificacion.correo_verificado) {
         return res.status(400).json({
             msg: errorMesages_1.errorMessages.userNotVerified,
         });
     }
-    // Verificar si el teléfono del usuario está verificado
+};
+/**
+ * Verifica si el teléfono del usuario está verificado.
+ * @param user Usuario encontrado.
+ * @param res Objeto de respuesta HTTP.
+ */
+const checkPhoneVerification = (user, res) => {
     if (!user.verificacion.celular_verificado) {
         return res.status(400).json({
             msg: errorMesages_1.errorMessages.phoneVerificationRequired,
         });
     }
+};
+/**
+ * Verifica el estado de verificación del usuario.
+ * @param user Usuario encontrado.
+ * @param res Objeto de respuesta HTTP.
+ */
+const checkUserVerificationStatusLogin = (user, res) => {
+    checkEmailVerification(user, res);
+    checkPhoneVerification(user, res);
 };
 exports.checkUserVerificationStatusLogin = checkUserVerificationStatusLogin;
 /////////////////////////////////////////////////////////////////////////
