@@ -11,6 +11,7 @@ export interface VerificacionModel extends Model {
     correo_verificado: boolean;
     codigo_verificacion: string;
     intentos_ingreso: number;
+    expiracion_intentos_ingreso: Date;
     expiracion_codigo_verificacion: Date;
     contraseña_aleatoria: string;
     celular_verificado: boolean;
@@ -26,7 +27,7 @@ export const Verificacion = sequelize.define<VerificacionModel>('verificacion', 
             model: Usuario,
             key: 'usuario_id'
         }
-    }, 
+    },
     verificado: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
@@ -46,6 +47,10 @@ export const Verificacion = sequelize.define<VerificacionModel>('verificacion', 
         type: DataTypes.INTEGER,
         allowNull: false,
         defaultValue: 0,
+    },
+    expiracion_intentos_ingreso: {
+        type: DataTypes.DATE,
+        allowNull: false,
     },
     expiracion_codigo_verificacion: {
         type: DataTypes.DATE,

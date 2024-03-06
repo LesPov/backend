@@ -47,14 +47,14 @@ export const findUserByUsernameLogin = async (usuario: string, res: Response) =>
  */
 export const checkUserVerificationStatusLogin = (user: any, res: Response) => {
     // Verificar si el correo electrónico del usuario está verificado
-    if (!user.Verificacion || !user.Verificacion.correo_verificado) {
+    if (!user.verificacion.correo_verificado) {
         return res.status(400).json({
             msg: errorMessages.userNotVerified,
         });
     }
 
     // Verificar si el teléfono del usuario está verificado
-    if (!user.Verificacion || !user.Verificacion.celular_verificado) {
+    if (!user.verificacion.celular_verificado) {
         return res.status(400).json({
             msg: errorMessages.phoneVerificationRequired,
         });
@@ -77,9 +77,9 @@ export const loginUser = async (req: Request, res: Response) => {
         handleInputValidationErrors(inputValidationErrors, res);
         // Buscar al usuario por nombre de usuario
         const user = await findUserByUsernameLogin(usuario, res);
-        
+
         // Verificar la propiedad de verificación del usuario
-    checkUserVerificationStatusLogin(user, res);
+        checkUserVerificationStatusLogin(user, res);
 
         // Responder con un mensaje de éxito
         res.json({

@@ -56,13 +56,13 @@ exports.findUserByUsernameLogin = findUserByUsernameLogin;
  */
 const checkUserVerificationStatusLogin = (user, res) => {
     // Verificar si el correo electrónico del usuario está verificado
-    if (!user.Verificacion || !user.Verificacion.correo_verificado) {
+    if (!user.verificacion.correo_verificado) {
         return res.status(400).json({
             msg: errorMesages_1.errorMessages.userNotVerified,
         });
     }
     // Verificar si el teléfono del usuario está verificado
-    if (!user.Verificacion || !user.Verificacion.celular_verificado) {
+    if (!user.verificacion.celular_verificado) {
         return res.status(400).json({
             msg: errorMesages_1.errorMessages.phoneVerificationRequired,
         });
