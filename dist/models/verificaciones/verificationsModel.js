@@ -38,7 +38,6 @@ exports.Verificacion = connection_1.default.define('verificacion', {
     },
     expiracion_intentos_ingreso: {
         type: sequelize_1.DataTypes.DATE,
-        allowNull: false,
     },
     expiracion_codigo_verificacion: {
         type: sequelize_1.DataTypes.DATE,

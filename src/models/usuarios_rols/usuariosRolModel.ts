@@ -12,6 +12,7 @@ export interface UsuarioRolModel extends Model {
     fecha_registro: Date;
     fecha_actualizacion: Date;
     estado: string;
+
 }
 
 export const UsuarioRol = sequelize.define<UsuarioRolModel>('usuario_rol', {

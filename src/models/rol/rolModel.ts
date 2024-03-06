@@ -43,4 +43,5 @@ export const Rol = sequelize.define<RolModel>('rol', {
 }, {
     timestamps: false, // Desactivar las columnas createdAt y updatedAt
 });
+
 export default Rol;

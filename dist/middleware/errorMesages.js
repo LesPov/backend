@@ -13,8 +13,21 @@ exports.errorMessages = {
     passwordNoLowercase: 'La contraseña debe contener al menos una letra minúscula',
     invalidRole: `rol invalido`,
     passwordNoSpecialChar: 'La contraseña debe contener al menos un carácter especial',
+    // Errores de login 
     userNotExists: (username) => `No existe un usuario con el nombre ${username} en la base de datos`,
+    invalidPassword: 'Contraseña incorrecta',
     userNotVerified: 'El usuario aún no ha sido verificado. Verifica tu correo electrónico para activar tu cuenta.',
+    numberNotVerified: 'El usuario aún no ha sido verificado. Verifica tu numero celular para activar tu cuenta.',
+    accountLocked: 'La cuenta está bloqueada temporalmente debido a múltiples intentos fallidos. Inténtalo de nuevo más tarde.',
+    accountLockedv1: (timeLeft) => `La cuenta está bloqueada temporalmente debido a múltiples intentos fallidos. Inténtalo de nuevo más tarde. Tiempo restante: ${timeLeft} minutos.`,
+    incorrectPassword: (attempts) => ` Contraseña incorrecta. Intentos fallidos: ${attempts}`,
+    verificationCodeNotFound: `Codigo a expirado registrate de nuevo `,
+    // Errores de validación de roles y tokens
+    tokenNotProvided: 'Acceso denegado, token no proporcionado',
+    accessDenied: 'Acceso denegado, no tienes permisos para acceder a esta ruta',
+    invalidToken: 'Token no válido',
+    accessDeniedNoToken: 'Acceso denegado',
+    serverError: 'servidor error',
     // Errores de verificación de usuario   
     userAlreadyVerified: 'El usuario ya ha sido verificado previamente',
     verificationCodeExpired: 'El código de verificación ha expirado. Registra una nueva cuenta para obtener un nuevo código.',
