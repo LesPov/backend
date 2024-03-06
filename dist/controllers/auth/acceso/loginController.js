@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.handleServerErrorLogin = exports.loginUser = exports.handleSuccessfulLogin = exports.generateAuthToken = exports.checkLoginAttemptsAndBlockAccount = exports.verifyUserPassword = exports.checkUserVerificationStatusLogin = exports.findUserByUsernameLogin = exports.validateVerificationFieldsLogin = void 0;
+exports.handleServerErrorLogin = exports.loginUser = exports.handleSuccessfulLogin = exports.generateAuthToken = exports.checkLoginAttemptsAndBlockAccount = exports.verifyUserPassworde = exports.checkUserVerificationStatusLogin = exports.findUserByUsernameLogin = exports.validateVerificationFieldsLogin = void 0;
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const successMessages_1 = require("../../../middleware/successMessages");
 const validationUtils_1 = require("../../../utils/singup/validation/validationUtils");
@@ -98,41 +98,94 @@ const checkUserVerificationStatusLogin = (user, res) => {
 exports.checkUserVerificationStatusLogin = checkUserVerificationStatusLogin;
 /////////////////////////////////////////////////////////////////////////
 /**
- * Función para verificar la contraseña del usuario.
- * @param passwordorrandomPassword Contraseña o contraseña aleatoria proporcionada.
+ * Verifica la contraseña aleatoria del usuario.
+ * @param randomPassword Contraseña aleatoria proporcionada.
+ * @param user Usuario encontrado.
+ * @returns true si la contraseña aleatoria es válida, false en caso contrario.
+ */
+const verifyRandomPassword = (randomPassword, user) => {
+    console.log('Contraseña aleatoria.');
+    return randomPassword === user.verificacion.contrasena_aleatoria;
+};
+/**
+ * Verifica la contraseña utilizando bcrypt.
+ * @param password Contraseña proporcionada.
+ * @param hashedPassword Contraseña almacenada en la base de datos.
+ * @returns true si la contraseña es válida, false en caso contrario.
+ */
+const verifyBcryptPassword = (password, hashedPassword) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log('Contraseña normal.');
+    return yield bcryptjs_1.default.compare(password, hashedPassword);
+});
+/**
+ * Actualiza el número de intentos de inicio de sesión en la tabla de Verificacion.
+ * @param user Usuario encontrado.
+ */
+const updateLoginAttempts = (user) => __awaiter(void 0, void 0, void 0, function* () {
+    const updatedLoginAttempts = (user.verificacion.intentos_ingreso || 0) + 1;
+    yield verificationsModel_1.default.update({ intentos_ingreso: updatedLoginAttempts }, { where: { usuario_id: user.usuario_id } });
+});
+/**
+ * Bloquea la cuenta si se excede el número máximo de intentos de inicio de sesión.
  * @param user Usuario encontrado.
  * @param res Objeto de respuesta HTTP.
  */
-const verifyUserPassword = (passwordorrandomPassword, user, res) => __awaiter(void 0, void 0, void 0, function* () {
-    let passwordValid = false;
-    if (passwordorrandomPassword.length === 8) {
-        // Verificar contraseña aleatoria
-        console.log('Contraseña aleatoria.');
-        passwordValid = passwordorrandomPassword === user.verificacion.contrasena_aleatoria;
-    }
-    else {
-        // Verificar contraseña utilizando bcrypt
-        console.log('Contraseña normal.');
-        passwordValid = yield bcryptjs_1.default.compare(passwordorrandomPassword, user.contrasena);
-    }
-    // Si la contraseña no es válida
-    if (!passwordValid) {
-        const updatedLoginAttempts = (user.verificacion.intentos_ingreso || 0) + 1;
-        yield verificationsModel_1.default.update({ intentos_ingreso: updatedLoginAttempts }, // Actualizar intentos_ingreso en la tabla Verificacion
-        { where: { usuario_id: user.usuario_id } });
-        // Si se excede el número máximo de intentos, bloquear la cuenta
-        if (updatedLoginAttempts >= MAX_LOGIN_ATTEMPTS) {
-            yield lockAccount(user.usuario); // Bloquear la cuenta
-            return res.status(400).json({
-                msg: errorMesages_1.errorMessages.accountLocked,
-            });
-        }
-        return res.status(400).json({
-            msg: errorMesages_1.errorMessages.incorrectPassword(updatedLoginAttempts),
+const handleMaxLoginAttempts = (user, res) => __awaiter(void 0, void 0, void 0, function* () {
+    if (user.verificacion.intentos_ingreso >= MAX_LOGIN_ATTEMPTS) {
+        yield lockAccount(user.usuario);
+        res.status(400).json({
+            msg: errorMesages_1.errorMessages.accountLocked,
         });
     }
 });
-exports.verifyUserPassword = verifyUserPassword;
+/**
+ * Verifica la contraseña del usuario.
+ * @param passwordOrRandomPassword Contraseña o contraseña aleatoria proporcionada.
+ * @param user Usuario encontrado.
+ * @param res Objeto de respuesta HTTP.
+ */
+const verifyUserPassworde = (passwordOrRandomPassword, user, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        // Verifica si la contraseña es válida
+        const passwordValid = yield isPasswordValid(passwordOrRandomPassword, user);
+        if (!passwordValid) {
+            // Maneja el inicio de sesión fallido
+            yield handleFailedLogin(user, res);
+        }
+    }
+    catch (error) {
+        console.error('Error al verificar la contraseña:', error);
+    }
+});
+exports.verifyUserPassworde = verifyUserPassworde;
+/**
+ * Verifica si la contraseña proporcionada es válida.
+ * @param passwordOrRandomPassword Contraseña o contraseña aleatoria proporcionada.
+ * @param user Usuario encontrado.
+ * @returns True si la contraseña es válida, false en caso contrario.
+ */
+const isPasswordValid = (passwordOrRandomPassword, user) => __awaiter(void 0, void 0, void 0, function* () {
+    // Verifica si la longitud de la contraseña es igual a 8 para determinar si es una contraseña aleatoria
+    return passwordOrRandomPassword.length === 8
+        ? verifyRandomPassword(passwordOrRandomPassword, user)
+        : yield verifyBcryptPassword(passwordOrRandomPassword, user.contrasena);
+});
+/**
+ * Maneja un intento fallido de inicio de sesión.
+ * @param user Usuario encontrado.
+ * @param res Objeto de respuesta HTTP.
+ */
+const handleFailedLogin = (user, res) => __awaiter(void 0, void 0, void 0, function* () {
+    // Actualiza el número de intentos de inicio de sesión
+    yield updateLoginAttempts(user);
+    // Maneja el bloqueo de la cuenta si es necesario
+    yield handleMaxLoginAttempts(user, res);
+    // Envía un mensaje de error al cliente
+    res.status(400).json({
+        msg: errorMesages_1.errorMessages.incorrectPassword(user.verificacion.intentos_ingreso),
+    });
+});
+//////////////////////////////////////////////////////////////////////////////////////
 /**
  * Bloquea la cuenta de un usuario después de múltiples intentos fallidos de inicio de sesión.
  * @async
@@ -268,7 +321,7 @@ const loginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         // Verificar la propiedad de verificación del usuario
         (0, exports.checkUserVerificationStatusLogin)(user, res);
         // Verificar la contraseña del usuario
-        yield (0, exports.verifyUserPassword)(contrasena_aleatoria, user, res);
+        yield (0, exports.verifyUserPassworde)(contrasena_aleatoria, user, res);
         // Verificar si el usuario ha excedido el número máximo de intentos de inicio de sesión y manejar el bloqueo de la cuenta
         yield (0, exports.checkLoginAttemptsAndBlockAccount)(user, res);
         yield (0, exports.handleSuccessfulLogin)(user, res, contrasena_aleatoria);

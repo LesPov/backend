@@ -92,53 +92,111 @@ export const checkUserVerificationStatusLogin = (user: any, res: Response) => {
 
 
 /**
- * Función para verificar la contraseña del usuario.
- * @param passwordorrandomPassword Contraseña o contraseña aleatoria proporcionada.
+ * Verifica la contraseña aleatoria del usuario.
+ * @param randomPassword Contraseña aleatoria proporcionada.
+ * @param user Usuario encontrado.
+ * @returns true si la contraseña aleatoria es válida, false en caso contrario.
+ */
+const verifyRandomPassword = (randomPassword: string, user: any): boolean => {
+    console.log('Contraseña aleatoria.');
+    return randomPassword === user.verificacion.contrasena_aleatoria;
+};
+
+/**
+ * Verifica la contraseña utilizando bcrypt.
+ * @param password Contraseña proporcionada.
+ * @param hashedPassword Contraseña almacenada en la base de datos.
+ * @returns true si la contraseña es válida, false en caso contrario.
+ */
+const verifyBcryptPassword = async (password: string, hashedPassword: string): Promise<boolean> => {
+    console.log('Contraseña normal.');
+    return await bcrypt.compare(password, hashedPassword);
+};
+
+/**
+ * Actualiza el número de intentos de inicio de sesión en la tabla de Verificacion.
+ * @param user Usuario encontrado.
+ */
+const updateLoginAttempts = async (user: any): Promise<void> => {
+    const updatedLoginAttempts = (user.verificacion.intentos_ingreso || 0) + 1;
+
+    await Verificacion.update(
+        { intentos_ingreso: updatedLoginAttempts },
+        { where: { usuario_id: user.usuario_id } }
+    );
+};
+
+/**
+ * Bloquea la cuenta si se excede el número máximo de intentos de inicio de sesión.
  * @param user Usuario encontrado.
  * @param res Objeto de respuesta HTTP.
  */
-export const verifyUserPassword = async (
-    passwordorrandomPassword: string,
-    user: any,
-    res: Response
-) => {
-    let passwordValid = false;
-
-    if (passwordorrandomPassword.length === 8) {
-        // Verificar contraseña aleatoria
-        console.log('Contraseña aleatoria.');
-        passwordValid = passwordorrandomPassword === user.verificacion.contrasena_aleatoria;
-    } else {
-        // Verificar contraseña utilizando bcrypt
-        console.log('Contraseña normal.');
-        passwordValid = await bcrypt.compare(passwordorrandomPassword, user.contrasena);
-    }
-
-    // Si la contraseña no es válida
-    if (!passwordValid) {
-        const updatedLoginAttempts = (user.verificacion.intentos_ingreso || 0) + 1;
-
-        await Verificacion.update(
-            { intentos_ingreso: updatedLoginAttempts }, // Actualizar intentos_ingreso en la tabla Verificacion
-
-            { where: { usuario_id: user.usuario_id } }
-        );
-
-        // Si se excede el número máximo de intentos, bloquear la cuenta
-        if (updatedLoginAttempts >= MAX_LOGIN_ATTEMPTS) {
-
-            await lockAccount(user.usuario); // Bloquear la cuenta
-            return res.status(400).json({
-                msg: errorMessages.accountLocked,
-            });
-        }
-
-        return res.status(400).json({
-            msg: errorMessages.incorrectPassword(updatedLoginAttempts),
+const handleMaxLoginAttempts = async (user: any, res: Response): Promise<void> => {
+    if (user.verificacion.intentos_ingreso >= MAX_LOGIN_ATTEMPTS) {
+        await lockAccount(user.usuario);
+        res.status(400).json({
+            msg: errorMessages.accountLocked,
         });
     }
 };
+/**
+ * Verifica la contraseña del usuario.
+ * @param passwordOrRandomPassword Contraseña o contraseña aleatoria proporcionada.
+ * @param user Usuario encontrado.
+ * @param res Objeto de respuesta HTTP.
+ */
+export const verifyUserPassworde = async (
+    passwordOrRandomPassword: string,
+    user: any,
+    res: Response
+): Promise<void> => {
+    try {
+        // Verifica si la contraseña es válida
 
+        const passwordValid = await isPasswordValid(passwordOrRandomPassword, user);
+
+        if (!passwordValid) {
+            // Maneja el inicio de sesión fallido
+            await handleFailedLogin(user, res);
+        }
+    } catch (error) {
+        console.error('Error al verificar la contraseña:', error);
+    }
+};
+
+/**
+ * Verifica si la contraseña proporcionada es válida.
+ * @param passwordOrRandomPassword Contraseña o contraseña aleatoria proporcionada.
+ * @param user Usuario encontrado.
+ * @returns True si la contraseña es válida, false en caso contrario.
+ */
+const isPasswordValid = async (passwordOrRandomPassword: string, user: any): Promise<boolean> => {
+    // Verifica si la longitud de la contraseña es igual a 8 para determinar si es una contraseña aleatoria
+    return passwordOrRandomPassword.length === 8
+        ? verifyRandomPassword(passwordOrRandomPassword, user)
+        : await verifyBcryptPassword(passwordOrRandomPassword, user.contrasena);
+};
+
+/**
+ * Maneja un intento fallido de inicio de sesión.
+ * @param user Usuario encontrado.
+ * @param res Objeto de respuesta HTTP.
+ */
+const handleFailedLogin = async (user: any, res: Response): Promise<void> => {
+    // Actualiza el número de intentos de inicio de sesión
+    await updateLoginAttempts(user);
+    
+    // Maneja el bloqueo de la cuenta si es necesario
+    await handleMaxLoginAttempts(user, res);
+
+    // Envía un mensaje de error al cliente
+    res.status(400).json({
+
+        msg: errorMessages.incorrectPassword(user.verificacion.intentos_ingreso),
+    });
+};
+
+//////////////////////////////////////////////////////////////////////////////////////
 
 /**
  * Bloquea la cuenta de un usuario después de múltiples intentos fallidos de inicio de sesión.
@@ -290,7 +348,7 @@ export const loginUser = async (req: Request, res: Response) => {
         checkUserVerificationStatusLogin(user, res);
 
         // Verificar la contraseña del usuario
-        await verifyUserPassword(contrasena_aleatoria, user, res);
+        await verifyUserPassworde(contrasena_aleatoria, user, res);
 
         // Verificar si el usuario ha excedido el número máximo de intentos de inicio de sesión y manejar el bloqueo de la cuenta
         await checkLoginAttemptsAndBlockAccount(user, res);
