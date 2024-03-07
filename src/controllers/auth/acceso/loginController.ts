@@ -352,55 +352,88 @@ export const checkLoginAttemptsAndBlockAccount = async (user: any, res: Response
  * @param {string} usuario - El nombre de usuario del usuario cuya cuenta se desbloqueará.
  * @returns {Promise<void>} No devuelve ningún valor explícito, pero desbloquea la cuenta del usuario si es encontrado en la base de datos.
  */
-async function unlockAccount(usuario: any) {
+export const unlockAccount = async (usuario: any): Promise<void> => {
     try {
-        // Buscar al usuario en la base de datos por su nombre de usuario y cargar información de verificación asociada.
-        const user = await Usuario.findOne({
-            where: { usuario: usuario },
-            include: [Verificacion],
-        });
+        const user = await findUserAndLoadVerificationInfo(usuario);
 
-        // Verificar si el usuario existe en la base de datos.
-        if (!user) {
-            console.error('Usuario no encontrado');
-            return;
+        if (user) {
+            await resetFailedLoginAttempts(user);
         }
-
-        // Restablecer el número de intentos de inicio de sesión fallidos a cero en la tabla Verification.
-        await Promise.all([
-            Verificacion.update(
-                { intentos_ingreso: 0 },
-                { where: { usuario_id: user.usuario_id } }
-            ),
-        ]);
     } catch (error) {
-        console.error('Error al desbloquear la cuenta:', error);
+        handleUnlockAccountError(error);
     }
-}
+};
+
+const findUserAndLoadVerificationInfo = async (usuario: string): Promise<any | null> => {
+    const user = await findUserByUserName(usuario);
+    return user || null;
+};
+
+const resetFailedLoginAttempts = async (user: any): Promise<void> => {
+    await Verificacion.update(
+        { intentos_ingreso: 0 },
+        { where: { usuario_id: user.usuario_id } }
+    );
+};
+
+const handleUnlockAccountError = (error: any) => {
+    console.error('Error al desbloquear la cuenta:', error);
+};
+
 ///////////////////////////////////////////////////////////////////////////////////
 export const generateAuthToken = (user: any) => {
-    // Asegúrate de que la propiedad 'roles' esté presente y sea un array
-    const roles = Array.isArray(user?.rols) ? user.rols.map((rol: any) => rol.nombre) : [];
+    // Obtener los roles del usuario
+    const roles = getUserRoles(user);
 
-    return jwt.sign({
+    // Crear el payload del token
+    const payload = createTokenPayload(user, roles);
+
+    // Firmar el token
+    return signToken(payload);
+};
+
+// Obtener los roles del usuario
+const getUserRoles = (user: any) => {
+    return Array.isArray(user?.rols) ? user.rols.map((rol: any) => rol.nombre) : [];
+};
+
+// Crear el payload del token
+const createTokenPayload = (user: any, roles: string[]) => {
+    return {
         usuario: user.usuario,
         usuario_id: user.usuario_id,
         rol: roles.length > 0 ? roles[0] : null, // Tomar el primer rol si existe, o null si no hay roles
-    }, process.env.SECRET_KEY || 'pepito123');
+    };
+};
+
+// Firmar el token
+const signToken = (payload: any) => {
+    return jwt.sign(payload, process.env.SECRET_KEY || 'pepito123');
+};
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+export const handleSuccessfulLogin = async (user: any, res: Response, contrasena: string) => {
+    const msg = getMessage(contrasena);
+    const token = generateAuthToken(user);
+    const { userId, rol } = getUserInfo(user);
+
+    return res.json({ msg, token, userId, rol, passwordorrandomPassword: getPasswordOrRandomPassword(user, contrasena) });
+};
+
+const getMessage = (contrasena: string): string => {
+    return contrasena.length === 8 ? 'Inicio de sesión Recuperación de contraseña' : successMessages.userLoggedIn;
+};
+
+const getUserInfo = (user: any): { userId: string, rol: string | null } => {
+    const userId = user.usuario_id;
+    const rol = Array.isArray(user.rols) && user.rols.length > 0 ? user.rols[0].nombre : null;
+    return { userId, rol };
 };
 
 
-
-export const handleSuccessfulLogin = async (user: any, res: Response, contrasena: string) => {
-    const msg = contrasena.length === 8 ? 'Inicio de sesión Recuperación de contraseña' : successMessages.userLoggedIn;
-    const token = generateAuthToken(user);
-    const userId = user.usuario_id;
-    const roles = Array.isArray(user.rols) ? user.rols.map((rol: any) => rol.nombre) : [];
-    const rol = roles.length > 0 ? roles[0] : null; // Tomar el primer rol si existe, o null si no hay roles
-    const passwordorrandomPassword = contrasena.length === 8 ? user.verificacion.contrasena_aleatoria : undefined;
-    console.log('Tipo de contraseña:', passwordorrandomPassword);
-
-    return res.json({ msg, token, userId, rol, passwordorrandomPassword });
+const getPasswordOrRandomPassword = (user: any, contrasena: string): string | undefined => {
+    return contrasena.length === 8 ? user.verificacion.contrasena_aleatoria : undefined;
 };
 
 ////////////////////////////////////////////////////////////////////

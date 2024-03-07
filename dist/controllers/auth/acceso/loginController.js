@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.handleServerErrorLogin = exports.loginUser = exports.handleSuccessfulLogin = exports.generateAuthToken = exports.checkLoginAttemptsAndBlockAccount = exports.verifyUserPassworde = exports.checkUserVerificationStatusLogin = exports.findUserByUsernameLogin = exports.validateVerificationFieldsLogin = void 0;
+exports.handleServerErrorLogin = exports.loginUser = exports.handleSuccessfulLogin = exports.generateAuthToken = exports.unlockAccount = exports.checkLoginAttemptsAndBlockAccount = exports.verifyUserPassworde = exports.checkUserVerificationStatusLogin = exports.findUserByUsernameLogin = exports.validateVerificationFieldsLogin = void 0;
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const successMessages_1 = require("../../../middleware/successMessages");
 const validationUtils_1 = require("../../../utils/singup/validation/validationUtils");
@@ -279,7 +279,7 @@ const handleTemporaryLock = (user, res) => {
         });
     }
     else {
-        unlockAccount(user.usuario);
+        (0, exports.unlockAccount)(user.usuario);
     }
 };
 /**
@@ -324,51 +324,73 @@ exports.checkLoginAttemptsAndBlockAccount = checkLoginAttemptsAndBlockAccount;
  * @param {string} usuario - El nombre de usuario del usuario cuya cuenta se desbloqueará.
  * @returns {Promise<void>} No devuelve ningún valor explícito, pero desbloquea la cuenta del usuario si es encontrado en la base de datos.
  */
-function unlockAccount(usuario) {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            // Buscar al usuario en la base de datos por su nombre de usuario y cargar información de verificación asociada.
-            const user = yield usuariosModel_1.default.findOne({
-                where: { usuario: usuario },
-                include: [verificationsModel_1.default],
-            });
-            // Verificar si el usuario existe en la base de datos.
-            if (!user) {
-                console.error('Usuario no encontrado');
-                return;
-            }
-            // Restablecer el número de intentos de inicio de sesión fallidos a cero en la tabla Verification.
-            yield Promise.all([
-                verificationsModel_1.default.update({ intentos_ingreso: 0 }, { where: { usuario_id: user.usuario_id } }),
-            ]);
+const unlockAccount = (usuario) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const user = yield findUserAndLoadVerificationInfo(usuario);
+        if (user) {
+            yield resetFailedLoginAttempts(user);
         }
-        catch (error) {
-            console.error('Error al desbloquear la cuenta:', error);
-        }
-    });
-}
+    }
+    catch (error) {
+        handleUnlockAccountError(error);
+    }
+});
+exports.unlockAccount = unlockAccount;
+const findUserAndLoadVerificationInfo = (usuario) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = yield findUserByUserName(usuario);
+    return user || null;
+});
+const resetFailedLoginAttempts = (user) => __awaiter(void 0, void 0, void 0, function* () {
+    yield verificationsModel_1.default.update({ intentos_ingreso: 0 }, { where: { usuario_id: user.usuario_id } });
+});
+const handleUnlockAccountError = (error) => {
+    console.error('Error al desbloquear la cuenta:', error);
+};
 ///////////////////////////////////////////////////////////////////////////////////
 const generateAuthToken = (user) => {
-    // Asegúrate de que la propiedad 'roles' esté presente y sea un array
-    const roles = Array.isArray(user === null || user === void 0 ? void 0 : user.rols) ? user.rols.map((rol) => rol.nombre) : [];
-    return jsonwebtoken_1.default.sign({
+    // Obtener los roles del usuario
+    const roles = getUserRoles(user);
+    // Crear el payload del token
+    const payload = createTokenPayload(user, roles);
+    // Firmar el token
+    return signToken(payload);
+};
+exports.generateAuthToken = generateAuthToken;
+// Obtener los roles del usuario
+const getUserRoles = (user) => {
+    return Array.isArray(user === null || user === void 0 ? void 0 : user.rols) ? user.rols.map((rol) => rol.nombre) : [];
+};
+// Crear el payload del token
+const createTokenPayload = (user, roles) => {
+    return {
         usuario: user.usuario,
         usuario_id: user.usuario_id,
         rol: roles.length > 0 ? roles[0] : null, // Tomar el primer rol si existe, o null si no hay roles
-    }, process.env.SECRET_KEY || 'pepito123');
+    };
 };
-exports.generateAuthToken = generateAuthToken;
+// Firmar el token
+const signToken = (payload) => {
+    return jsonwebtoken_1.default.sign(payload, process.env.SECRET_KEY || 'pepito123');
+};
+/////////////////////////////////////////////////////////////////////////////////////////
 const handleSuccessfulLogin = (user, res, contrasena) => __awaiter(void 0, void 0, void 0, function* () {
-    const msg = contrasena.length === 8 ? 'Inicio de sesión Recuperación de contraseña' : successMessages_1.successMessages.userLoggedIn;
+    const msg = getMessage(contrasena);
     const token = (0, exports.generateAuthToken)(user);
-    const userId = user.usuario_id;
-    const roles = Array.isArray(user.rols) ? user.rols.map((rol) => rol.nombre) : [];
-    const rol = roles.length > 0 ? roles[0] : null; // Tomar el primer rol si existe, o null si no hay roles
-    const passwordorrandomPassword = contrasena.length === 8 ? user.verificacion.contrasena_aleatoria : undefined;
-    console.log('Tipo de contraseña:', passwordorrandomPassword);
-    return res.json({ msg, token, userId, rol, passwordorrandomPassword });
+    const { userId, rol } = getUserInfo(user);
+    return res.json({ msg, token, userId, rol, passwordorrandomPassword: getPasswordOrRandomPassword(user, contrasena) });
 });
 exports.handleSuccessfulLogin = handleSuccessfulLogin;
+const getMessage = (contrasena) => {
+    return contrasena.length === 8 ? 'Inicio de sesión Recuperación de contraseña' : successMessages_1.successMessages.userLoggedIn;
+};
+const getUserInfo = (user) => {
+    const userId = user.usuario_id;
+    const rol = Array.isArray(user.rols) && user.rols.length > 0 ? user.rols[0].nombre : null;
+    return { userId, rol };
+};
+const getPasswordOrRandomPassword = (user, contrasena) => {
+    return contrasena.length === 8 ? user.verificacion.contrasena_aleatoria : undefined;
+};
 ////////////////////////////////////////////////////////////////////
 /**
  * Controlador para inicar sesion.
