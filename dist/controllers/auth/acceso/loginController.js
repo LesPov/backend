@@ -22,6 +22,7 @@ const verificationsModel_1 = __importDefault(require("../../../models/verificaci
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const rolModel_1 = __importDefault(require("../../../models/rol/rolModel"));
 // Máximo de intentos de inicio de sesión permitidos
+const BLOCK_DURATION_MINUTES = 3;
 const MAX_LOGIN_ATTEMPTS = 5;
 /**
  * Validar campos requeridos para el envío de códigos de verificación por SMS.
@@ -122,7 +123,8 @@ const verifyBcryptPassword = (password, hashedPassword) => __awaiter(void 0, voi
  * @param user Usuario encontrado.
  */
 const updateLoginAttempts = (user) => __awaiter(void 0, void 0, void 0, function* () {
-    const updatedLoginAttempts = (user.verificacion.intentos_ingreso || 0) + 1;
+    const currentLoginAttempts = user.verificacion.intentos_ingreso || 0;
+    const updatedLoginAttempts = currentLoginAttempts >= MAX_LOGIN_ATTEMPTS ? MAX_LOGIN_ATTEMPTS : currentLoginAttempts + 1;
     yield verificationsModel_1.default.update({ intentos_ingreso: updatedLoginAttempts }, { where: { usuario_id: user.usuario_id } });
 });
 /**
@@ -178,81 +180,144 @@ const isPasswordValid = (passwordOrRandomPassword, user) => __awaiter(void 0, vo
 const handleFailedLogin = (user, res) => __awaiter(void 0, void 0, void 0, function* () {
     // Actualiza el número de intentos de inicio de sesión
     yield updateLoginAttempts(user);
+    // Obtener el número actualizado de intentos de inicio de sesión desde la base de datos
+    const updatedUser = yield findUserByUserName(user.usuario);
     // Maneja el bloqueo de la cuenta si es necesario
-    yield handleMaxLoginAttempts(user, res);
+    yield handleMaxLoginAttempts(updatedUser, res);
     // Envía un mensaje de error al cliente
     res.status(400).json({
-        msg: errorMesages_1.errorMessages.incorrectPassword(user.verificacion.intentos_ingreso),
+        msg: errorMesages_1.errorMessages.incorrectPassword(updatedUser.verificacion.intentos_ingreso),
     });
 });
 //////////////////////////////////////////////////////////////////////////////////////
 /**
- * Bloquea la cuenta de un usuario después de múltiples intentos fallidos de inicio de sesión.
+ * Bloquea la cuenta del usuario después de varios intentos fallidos de inicio de sesión.
  * @async
  * @param {string} usuario - El nombre de usuario del usuario cuya cuenta se bloqueará.
- * @returns {Promise<void>} No devuelve ningún valor explícito, pero bloquea la cuenta del usuario si es encontrado en la base de datos.
+ * @returns {Promise<void>} - Resuelve después de bloquear la cuenta del usuario si se encuentra en la base de datos.
  */
-function lockAccount(usuario) {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            // Buscar al usuario en la base de datos por su nombre de usuario y cargar información de verificación asociada.
-            const user = yield usuariosModel_1.default.findOne({
-                where: { usuario: usuario },
-                include: [verificationsModel_1.default],
-            });
-            // Verificar si el usuario existe en la base de datos.
-            if (!user) {
-                console.error('Usuario no encontrado');
-                return;
-            }
-            // Calcular la fecha de expiración del bloqueo (3 minutos a partir de la fecha y hora actual).
-            const currentDate = new Date();
-            const expirationDate = new Date(currentDate.getTime() + 3 * 60 * 1000); // Bloqueo por 3 minutos
-            // Actualizar la información en las tablas  'Verificacion' para reflejar el bloqueo de la cuenta.
-            yield Promise.all([
-                verificationsModel_1.default.update({
-                    intentos_ingreso: MAX_LOGIN_ATTEMPTS,
-                    expiracion_intentos_ingreso: expirationDate // Actualiza la fecha de expiración de bloqueo
-                }, { where: { usuario_id: user.usuario_id } }),
-            ]);
+const lockAccount = (usuario) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const user = yield findUserAndBlockAccount(usuario);
+        if (user) {
+            yield handleAccountLock(user);
         }
-        catch (error) {
-            console.error('Error al bloquear la cuenta:', error);
-        }
-    });
-}
+    }
+    catch (error) {
+        handleLockAccountError(error);
+    }
+});
+const findUserAndBlockAccount = (usuario) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = yield findUserByUserName(usuario);
+    if (!user) {
+        throw new Error('Usuario no encontrado');
+    }
+    const expirationDate = calculateBlockExpirationDate();
+    yield updateVerificationTable(user, expirationDate);
+    return user;
+});
+const handleAccountLock = (user) => __awaiter(void 0, void 0, void 0, function* () {
+    const expirationDate = calculateBlockExpirationDate();
+    yield updateVerificationTable(user, expirationDate);
+});
+const handleLockAccountError = (error) => {
+    console.error('Error al bloquear la cuenta:', error);
+};
 /**
- * Verifica si el usuario ha excedido el número máximo de intentos de inicio de sesión.
+ * Encuentra a un usuario por nombre de usuario e incluye información de verificación.
+ * @param {string} usuario - El nombre de usuario del usuario a buscar.
+ * @returns {Promise<any>} - Resuelve con el objeto de usuario si se encuentra, de lo contrario, null.
+ */
+const findUserByUserName = (usuario) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = yield usuariosModel_1.default.findOne({
+        where: { usuario: usuario },
+        include: [verificationsModel_1.default],
+    });
+    return user || null;
+});
+/**
+ * Calcula la fecha de vencimiento para el bloqueo de la cuenta.
+ * @returns {Date} - La fecha de vencimiento calculada.
+ */
+const calculateBlockExpirationDate = () => {
+    const currentDate = new Date();
+    return new Date(currentDate.getTime() + BLOCK_DURATION_MINUTES * 60 * 1000);
+};
+/**
+ * Actualiza la tabla de verificación para reflejar el bloqueo de la cuenta.
+ * @param {any} user - El objeto de usuario.
+ * @param {Date} expirationDate - La fecha de vencimiento para el bloqueo de la cuenta.
+ * @returns {Promise<void>} - Resuelve después de actualizar la tabla de verificación.
+ */
+const updateVerificationTable = (user, expirationDate) => __awaiter(void 0, void 0, void 0, function* () {
+    yield verificationsModel_1.default.update({
+        intentos_ingreso: MAX_LOGIN_ATTEMPTS,
+        expiracion_intentos_ingreso: expirationDate,
+    }, { where: { usuario_id: user.usuario_id } });
+});
+////////////////////////////////////////////////////////////////////
+/**
+ * Verifica si la cuenta del usuario está bloqueada debido a intentos fallidos de inicio de sesión.
+ * @param user Usuario encontrado.
+ * @returns true si la cuenta está bloqueada, false si no lo está.
+ */
+const isAccountBlocked = (user) => {
+    return user.verificacion.intentos_ingreso >= MAX_LOGIN_ATTEMPTS;
+};
+/**
+ * Verifica si la cuenta está bloqueada temporalmente y maneja la respuesta HTTP en consecuencia.
+ * @param user Usuario encontrado.
+ * @param res Objeto de respuesta HTTP.
+ */
+const handleTemporaryLock = (user, res) => {
+    const currentDate = new Date();
+    const expirationDate = user.verificacion.expiracion_intentos_ingreso;
+    if (expirationDate && expirationDate > currentDate) {
+        const timeLeft = Math.ceil((expirationDate.getTime() - currentDate.getTime()) / (60 * 1000));
+        res.status(400).json({
+            msg: `La cuenta está bloqueada temporalmente debido a múltiples intentos fallidos. Inténtalo de nuevo más tarde. Tiempo restante: ${timeLeft} minutos`,
+        });
+    }
+    else {
+        unlockAccount(user.usuario);
+    }
+};
+/**
+ * Verifica si la cuenta está bloqueada y maneja la respuesta HTTP en consecuencia.
+ * @param user Usuario encontrado.
+ * @param res Objeto de respuesta HTTP.
+ */
+const checkAndHandleAccountBlock = (user, res) => {
+    if (isAccountBlocked(user)) {
+        handleTemporaryLock(user, res);
+    }
+};
+/**
+ * Verifica si la cuenta está bloqueada según la nueva lógica proporcionada y maneja la respuesta HTTP en consecuencia.
+ * @param user Usuario encontrado.
+ * @param res Objeto de respuesta HTTP.
+ */
+const checkAndHandleNewAccountBlockLogic = (user, res) => {
+    const currentDate = new Date();
+    const blockExpiration = user.verificacion.blockExpiration;
+    if (blockExpiration && blockExpiration > currentDate) {
+        const timeLeft = Math.ceil((blockExpiration.getTime() - currentDate.getTime()) / (60 * 1000));
+        res.status(400).json({
+            msg: `La cuenta está bloqueada temporalmente debido a múltiples intentos fallidos. Inténtalo de nuevo más tarde. Tiempo restante: ${timeLeft} minutos`,
+        });
+    }
+};
+/**
+ * Verifica el estado de bloqueo de la cuenta y maneja la respuesta HTTP en consecuencia.
  * @param user Usuario encontrado.
  * @param res Objeto de respuesta HTTP.
  */
 const checkLoginAttemptsAndBlockAccount = (user, res) => __awaiter(void 0, void 0, void 0, function* () {
-    if (user.verificacion.intentos_ingreso >= MAX_LOGIN_ATTEMPTS) {
-        const currentDate = new Date();
-        // Verificar si la cuenta está bloqueada y si el bloqueo aún no ha expirado
-        if (user.verificacion.expiracion_intentos_ingreso && user.verificacion.expiracion_intentos_ingreso > currentDate) {
-            const timeLeft = Math.ceil((user.verificacion.expiracion_intentos_ingreso.getTime() - currentDate.getTime()) / (60 * 1000));
-            return res.status(400).json({
-                msg: `La cuenta está bloqueada temporalmente debido a múltiples intentos fallidos. Inténtalo de nuevo más tarde. Tiempo restante: ${timeLeft} minutos`,
-            });
-        }
-        else {
-            // Desbloquear la cuenta nuevamente si el bloqueo ha expirado
-            yield unlockAccount(user.usuario);
-        }
-    }
-    // Verificar si la cuenta está bloqueada según la nueva lógica proporcionada
-    if (user.verificacion.blockExpiration) {
-        const currentDate = new Date();
-        if (user.verificacion.blockExpiration > currentDate) {
-            const timeLeft = Math.ceil((user.verificacion.blockExpiration.getTime() - currentDate.getTime()) / (60 * 1000));
-            return res.status(400).json({
-                msg: `La cuenta está bloqueada temporalmente debido a múltiples intentos fallidos. Inténtalo de nuevo más tarde. Tiempo restante: ${timeLeft} minutos`,
-            });
-        }
-    }
+    checkAndHandleAccountBlock(user, res);
+    checkAndHandleNewAccountBlockLogic(user, res);
 });
 exports.checkLoginAttemptsAndBlockAccount = checkLoginAttemptsAndBlockAccount;
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
 /**
  * Desbloquear la cuenta de un usuario en base a su nombre de usuario.
  * @async
