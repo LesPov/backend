@@ -5,6 +5,7 @@ import { findUserByUsernamePhoneSend, handleServerErrorPhoneSend, validateVerifi
 import { checkUserVerificationStatusPhoneSend, checkUserPhoneNumberExistsPhoneSend, checkPhoneNumberAvailabilityPhoneSend } from "../../../../../utils/telefono/userVerification/sendCodeVerification/verificationUtils/verificationUtils";
 import { findOrCreateVerificationRecordPhoneSend, generateVerificationDataPhoneSend, sendVerificationCodeViaSMSPhoneSend } from "../../../../../utils/telefono/userVerification/sendCodeVerification/userUtils/userUtils";
 import { updateUserInfoAfterVerificationCodeSentPhoneSend } from "../../../../../utils/telefono/userVerification/sendCodeVerification/updateUtils/updateUtils";
+import { successMessages } from '../../../../../middleware/successMessages';
 
 
 /**
@@ -27,7 +28,7 @@ export const sendCodeVerification = async (req: Request, res: Response) => {
         checkUserVerificationStatusPhoneSend(user);
 
         // Verificar si el usuario ya tiene un número de teléfono asociado
-        checkUserPhoneNumberExistsPhoneSend(user,celular);
+        checkUserPhoneNumberExistsPhoneSend(user, celular);
 
         // Verificar si el teléfono ya está verificado
         await checkPhoneNumberAvailabilityPhoneSend(celular);
@@ -48,7 +49,8 @@ export const sendCodeVerification = async (req: Request, res: Response) => {
         await updateUserInfoAfterVerificationCodeSentPhoneSend(celular, usuario, user);
 
         // Resto de la lógica para enviar el código de verificación por SMS
-
+        // Responder con un mensaje de éxito
+        res.json({ msg: successMessages.verificationCodeSent });
     } catch (error: any) {
         handleServerErrorPhoneSend(error, res);
     }

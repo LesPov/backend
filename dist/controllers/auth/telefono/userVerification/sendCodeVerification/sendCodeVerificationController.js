@@ -16,6 +16,7 @@ const validationUtils_2 = require("../../../../../utils/telefono/userVerificatio
 const verificationUtils_1 = require("../../../../../utils/telefono/userVerification/sendCodeVerification/verificationUtils/verificationUtils");
 const userUtils_1 = require("../../../../../utils/telefono/userVerification/sendCodeVerification/userUtils/userUtils");
 const updateUtils_1 = require("../../../../../utils/telefono/userVerification/sendCodeVerification/updateUtils/updateUtils");
+const successMessages_1 = require("../../../../../middleware/successMessages");
 /**
  * Enviar código de verificación por SMS.
  * @param req Objeto de solicitud HTTP.
@@ -46,6 +47,8 @@ const sendCodeVerification = (req, res) => __awaiter(void 0, void 0, void 0, fun
         // Actualizar la información del usuario después de enviar el código de verificación
         yield (0, updateUtils_1.updateUserInfoAfterVerificationCodeSentPhoneSend)(celular, usuario, user);
         // Resto de la lógica para enviar el código de verificación por SMS
+        // Responder con un mensaje de éxito
+        res.json({ msg: successMessages_1.successMessages.verificationCodeSent });
     }
     catch (error) {
         (0, validationUtils_2.handleServerErrorPhoneSend)(error, res);
