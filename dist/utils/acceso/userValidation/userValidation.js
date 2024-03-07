@@ -13,7 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.handleServerErrorLogin = exports.findUserByUsernameLogin = exports.validateVerificationFieldsLogin = void 0;
-const errorMesages_1 = require("../../../middleware/errorMesages");
+const errorMessages_1 = require("../../../middleware/errorMessages");
 const rolModel_1 = __importDefault(require("../../../models/rol/rolModel"));
 const usuariosModel_1 = __importDefault(require("../../../models/usuarios/usuariosModel"));
 const verificationsModel_1 = __importDefault(require("../../../models/verificaciones/verificationsModel"));
@@ -26,7 +26,7 @@ const verificationsModel_1 = __importDefault(require("../../../models/verificaci
 const validateVerificationFieldsLogin = (usuario, contrasena_aleatoria) => {
     const errors = [];
     if (!usuario || !contrasena_aleatoria) {
-        errors.push(errorMesages_1.errorMessages.requiredFields);
+        errors.push(errorMessages_1.errorMessages.requiredFields);
     }
     return errors;
 };
@@ -50,7 +50,7 @@ const findUserByUsernameLogin = (usuario, res) => __awaiter(void 0, void 0, void
         ],
     });
     if (!user) {
-        return res.status(400).json({ msg: errorMesages_1.errorMessages.userNotExists(usuario) });
+        return res.status(400).json({ msg: errorMessages_1.errorMessages.userNotExists(usuario) });
     }
     return user;
 });
@@ -64,7 +64,7 @@ const handleServerErrorLogin = (error, res) => {
     console.error("Error en el controlador login:", error);
     if (!res.headersSent) {
         res.status(400).json({
-            msg: error.message || errorMesages_1.errorMessages.databaseError,
+            msg: error.message || errorMessages_1.errorMessages.databaseError,
             error,
         });
     }

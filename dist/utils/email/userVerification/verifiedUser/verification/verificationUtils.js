@@ -13,13 +13,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.isInvalidVerificationCode = exports.isVerificationCodeExpired = exports.isUserAlreadyVerified = exports.findUserByUsername = exports.validateVerificationFields = void 0;
-const errorMesages_1 = require("../../../../../middleware/errorMesages");
+const errorMessages_1 = require("../../../../../middleware/errorMessages");
 const usuariosModel_1 = __importDefault(require("../../../../../models/usuarios/usuariosModel"));
 const verificationsModel_1 = __importDefault(require("../../../../../models/verificaciones/verificationsModel"));
 const validateVerificationFields = (usuario, codigo_verificacion) => {
     const errors = [];
     if (!usuario || !codigo_verificacion) {
-        errors.push(errorMesages_1.errorMessages.requiredFields);
+        errors.push(errorMessages_1.errorMessages.requiredFields);
     }
     return errors;
 };
@@ -28,7 +28,7 @@ exports.validateVerificationFields = validateVerificationFields;
 const findUserByUsername = (usuario, res) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield usuariosModel_1.default.findOne({ where: { usuario: usuario }, include: [verificationsModel_1.default] });
     if (!user) {
-        return res.status(400).json({ msg: errorMesages_1.errorMessages.userNotExists(usuario) });
+        return res.status(400).json({ msg: errorMessages_1.errorMessages.userNotExists(usuario) });
     }
     return user;
 });

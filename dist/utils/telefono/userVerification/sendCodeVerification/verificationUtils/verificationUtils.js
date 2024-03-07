@@ -13,7 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.checkUserPhoneNumberExistsPhoneSend = exports.checkPhoneNumberAvailabilityPhoneSend = exports.isUserAlreadyVerifiedPhoneSend = exports.checkUserVerificationStatusPhoneSend = void 0;
-const errorMesages_1 = require("../../../../../middleware/errorMesages");
+const errorMessages_1 = require("../../../../../middleware/errorMessages");
 const usuariosModel_1 = __importDefault(require("../../../../../models/usuarios/usuariosModel"));
 /**
  * Verificar si el usuario ya ha sido verificado previamente.
@@ -22,7 +22,7 @@ const usuariosModel_1 = __importDefault(require("../../../../../models/usuarios/
  */
 const checkUserVerificationStatusPhoneSend = (user) => {
     if ((0, exports.isUserAlreadyVerifiedPhoneSend)(user)) {
-        throw new Error(errorMesages_1.errorMessages.userAlreadyVerified);
+        throw new Error(errorMessages_1.errorMessages.userAlreadyVerified);
     }
 };
 exports.checkUserVerificationStatusPhoneSend = checkUserVerificationStatusPhoneSend;
@@ -44,7 +44,7 @@ exports.isUserAlreadyVerifiedPhoneSend = isUserAlreadyVerifiedPhoneSend;
 const checkPhoneNumberAvailabilityPhoneSend = (celular) => __awaiter(void 0, void 0, void 0, function* () {
     const existingUser = yield usuariosModel_1.default.findOne({ where: { celular: celular } });
     if (existingUser) {
-        throw new Error(errorMesages_1.errorMessages.phoneNumberExists);
+        throw new Error(errorMessages_1.errorMessages.phoneNumberExists);
     }
 });
 exports.checkPhoneNumberAvailabilityPhoneSend = checkPhoneNumberAvailabilityPhoneSend;
@@ -56,7 +56,7 @@ exports.checkPhoneNumberAvailabilityPhoneSend = checkPhoneNumberAvailabilityPhon
  */
 const checkUserPhoneNumberExistsPhoneSend = (user, celular) => {
     if (user.celular === celular) {
-        throw new Error(errorMesages_1.errorMessages.phoneNumberInUse);
+        throw new Error(errorMessages_1.errorMessages.phoneNumberInUse);
     }
 };
 exports.checkUserPhoneNumberExistsPhoneSend = checkUserPhoneNumberExistsPhoneSend;

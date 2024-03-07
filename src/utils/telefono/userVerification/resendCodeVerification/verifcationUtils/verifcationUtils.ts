@@ -1,4 +1,4 @@
-import { errorMessages } from "../../../../../middleware/errorMesages";
+import { errorMessages } from "../../../../../middleware/errorMessages";
 
 // Verifica el estado de verificación del usuario
 export const checkUserVerificationStatusPhoneResend = (user: any) => {

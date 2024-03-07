@@ -13,7 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.checkExistingUsername = exports.checkExistingUser = exports.handleExistingUserError = void 0;
-const errorMesages_1 = require("../../../middleware/errorMesages");
+const errorMessages_1 = require("../../../middleware/errorMessages");
 const usuariosModel_1 = __importDefault(require("../../../models/usuarios/usuariosModel"));
 /**
  * Maneja los errores relacionados con la existencia de un usuario.
@@ -50,7 +50,7 @@ exports.checkExistingUser = checkExistingUser;
  */
 const checkExistingUsername = (usuario) => __awaiter(void 0, void 0, void 0, function* () {
     return (yield findExistingUsername(usuario))
-        ? errorMesages_1.errorMessages.userExists(usuario)
+        ? errorMessages_1.errorMessages.userExists(usuario)
         : null;
 });
 exports.checkExistingUsername = checkExistingUsername;
@@ -61,7 +61,7 @@ exports.checkExistingUsername = checkExistingUsername;
  */
 const checkExistingEmail = (email) => __awaiter(void 0, void 0, void 0, function* () {
     return (yield findExistingEmail(email))
-        ? errorMesages_1.errorMessages.userEmailExists(email)
+        ? errorMessages_1.errorMessages.userEmailExists(email)
         : null;
 });
 /**
@@ -76,7 +76,7 @@ const findExistingUsername = (usuario) => __awaiter(void 0, void 0, void 0, func
     }
     catch (error) {
         console.error("Error en findExistingUsername:", error);
-        throw errorMesages_1.errorMessages.databaseError;
+        throw errorMessages_1.errorMessages.databaseError;
     }
 });
 /**
@@ -91,6 +91,6 @@ const findExistingEmail = (email) => __awaiter(void 0, void 0, void 0, function*
     }
     catch (error) {
         console.error("Error en findExistingEmail:", error);
-        throw errorMesages_1.errorMessages.databaseError;
+        throw errorMessages_1.errorMessages.databaseError;
     }
 });

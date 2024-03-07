@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.validateEmail = exports.handlePasswordValidationErrors = exports.validateCharacterClass = exports.validateLength = exports.validatePassword = exports.handleInputValidationErrors = exports.validateInput = void 0;
-const errorMesages_1 = require("../../../middleware/errorMesages");
+const errorMessages_1 = require("../../../middleware/errorMessages");
 const PASSWORD_MIN_LENGTH = 10;
 const PASSWORD_REGEX_NUMBER = /\d/;
 const PASSWORD_REGEX_UPPERCASE = /[A-Z]/;
@@ -18,7 +18,7 @@ const SPECIAL_CHARACTERS_REGEX = /[!@#$%^&*()_+{}\[\]:;<>,.?~\\/-]/;
 const validateInput = (usuario, contrasena, email, rol) => {
     const errors = [];
     if (!usuario) {
-        errors.push(errorMesages_1.errorMessages.requiredFields);
+        errors.push(errorMessages_1.errorMessages.requiredFields);
     }
     // ... (validar otros campos)
     return errors;
@@ -52,10 +52,10 @@ exports.handleInputValidationErrors = handleInputValidationErrors;
 const validatePassword = (contrasena) => {
     const errors = [];
     (0, exports.validateLength)(contrasena, errors);
-    (0, exports.validateCharacterClass)(contrasena, PASSWORD_REGEX_NUMBER, errorMesages_1.errorMessages.passwordNoNumber, errors);
-    (0, exports.validateCharacterClass)(contrasena, PASSWORD_REGEX_UPPERCASE, errorMesages_1.errorMessages.passwordNoUppercase, errors);
-    (0, exports.validateCharacterClass)(contrasena, PASSWORD_REGEX_LOWERCASE, errorMesages_1.errorMessages.passwordNoLowercase, errors);
-    (0, exports.validateCharacterClass)(contrasena, SPECIAL_CHARACTERS_REGEX, errorMesages_1.errorMessages.passwordNoSpecialChar, errors);
+    (0, exports.validateCharacterClass)(contrasena, PASSWORD_REGEX_NUMBER, errorMessages_1.errorMessages.passwordNoNumber, errors);
+    (0, exports.validateCharacterClass)(contrasena, PASSWORD_REGEX_UPPERCASE, errorMessages_1.errorMessages.passwordNoUppercase, errors);
+    (0, exports.validateCharacterClass)(contrasena, PASSWORD_REGEX_LOWERCASE, errorMessages_1.errorMessages.passwordNoLowercase, errors);
+    (0, exports.validateCharacterClass)(contrasena, SPECIAL_CHARACTERS_REGEX, errorMessages_1.errorMessages.passwordNoSpecialChar, errors);
     return errors;
 };
 exports.validatePassword = validatePassword;
@@ -66,7 +66,7 @@ exports.validatePassword = validatePassword;
  */
 const validateLength = (contrasena, errors) => {
     if (contrasena.length < PASSWORD_MIN_LENGTH) {
-        errors.push(errorMesages_1.errorMessages.passwordTooShort);
+        errors.push(errorMessages_1.errorMessages.passwordTooShort);
     }
 };
 exports.validateLength = validateLength;
@@ -104,7 +104,7 @@ exports.handlePasswordValidationErrors = handlePasswordValidationErrors;
  */
 const validateEmail = (email) => {
     if (!EMAIL_REGEX.test(email)) {
-        throw new Error(errorMesages_1.errorMessages.invalidEmail);
+        throw new Error(errorMessages_1.errorMessages.invalidEmail);
     }
 };
 exports.validateEmail = validateEmail;

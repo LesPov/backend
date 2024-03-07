@@ -1,4 +1,4 @@
-import { errorMessages } from "../../../middleware/errorMesages";
+import { errorMessages } from "../../../middleware/errorMessages";
 import { Response } from 'express';
 
 const PASSWORD_MIN_LENGTH = 10;

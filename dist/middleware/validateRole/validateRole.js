@@ -4,14 +4,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const errorMesages_1 = require("../errorMesages");
+const errorMessages_1 = require("../errorMessages");
 const validateRole = (requiredRole, req, res, next) => {
     var _a;
     // Verifica el token del usuario para obtener el rol
     const token = (_a = req.headers['authorization']) === null || _a === void 0 ? void 0 : _a.split(' ')[1];
     if (!token) {
         return res.status(401).json({
-            msg: errorMesages_1.errorMessages.tokenNotProvided,
+            msg: errorMessages_1.errorMessages.tokenNotProvided,
         });
     }
     try {
@@ -24,13 +24,13 @@ const validateRole = (requiredRole, req, res, next) => {
         }
         else {
             return res.status(403).json({
-                msg: errorMesages_1.errorMessages.accessDenied,
+                msg: errorMessages_1.errorMessages.accessDenied,
             });
         }
     }
     catch (error) {
         return res.status(401).json({
-            msg: errorMesages_1.errorMessages.invalidToken,
+            msg: errorMessages_1.errorMessages.invalidToken,
         });
     }
 };

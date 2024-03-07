@@ -1,4 +1,4 @@
-import { errorMessages } from "../../../../../middleware/errorMesages";
+import { errorMessages } from "../../../../../middleware/errorMessages";
 import Usuario from "../../../../../models/usuarios/usuariosModel";
 import Verificacion from "../../../../../models/verificaciones/verificationsModel";
 import { Request, Response } from 'express';

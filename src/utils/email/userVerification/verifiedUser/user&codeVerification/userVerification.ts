@@ -1,4 +1,4 @@
-import { errorMessages } from "../../../../../middleware/errorMesages";
+import { errorMessages } from "../../../../../middleware/errorMessages";
 import { isUserAlreadyVerified, isVerificationCodeExpired, isInvalidVerificationCode } from "../verification/verificationUtils";
 
 // Verifica el estado de verificación del usuario

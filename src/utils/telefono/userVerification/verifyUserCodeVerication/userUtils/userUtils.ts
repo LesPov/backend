@@ -1,7 +1,7 @@
-import  { VerificacionModel } from '../../../../../models/verificaciones/verificationsModel';
-import { errorMessages } from '../../../../../middleware/errorMesages';
+import { VerificacionModel } from '../../../../../models/verificaciones/verificationsModel';
+import { errorMessages } from '../../../../../middleware/errorMessages';
 import { findVerificationRecordPhoneVerify, handleServerErrorPhoneVerify } from '../validationUtils/validationUtils';
-import {  Response } from 'express';
+import { Response } from 'express';
 
 /**
  * Valida el código de verificación proporcionado.

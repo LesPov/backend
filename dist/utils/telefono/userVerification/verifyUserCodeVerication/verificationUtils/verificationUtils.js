@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.isUserAlreadyVerifiedPhoneVerify = exports.checkUserVerificationStatusPhoneVerify = void 0;
-const errorMesages_1 = require("../../../../../middleware/errorMesages");
+const errorMessages_1 = require("../../../../../middleware/errorMessages");
 /**
  * Verificar si el usuario ya ha sido verificado previamente.
  * @param user Usuario a verificar.
@@ -9,7 +9,7 @@ const errorMesages_1 = require("../../../../../middleware/errorMesages");
  */
 const checkUserVerificationStatusPhoneVerify = (user) => {
     if ((0, exports.isUserAlreadyVerifiedPhoneVerify)(user)) {
-        throw new Error(errorMesages_1.errorMessages.userAlreadyVerified);
+        throw new Error(errorMessages_1.errorMessages.userAlreadyVerified);
     }
 };
 exports.checkUserVerificationStatusPhoneVerify = checkUserVerificationStatusPhoneVerify;

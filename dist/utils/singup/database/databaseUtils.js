@@ -14,7 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.generateAndSaveVerificationCode = exports.initializeUserProfile = exports.createNewUserWithRole = exports.handleServerError = void 0;
 const generateCode_1 = require("../paswword_generate/generateCode");
-const errorMesages_1 = require("../../../middleware/errorMesages");
+const errorMessages_1 = require("../../../middleware/errorMessages");
 const rolModel_1 = __importDefault(require("../../../models/rol/rolModel"));
 const usuariosModel_1 = __importDefault(require("../../../models/usuarios/usuariosModel"));
 const usuariosRolModel_1 = __importDefault(require("../../../models/usuarios_rols/usuariosRolModel"));
@@ -30,7 +30,7 @@ const handleServerError = (error, res) => {
     console.error("Error en el controlador newUser:", error);
     if (!res.headersSent) {
         res.status(400).json({
-            msg: error.message || errorMesages_1.errorMessages.databaseError,
+            msg: error.message || errorMessages_1.errorMessages.databaseError,
             error,
         });
     }
@@ -56,7 +56,7 @@ const createNewUserWithRole = (usuario, hashedPassword, email, rol) => __awaiter
     }
     catch (error) {
         console.error("Error en createNewUser:", error);
-        throw errorMesages_1.errorMessages.databaseError;
+        throw errorMessages_1.errorMessages.databaseError;
     }
 });
 exports.createNewUserWithRole = createNewUserWithRole;
@@ -69,7 +69,7 @@ const assignUserRole = (usuarioId, rol) => __awaiter(void 0, void 0, void 0, fun
     try {
         const selectedRol = yield rolModel_1.default.findOne({ where: { nombre: rol } });
         if (!selectedRol) {
-            throw new Error(errorMesages_1.errorMessages.invalidRole);
+            throw new Error(errorMessages_1.errorMessages.invalidRole);
         }
         yield usuariosRolModel_1.default.create({
             usuario_id: usuarioId,
@@ -78,7 +78,7 @@ const assignUserRole = (usuarioId, rol) => __awaiter(void 0, void 0, void 0, fun
     }
     catch (error) {
         console.error("Error en assignUserRole:", error);
-        throw errorMesages_1.errorMessages.databaseError;
+        throw errorMessages_1.errorMessages.databaseError;
     }
 });
 /**

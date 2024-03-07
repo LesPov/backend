@@ -1,5 +1,5 @@
 import twilio from "twilio";
-import { errorMessages } from "../../../../../middleware/errorMesages";
+import { errorMessages } from "../../../../../middleware/errorMessages";
 import { Request, Response } from 'express';
 
 // Función para enviar el código de verificación por SMS usando Twilio

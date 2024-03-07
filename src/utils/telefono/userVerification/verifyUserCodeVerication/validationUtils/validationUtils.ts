@@ -1,5 +1,5 @@
-import { errorMessages } from '../../../../../middleware/errorMesages';
-import {  Response } from 'express';
+import { errorMessages } from '../../../../../middleware/errorMessages';
+import { Response } from 'express';
 import Verificacion from '../../../../../models/verificaciones/verificationsModel';
 
 /**

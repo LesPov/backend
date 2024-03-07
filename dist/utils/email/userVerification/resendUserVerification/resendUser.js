@@ -13,7 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.handleemailServerError = exports.sendVerificationCodeByEmail = exports.updateVerificationCodeInfo = exports.findOrCreateVerificationRecord = exports.generateVerificationData = exports.checkUserExistence = exports.validateVerificationFieldsResend = void 0;
-const errorMesages_1 = require("../../../../middleware/errorMesages");
+const errorMessages_1 = require("../../../../middleware/errorMessages");
 const usuariosModel_1 = __importDefault(require("../../../../models/usuarios/usuariosModel"));
 const verificationsModel_1 = __importDefault(require("../../../../models/verificaciones/verificationsModel"));
 const emailUtils_1 = require("../../../singup/emailsend/emailUtils");
@@ -25,7 +25,7 @@ const VERIFICATION_CODE_EXPIRATION_HOURS = 24;
 const validateVerificationFieldsResend = (usuario) => {
     const errors = [];
     if (!usuario) {
-        errors.push(errorMesages_1.errorMessages.requiredFields);
+        errors.push(errorMessages_1.errorMessages.requiredFields);
     }
     return errors;
 };
@@ -40,7 +40,7 @@ const checkUserExistence = (usuario, res) => __awaiter(void 0, void 0, void 0, f
     const user = yield usuariosModel_1.default.findOne({ where: { usuario }, include: [verificationsModel_1.default] });
     if (!user) {
         // Devuelve un error si el usuario no existe
-        res.status(400).json({ msg: errorMesages_1.errorMessages.userNotExists(usuario) });
+        res.status(400).json({ msg: errorMessages_1.errorMessages.userNotExists(usuario) });
         // En este punto, puedes lanzar un error o devolver un objeto que indique la ausencia del usuario.
         throw new Error("Usuario no encontrado");
     }
@@ -114,7 +114,7 @@ const handleemailServerError = (error, res) => {
     console.error("Error en el controlador email:", error);
     if (!res.headersSent) {
         res.status(400).json({
-            msg: error.message || errorMesages_1.errorMessages.databaseError,
+            msg: error.message || errorMessages_1.errorMessages.databaseError,
             error,
         });
     }

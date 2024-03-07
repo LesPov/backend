@@ -14,7 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.handleemailServerErrorPhoneResend = exports.sendVerificationCodeViaSMSPhoneResend = void 0;
 const twilio_1 = __importDefault(require("twilio"));
-const errorMesages_1 = require("../../../../../middleware/errorMesages");
+const errorMessages_1 = require("../../../../../middleware/errorMessages");
 // Función para enviar el código de verificación por SMS usando Twilio
 const sendVerificationCodeViaSMSPhoneResend = (celular, codigo_verificacion) => __awaiter(void 0, void 0, void 0, function* () {
     const client = (0, twilio_1.default)(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
@@ -42,7 +42,7 @@ const handleemailServerErrorPhoneResend = (error, res) => {
     console.error("Error en el controlador phoneresend:", error);
     if (!res.headersSent) {
         res.status(400).json({
-            msg: error.message || errorMesages_1.errorMessages.databaseError,
+            msg: error.message || errorMessages_1.errorMessages.databaseError,
             error,
         });
     }

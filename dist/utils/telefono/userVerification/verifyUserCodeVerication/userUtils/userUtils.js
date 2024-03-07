@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.verifySMSCodePhoneVerify = void 0;
-const errorMesages_1 = require("../../../../../middleware/errorMesages");
+const errorMessages_1 = require("../../../../../middleware/errorMessages");
 const validationUtils_1 = require("../validationUtils/validationUtils");
 /**
  * Valida el código de verificación proporcionado.
@@ -20,7 +20,7 @@ const validationUtils_1 = require("../validationUtils/validationUtils");
  */
 const validateVerificationCodePhoneVerify = (verificationRecord, verificationCode) => {
     if (verificationRecord.codigo_verificacion !== verificationCode) {
-        throw new Error(errorMesages_1.errorMessages.invalidVerificationCode);
+        throw new Error(errorMessages_1.errorMessages.invalidVerificationCode);
     }
 };
 /**

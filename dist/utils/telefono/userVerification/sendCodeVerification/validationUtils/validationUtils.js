@@ -13,7 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.handleServerErrorPhoneSend = exports.findUserByUsernamePhoneSend = exports.validateVerificationFieldsPhoneSend = void 0;
-const errorMesages_1 = require("../../../../../middleware/errorMesages");
+const errorMessages_1 = require("../../../../../middleware/errorMessages");
 const usuariosModel_1 = __importDefault(require("../../../../../models/usuarios/usuariosModel"));
 const verificationsModel_1 = __importDefault(require("../../../../../models/verificaciones/verificationsModel"));
 /**
@@ -25,7 +25,7 @@ const verificationsModel_1 = __importDefault(require("../../../../../models/veri
 const validateVerificationFieldsPhoneSend = (usuario, celular) => {
     const errors = [];
     if (!usuario || !celular) {
-        errors.push(errorMesages_1.errorMessages.requiredFields);
+        errors.push(errorMessages_1.errorMessages.requiredFields);
     }
     return errors;
 };
@@ -39,7 +39,7 @@ exports.validateVerificationFieldsPhoneSend = validateVerificationFieldsPhoneSen
 const findUserByUsernamePhoneSend = (usuario, res) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield usuariosModel_1.default.findOne({ where: { usuario: usuario }, include: [verificationsModel_1.default] });
     if (!user) {
-        return res.status(400).json({ msg: errorMesages_1.errorMessages.userNotExists(usuario) });
+        return res.status(400).json({ msg: errorMessages_1.errorMessages.userNotExists(usuario) });
     }
     return user;
 });
@@ -53,7 +53,7 @@ const handleServerErrorPhoneSend = (error, res) => {
     console.error("Error en el controlador phonesend:", error);
     if (!res.headersSent) {
         res.status(400).json({
-            msg: error.message || errorMesages_1.errorMessages.databaseError,
+            msg: error.message || errorMessages_1.errorMessages.databaseError,
             error,
         });
     }

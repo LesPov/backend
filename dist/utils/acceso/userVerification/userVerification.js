@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.checkLoginAttemptsAndBlockAccount = exports.checkUserVerificationStatusLogin = void 0;
-const errorMesages_1 = require("../../../middleware/errorMesages");
+const errorMessages_1 = require("../../../middleware/errorMessages");
 const unlockAccoun_1 = require("../unlockAccount/unlockAccoun");
 const MAX_LOGIN_ATTEMPTS = 5;
 /**
@@ -21,7 +21,7 @@ const MAX_LOGIN_ATTEMPTS = 5;
 const checkEmailVerification = (user, res) => {
     if (!user.verificacion.correo_verificado) {
         return res.status(400).json({
-            msg: errorMesages_1.errorMessages.userNotVerified,
+            msg: errorMessages_1.errorMessages.userNotVerified,
         });
     }
 };
@@ -33,7 +33,7 @@ const checkEmailVerification = (user, res) => {
 const checkPhoneVerification = (user, res) => {
     if (!user.verificacion.celular_verificado) {
         return res.status(400).json({
-            msg: errorMesages_1.errorMessages.phoneVerificationRequired,
+            msg: errorMessages_1.errorMessages.phoneVerificationRequired,
         });
     }
 };

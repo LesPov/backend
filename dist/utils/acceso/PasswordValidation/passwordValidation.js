@@ -13,7 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.verifyUserPassworde = void 0;
-const errorMesages_1 = require("../../../middleware/errorMesages");
+const errorMessages_1 = require("../../../middleware/errorMessages");
 const verificationsModel_1 = __importDefault(require("../../../models/verificaciones/verificationsModel"));
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const lockAccount_1 = require("../lockAccount/lockAccount");
@@ -58,7 +58,7 @@ const handleMaxLoginAttempts = (user, res) => __awaiter(void 0, void 0, void 0, 
     if (user.verificacion.intentos_ingreso >= MAX_LOGIN_ATTEMPTS) {
         yield (0, lockAccount_1.lockAccount)(user.usuario);
         res.status(400).json({
-            msg: errorMesages_1.errorMessages.accountLocked,
+            msg: errorMessages_1.errorMessages.accountLocked,
         });
     }
 });
@@ -108,6 +108,6 @@ const handleFailedLogin = (user, res) => __awaiter(void 0, void 0, void 0, funct
     yield handleMaxLoginAttempts(updatedUser, res);
     // Envía un mensaje de error al cliente
     res.status(400).json({
-        msg: errorMesages_1.errorMessages.incorrectPassword(updatedUser.verificacion.intentos_ingreso),
+        msg: errorMessages_1.errorMessages.incorrectPassword(updatedUser.verificacion.intentos_ingreso),
     });
 });

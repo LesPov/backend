@@ -1,7 +1,7 @@
 // validateRole.ts
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import { errorMessages } from '../errorMesages';
+import { errorMessages } from '../errorMessages';
 
 
 const validateRole = (requiredRole: string, req: Request, res: Response, next: NextFunction) => {

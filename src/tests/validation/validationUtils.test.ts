@@ -3,7 +3,7 @@ import { handleInputValidationErrors, handlePasswordValidationErrors, validateCh
 import { Response as ExpressResponse } from 'express'; // Importa la interfaz Response desde Express
 
 // Importa los mensajes de error desde el middleware correspondiente
-import { errorMessages } from "../../middleware/errorMesages";
+import { errorMessages } from "../../middleware/errorMessages";
 
 // Constante para la longitud mínima de la contraseña
 
@@ -235,7 +235,7 @@ describe('validateEmail Function', () => {
 
   // Puedes agregar más casos de prueba según sea necesario para cubrir diferentes escenarios
 
-}); 
+});
 
 
 

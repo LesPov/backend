@@ -13,7 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.findVerificationRecordPhoneVerify = exports.handleServerErrorPhoneVerify = exports.validatePhoneNumberMatchPhoneVerify = exports.validateVerificationFieldsPhoneVerify = void 0;
-const errorMesages_1 = require("../../../../../middleware/errorMesages");
+const errorMessages_1 = require("../../../../../middleware/errorMessages");
 const verificationsModel_1 = __importDefault(require("../../../../../models/verificaciones/verificationsModel"));
 /**
  * Validar campos requeridos para el envío de códigos de verificación por SMS.
@@ -24,7 +24,7 @@ const verificationsModel_1 = __importDefault(require("../../../../../models/veri
 const validateVerificationFieldsPhoneVerify = (usuario, celular, codigo_verificacion) => {
     const errors = [];
     if (!usuario || !celular || !codigo_verificacion) {
-        errors.push(errorMesages_1.errorMessages.requiredFields);
+        errors.push(errorMessages_1.errorMessages.requiredFields);
     }
     return errors;
 };
@@ -38,7 +38,7 @@ exports.validateVerificationFieldsPhoneVerify = validateVerificationFieldsPhoneV
  */
 const validatePhoneNumberMatchPhoneVerify = (user, celular, res) => {
     if (user.celular !== celular) {
-        throw new Error(errorMesages_1.errorMessages.incorrectPhoneNumber);
+        throw new Error(errorMessages_1.errorMessages.incorrectPhoneNumber);
     }
 };
 exports.validatePhoneNumberMatchPhoneVerify = validatePhoneNumberMatchPhoneVerify;
@@ -51,7 +51,7 @@ const handleServerErrorPhoneVerify = (error, res) => {
     console.error("Error en el controlador phoneverify:", error);
     if (!res.headersSent) {
         res.status(400).json({
-            msg: error.message || errorMesages_1.errorMessages.databaseError,
+            msg: error.message || errorMessages_1.errorMessages.databaseError,
             error,
         });
     }
@@ -66,7 +66,7 @@ exports.handleServerErrorPhoneVerify = handleServerErrorPhoneVerify;
 const findVerificationRecordPhoneVerify = (userId) => __awaiter(void 0, void 0, void 0, function* () {
     const verificationRecord = yield verificationsModel_1.default.findOne({ where: { usuario_id: userId } });
     if (!verificationRecord) {
-        throw new Error(errorMesages_1.errorMessages.invalidVerificationCode);
+        throw new Error(errorMessages_1.errorMessages.invalidVerificationCode);
     }
     return verificationRecord;
 });

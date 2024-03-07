@@ -1,7 +1,7 @@
 import { Response } from 'express';
 
 import { generateVerificationCode } from '../paswword_generate/generateCode';
-import { errorMessages } from '../../../middleware/errorMesages';
+import { errorMessages } from '../../../middleware/errorMessages';
 import Rol from '../../../models/rol/rolModel';
 import Usuario from '../../../models/usuarios/usuariosModel';
 import UsuarioRol from '../../../models/usuarios_rols/usuariosRolModel';
@@ -18,7 +18,7 @@ export const handleServerError = (error: any, res: Response) => {
     console.error("Error en el controlador newUser:", error);
     if (!res.headersSent) {
         res.status(400).json({
-            msg: error.message ||  errorMessages.databaseError,
+            msg: error.message || errorMessages.databaseError,
             error,
         });
     }
