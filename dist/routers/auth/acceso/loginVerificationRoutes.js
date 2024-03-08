@@ -15,14 +15,6 @@ const router = (0, express_1.Router)();
  */
 router.post('/login', loginController_1.loginUser);
 /**
- *  GET /api/user/admin
- *  Ruta protegida para los administradores.
- *  Privado (solo para usuarios con rol 'admin')
- */
-router.get('/admin', validateToken_1.default, (0, validateRole_1.default)('admin'), (req, res) => {
-    res.send('Bienvenido, eres un administrador');
-});
-/**
  *  GET /api/user/user
  *  Ruta protegida para los usuarios normales.
  *  Privado (solo para usuarios con rol 'user')

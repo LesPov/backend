@@ -32,9 +32,10 @@ exports.validateInput = validateInput;
  */
 const handleInputValidationErrors = (errors, res) => {
     if (errors.length > 0) {
+        console.log("Validation errors:", errors); // Agrega esta línea para imprimir los errores
         // Concatenar los mensajes de error en una cadena
         const errorMessage = errors.join('. ');
-        // Responder con un JSON de error y código de estado 400 
+        // Responder con un JSON de error y código de estado 400  
         res.status(400).json({
             msg: errorMessage,
             errors: `Error en la validación de la entrada de datos`,

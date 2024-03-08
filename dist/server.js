@@ -30,6 +30,7 @@ const singupRoutes_1 = __importDefault(require("./routers/auth/registro/singupRo
 const emailVerificationRoutes_1 = __importDefault(require("./routers/auth/email/emailVerificationRoutes"));
 const phoneSendRoutes_1 = __importDefault(require("./routers/auth/telefono/phoneSendRoutes"));
 const loginController_1 = require("./controllers/auth/acceso/loginController");
+const adminVerificationRoutes_1 = __importDefault(require("./routers/auth/acceso/admin/adminVerificationRoutes")); // Importa las nuevas rutas administrativas
 exports.DB_DATABASE = process.env.DB_DATABASE || 'root';
 class Server {
     /**
@@ -56,7 +57,7 @@ class Server {
      */
     routes() {
         this.app.use('/api/auth', singupRoutes_1.default, emailVerificationRoutes_1.default, phoneSendRoutes_1.default, loginController_1.loginUser);
-        // this.app.use('/api/admin', adminRoutes, imageRoutes); // Utiliza las rutas específicas para operaciones administrativas
+        this.app.use('/api/admin', adminVerificationRoutes_1.default); // Utiliza las rutas específicas para operaciones administrativas
     }
     /**
      * Configura los middlewares de la aplicación.

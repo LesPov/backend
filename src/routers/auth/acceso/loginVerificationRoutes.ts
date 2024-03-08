@@ -12,16 +12,6 @@ const router = Router();
  *  Público
  */ 
 router.post('/login', loginUser);
-
-/**
- *  GET /api/user/admin
- *  Ruta protegida para los administradores.
- *  Privado (solo para usuarios con rol 'admin')
- */
-router.get('/admin', validateToken, validateRole('admin'), (req, res) => {
-    res.send('Bienvenido, eres un administrador');
-});
-
 /**
  *  GET /api/user/user
  *  Ruta protegida para los usuarios normales.
@@ -32,3 +22,4 @@ router.get('/user', validateToken, validateRole('user'), (req, res) => {
 });
 
 export default router;
+ 

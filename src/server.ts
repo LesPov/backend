@@ -16,6 +16,7 @@ import signinRoutes from "./routers/auth/registro/singupRoutes"; // Importar las
 import emailVerificationRoutes from './routers/auth/email/emailVerificationRoutes';
 import phoneVerificationRouter from './routers/auth/telefono/phoneSendRoutes';
 import { loginUser } from './controllers/auth/acceso/loginController';
+import adminRoutes from './routers/auth/acceso/admin/adminVerificationRoutes'; // Importa las nuevas rutas administrativas
 
 export const DB_DATABASE = process.env.DB_DATABASE || 'root'
 
@@ -50,8 +51,8 @@ class Server {
      * Configura las rutas de la aplicación.
      */
     routes() {
-        this.app.use('/api/auth', signinRoutes, emailVerificationRoutes,phoneVerificationRouter,loginUser);
-        // this.app.use('/api/admin', adminRoutes, imageRoutes); // Utiliza las rutas específicas para operaciones administrativas
+        this.app.use('/api/auth', signinRoutes, emailVerificationRoutes, phoneVerificationRouter, loginUser);
+        this.app.use('/api/admin', adminRoutes); // Utiliza las rutas específicas para operaciones administrativas
 
 
     }
@@ -69,7 +70,7 @@ class Server {
 
         // Cors
         this.app.use(cors());
-    } 
+    }
 
     /**
      * Conecta a la base de datos y sincroniza los modelos de Product y User.

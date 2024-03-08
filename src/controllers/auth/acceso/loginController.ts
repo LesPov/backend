@@ -15,6 +15,8 @@ import { handleSuccessfulLogin } from '../../../utils/acceso/handleSuccessfulLog
  */
 export const loginUser = async (req: Request, res: Response) => {
     try {
+
+        
         const { usuario, contrasena_aleatoria } = req.body;
         // Validar la entrada de datos
         const inputValidationErrors = validateVerificationFieldsLogin(usuario, contrasena_aleatoria);

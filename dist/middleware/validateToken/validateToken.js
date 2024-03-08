@@ -33,12 +33,8 @@ const attachUserInfoToRequest = (req, decodedToken) => {
     req.user = decodedToken;
 };
 const handleTokenVerificationError = (error, res) => {
-    console.error("Error en el token:", error);
-    if (!res.headersSent) {
-        res.status(401).json({
-            msg: error.message || errorMessages_1.errorMessages.invalidToken,
-            error,
-        });
-    }
+    res.status(401).json({
+        msg: errorMessages_1.errorMessages.invalidToken,
+    });
 };
 exports.default = validateToken;
