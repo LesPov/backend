@@ -5,17 +5,19 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const errorMessages_1 = require("../errorMessages");
-const validateRole = (requiredRole, req, res, next) => {
-    try {
-        const token = extractToken(req);
-        const userRole = getUserRoleFromToken(token);
-        validateUserRole(userRole, requiredRole, res, next);
-    }
-    catch (error) {
-        return res.status(401).json({
-            msg: errorMessages_1.errorMessages.invalidToken,
-        });
-    }
+const validateRole = (requiredRole) => {
+    return (req, res, next) => {
+        try {
+            const token = extractToken(req);
+            const userRole = getUserRoleFromToken(token);
+            validateUserRole(userRole, requiredRole, res, next);
+        }
+        catch (error) {
+            return res.status(401).json({
+                msg: errorMessages_1.errorMessages.invalidToken,
+            });
+        }
+    };
 };
 const extractToken = (req) => {
     var _a;

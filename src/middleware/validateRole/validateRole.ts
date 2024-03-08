@@ -2,17 +2,19 @@ import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { errorMessages } from '../errorMessages';
 
-const validateRole = (requiredRole: string, req: Request, res: Response, next: NextFunction) => {
-    try {
-        const token = extractToken(req);
-        const userRole = getUserRoleFromToken(token);
+const validateRole = (requiredRole: string) => {
+    return (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const token = extractToken(req);
+            const userRole = getUserRoleFromToken(token);
 
-        validateUserRole(userRole, requiredRole, res, next);
-    } catch (error) {
-        return res.status(401).json({
-            msg: errorMessages.invalidToken,
-        });
-    }
+            validateUserRole(userRole, requiredRole, res, next);
+        } catch (error) {
+            return res.status(401).json({
+                msg: errorMessages.invalidToken,
+            });
+        }
+    };
 };
 
 const extractToken = (req: Request): string => {
