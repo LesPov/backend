@@ -17,6 +17,7 @@ import emailVerificationRoutes from './routers/auth/email/emailVerificationRoute
 import phoneVerificationRouter from './routers/auth/telefono/phoneSendRoutes';
 import { loginUser } from './controllers/auth/acceso/loginController';
 import adminRoutes from './routers/auth/acceso/admin/adminVerificationRoutes'; // Importa las nuevas rutas administrativas
+import userRoutes from './routers/auth/acceso/user/userVerificationRoutes'; // Importa las nuevas rutas administrativas
 
 export const DB_DATABASE = process.env.DB_DATABASE || 'root'
 
@@ -51,9 +52,8 @@ class Server {
      * Configura las rutas de la aplicación.
      */
     routes() {
-        this.app.use('/api/auth', signinRoutes, emailVerificationRoutes, phoneVerificationRouter, loginUser);
-        this.app.use('/api/admin', adminRoutes); // Utiliza las rutas específicas para operaciones administrativas
-
+        this.app.use('/api/auth',adminRoutes,userRoutes, signinRoutes, emailVerificationRoutes, phoneVerificationRouter, loginUser);
+       
 
     }
 
