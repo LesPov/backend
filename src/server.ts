@@ -52,8 +52,8 @@ class Server {
      * Configura las rutas de la aplicación.
      */
     routes() {
-        this.app.use('/api/auth',adminRoutes,userRoutes, signinRoutes, emailVerificationRoutes, phoneVerificationRouter, loginUser);
-       
+        this.app.use('/api/auth', adminRoutes, userRoutes, signinRoutes, emailVerificationRoutes, phoneVerificationRouter, loginUser);
+
 
     }
 
