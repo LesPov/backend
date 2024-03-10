@@ -29,9 +29,10 @@ const verificationsModel_1 = require("./models/verificaciones/verificationsModel
 const singupRoutes_1 = __importDefault(require("./routers/auth/registro/singupRoutes")); // Importar las rutas de signin
 const emailVerificationRoutes_1 = __importDefault(require("./routers/auth/email/emailVerificationRoutes"));
 const phoneSendRoutes_1 = __importDefault(require("./routers/auth/telefono/phoneSendRoutes"));
-const loginController_1 = require("./controllers/auth/acceso/loginController");
+const loginVerificationRoutes_1 = __importDefault(require("./routers/auth/acceso/login/loginVerificationRoutes"));
 const adminVerificationRoutes_1 = __importDefault(require("./routers/auth/acceso/login/admin/adminVerificationRoutes")); // Importa las nuevas rutas administrativas
 const userVerificationRoutes_1 = __importDefault(require("./routers/auth/acceso/login/user/userVerificationRoutes")); // Importa las nuevas rutas administrativas
+const passwordReset_1 = __importDefault(require("./routers/auth/acceso/passwordReset/passwordReset"));
 exports.DB_DATABASE = process.env.DB_DATABASE || 'root';
 class Server {
     /**
@@ -57,7 +58,7 @@ class Server {
      * Configura las rutas de la aplicación.
      */
     routes() {
-        this.app.use('/api/auth', adminVerificationRoutes_1.default, userVerificationRoutes_1.default, singupRoutes_1.default, emailVerificationRoutes_1.default, phoneSendRoutes_1.default, loginController_1.loginUser);
+        this.app.use('/api/auth', adminVerificationRoutes_1.default, userVerificationRoutes_1.default, singupRoutes_1.default, emailVerificationRoutes_1.default, phoneSendRoutes_1.default, loginVerificationRoutes_1.default, passwordReset_1.default);
     }
     /**
      * Configura los middlewares de la aplicación.

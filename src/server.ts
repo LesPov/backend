@@ -15,9 +15,10 @@ import { Verificacion } from './models/verificaciones/verificationsModel';
 import signinRoutes from "./routers/auth/registro/singupRoutes"; // Importar las rutas de signin
 import emailVerificationRoutes from './routers/auth/email/emailVerificationRoutes';
 import phoneVerificationRouter from './routers/auth/telefono/phoneSendRoutes';
-import { loginUser } from './controllers/auth/acceso/loginController';
+import  loginUser  from './routers/auth/acceso/login/loginVerificationRoutes';
 import adminRoutes from './routers/auth/acceso/login/admin/adminVerificationRoutes'; // Importa las nuevas rutas administrativas
 import userRoutes from './routers/auth/acceso/login/user/userVerificationRoutes'; // Importa las nuevas rutas administrativas
+import  resetpass  from './routers/auth/acceso/passwordReset/passwordReset';
 
 export const DB_DATABASE = process.env.DB_DATABASE || 'root'
 
@@ -52,7 +53,7 @@ class Server {
      * Configura las rutas de la aplicación.
      */
     routes() {
-        this.app.use('/api/auth', adminRoutes, userRoutes, signinRoutes, emailVerificationRoutes, phoneVerificationRouter, loginUser);
+        this.app.use('/api/auth', adminRoutes, userRoutes, signinRoutes, emailVerificationRoutes, phoneVerificationRouter, loginUser,resetpass);
 
 
     }
