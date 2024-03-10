@@ -11,10 +11,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.loginUser = void 0;
 const validationUtils_1 = require("../../../utils/singup/validation/validationUtils");
-const userValidation_1 = require("../../../utils/acceso/userValidation/userValidation");
-const userVerification_1 = require("../../../utils/acceso/userVerification/userVerification");
-const passwordValidation_1 = require("../../../utils/acceso/passwordValidation/passwordValidation");
-const handleSuccessfulLogin_1 = require("../../../utils/acceso/handleSuccessfulLogin/handleSuccessfulLogin");
+const userValidation_1 = require("../../../utils/acceso/login/userValidation/userValidation");
+const userVerification_1 = require("../../../utils/acceso/login/userVerification/userVerification");
+const passwordValidation_1 = require("../../../utils/acceso/login/passwordValidation/passwordValidation");
+const handleSuccessfulLogin_1 = require("../../../utils/acceso/login/handleSuccessfulLogin/handleSuccessfulLogin");
 ////////////////////////////////////////////////////////////////////
 /**
  * Controlador para inicar sesion.

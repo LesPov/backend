@@ -1,4 +1,4 @@
-import Verificacion from "../../../models/verificaciones/verificationsModel";
+import Verificacion from "../../../../models/verificaciones/verificationsModel";
 import { findUserByUserName } from "../lockAccount/lockAccount";
 
 /**

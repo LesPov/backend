@@ -1,5 +1,5 @@
-import Usuario from "../../../models/usuarios/usuariosModel";
-import Verificacion from "../../../models/verificaciones/verificationsModel";
+import Usuario from "../../../../models/usuarios/usuariosModel";
+import Verificacion from "../../../../models/verificaciones/verificationsModel";
 
 // Máximo de intentos de inicio de sesión permitidos
 const BLOCK_DURATION_MINUTES = 3;

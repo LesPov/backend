@@ -1,5 +1,5 @@
-import { errorMessages } from "../../../middleware/errorMessages";
-import Verificacion from "../../../models/verificaciones/verificationsModel";
+import { errorMessages } from "../../../../middleware/errorMessages";
+import Verificacion from "../../../../models/verificaciones/verificationsModel";
 import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import { findUserByUserName, lockAccount } from "../lockAccount/lockAccount";

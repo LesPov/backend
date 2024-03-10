@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
 import { handleInputValidationErrors } from '../../../utils/singup/validation/validationUtils';
-import { findUserByUsernameLogin, handleServerErrorLogin, validateVerificationFieldsLogin } from '../../../utils/acceso/userValidation/userValidation';
-import { checkLoginAttemptsAndBlockAccount, checkUserVerificationStatusLogin } from '../../../utils/acceso/userVerification/userVerification';
-import { verifyUserPassworde } from '../../../utils/acceso/passwordValidation/passwordValidation';
-import { handleSuccessfulLogin } from '../../../utils/acceso/handleSuccessfulLogin/handleSuccessfulLogin';
+import { findUserByUsernameLogin, handleServerErrorLogin, validateVerificationFieldsLogin } from '../../../utils/acceso/login/userValidation/userValidation';
+import { checkLoginAttemptsAndBlockAccount, checkUserVerificationStatusLogin } from '../../../utils/acceso/login/userVerification/userVerification';
+import { verifyUserPassworde } from '../../../utils/acceso/login/passwordValidation/passwordValidation';
+import { handleSuccessfulLogin } from '../../../utils/acceso/login/handleSuccessfulLogin/handleSuccessfulLogin';
 
 
 
@@ -16,7 +16,7 @@ import { handleSuccessfulLogin } from '../../../utils/acceso/handleSuccessfulLog
 export const loginUser = async (req: Request, res: Response) => {
     try {
 
-        
+
         const { usuario, contrasena_aleatoria } = req.body;
         // Validar la entrada de datos
         const inputValidationErrors = validateVerificationFieldsLogin(usuario, contrasena_aleatoria);

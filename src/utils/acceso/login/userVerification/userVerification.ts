@@ -1,4 +1,4 @@
-import { errorMessages } from "../../../middleware/errorMessages";
+import { errorMessages } from "../../../../middleware/errorMessages";
 import { Request, Response } from 'express';
 import { unlockAccount } from "../unlockAccount/unlockAccoun";
 const MAX_LOGIN_ATTEMPTS = 5;
