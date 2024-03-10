@@ -16,8 +16,8 @@ import signinRoutes from "./routers/auth/registro/singupRoutes"; // Importar las
 import emailVerificationRoutes from './routers/auth/email/emailVerificationRoutes';
 import phoneVerificationRouter from './routers/auth/telefono/phoneSendRoutes';
 import { loginUser } from './controllers/auth/acceso/loginController';
-import adminRoutes from './routers/auth/acceso/admin/adminVerificationRoutes'; // Importa las nuevas rutas administrativas
-import userRoutes from './routers/auth/acceso/user/userVerificationRoutes'; // Importa las nuevas rutas administrativas
+import adminRoutes from './routers/auth/acceso/login/admin/adminVerificationRoutes'; // Importa las nuevas rutas administrativas
+import userRoutes from './routers/auth/acceso/login/user/userVerificationRoutes'; // Importa las nuevas rutas administrativas
 
 export const DB_DATABASE = process.env.DB_DATABASE || 'root'
 

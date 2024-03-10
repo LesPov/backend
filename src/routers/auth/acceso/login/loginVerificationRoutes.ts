@@ -1,8 +1,8 @@
 
 import { Router } from "express";
-import { loginUser } from "../../../controllers/auth/acceso/loginController";
-import validateToken from "../../../middleware/validateToken/validateToken";
-import validateRole from "../../../middleware/validateRole/validateRole";
+import { loginUser } from "../../../../controllers/auth/acceso/loginController";
+import validateToken from "../../../../middleware/validateToken/validateToken";
+import validateRole from "../../../../middleware/validateRole/validateRole";
 
 const router = Router();
 
@@ -10,7 +10,7 @@ const router = Router();
  * POST /api/user/login
  *  Ruta para que los usuarios inicien sesión.
  *  Público
- */ 
+ */
 router.post('/login', loginUser);
 /**
  *  GET /api/user/user
@@ -22,4 +22,3 @@ router.get('/user', validateToken, validateRole('user'), (req, res) => {
 });
 
 export default router;
- 

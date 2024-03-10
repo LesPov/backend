@@ -30,7 +30,6 @@ export const passwordRecoveryPass = async (req: Request, res: Response) => {
 
         const { usernameOrEmail } = req.body;
         // Validar la entrada de datos
-        // Validar la entrada de datos
         const inputValidationErrors = validateVerificationFieldsRecoveryPass(usernameOrEmail);
 
         handleInputValidationErrors(inputValidationErrors, res);

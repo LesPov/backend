@@ -1,5 +1,5 @@
-import validateRole from "../../../../middleware/validateRole/validateRole";
-import validateToken from "../../../../middleware/validateToken/validateToken";
+import validateRole from "../../../../../middleware/validateRole/validateRole";
+import validateToken from "../../../../../middleware/validateToken/validateToken";
 import express from 'express';
 
 

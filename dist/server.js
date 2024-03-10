@@ -30,8 +30,8 @@ const singupRoutes_1 = __importDefault(require("./routers/auth/registro/singupRo
 const emailVerificationRoutes_1 = __importDefault(require("./routers/auth/email/emailVerificationRoutes"));
 const phoneSendRoutes_1 = __importDefault(require("./routers/auth/telefono/phoneSendRoutes"));
 const loginController_1 = require("./controllers/auth/acceso/loginController");
-const adminVerificationRoutes_1 = __importDefault(require("./routers/auth/acceso/admin/adminVerificationRoutes")); // Importa las nuevas rutas administrativas
-const userVerificationRoutes_1 = __importDefault(require("./routers/auth/acceso/user/userVerificationRoutes")); // Importa las nuevas rutas administrativas
+const adminVerificationRoutes_1 = __importDefault(require("./routers/auth/acceso/login/admin/adminVerificationRoutes")); // Importa las nuevas rutas administrativas
+const userVerificationRoutes_1 = __importDefault(require("./routers/auth/acceso/login/user/userVerificationRoutes")); // Importa las nuevas rutas administrativas
 exports.DB_DATABASE = process.env.DB_DATABASE || 'root';
 class Server {
     /**
