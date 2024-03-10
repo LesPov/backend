@@ -42,6 +42,7 @@ const getUserRoleFromToken = (token) => {
 };
 // Función para validar el rol del usuario con el rol requerido
 const validateUserRole = (userRole, requiredRole, res, next) => {
+    //El rol admin puede inrgresar a las rutas como admin y como user , y user solo tine permitido entrar a su ruta predeterminada
     if (userRole === requiredRole || userRole === 'admin') {
         // Si el rol es válido, se permite el acceso a la ruta protegida
         next();

@@ -5,6 +5,7 @@ import { errorMessages } from '../errorMessages';
 
 // Middleware para validar el rol del usuario
 const validateRole = (requiredRole: string) => {
+    
     return (req: Request, res: Response, next: NextFunction) => {
         try {
             // Extracción del token de autorización desde la solicitud
@@ -46,6 +47,7 @@ const getUserRoleFromToken = (token: string): string => {
 
 // Función para validar el rol del usuario con el rol requerido
 const validateUserRole = (userRole: string, requiredRole: string, res: Response, next: NextFunction) => {
+    //El rol admin puede inrgresar a las rutas como admin y como user , y user solo tine permitido entrar a su ruta predeterminada
     if (userRole === requiredRole || userRole === 'admin') {
         // Si el rol es válido, se permite el acceso a la ruta protegida
         next();
