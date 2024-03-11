@@ -9,22 +9,41 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.handleServerErrorRecoveryPass = exports.passwordresetPass = void 0;
+exports.handleServerErrorRecoveryPass = exports.passwordresetPass = exports.validateVerificationFieldsResetPass = void 0;
 const errorMessages_1 = require("../../../../../middleware/errorMessages");
-const successMessages_1 = require("../../../../../middleware/successMessages");
+const validationUtils_1 = require("../../../../../utils/singup/validation/validationUtils");
+const passwordRecoveryController_1 = require("../passwordRecoveryController/passwordRecoveryController");
 const PASSWORD_MIN_LENGTH = 10;
 const PASSWORD_REGEX_NUMBER = /\d/;
 const PASSWORD_REGEX_UPPERCASE = /[A-Z]/;
 const PASSWORD_REGEX_LOWERCASE = /[a-z]/;
 const PASSWORD_REGEX_SPECIAL = /[&$@_/-]/;
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+/**
+ * Validar campos requeridos para el envío de .
+ * @param usuario Nombre de usuario.
+ * @param celular Número de teléfono.
+ * @returns Array de mensajes de error, vacío si no hay errores.
+ */
+const validateVerificationFieldsResetPass = (usernameOrEmail, contrasena_aleatoria, newPassword) => {
+    const errors = [];
+    if (!usernameOrEmail || !contrasena_aleatoria || !newPassword) {
+        errors.push(errorMessages_1.errorMessages.missingUsernameOrEmail);
+    }
+    else if (!EMAIL_REGEX.test(usernameOrEmail) && !/^[a-zA-Z0-9_]+$/.test(usernameOrEmail)) {
+        errors.push(errorMessages_1.errorMessages.invalidEmail);
+    }
+    return errors;
+};
+exports.validateVerificationFieldsResetPass = validateVerificationFieldsResetPass;
 const passwordresetPass = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { usernameOrEmail } = req.body;
-        // Responder con un mensaje de éxito si el correo electrónico se envía correctamente.
-        res.json({
-            msg: successMessages_1.successMessages,
-        });
+        const { usernameOrEmail, contrasena_aleatoria, newPassword } = req.body;
+        // Validar la entrada de datos
+        const inputValidationErrors = (0, exports.validateVerificationFieldsResetPass)(usernameOrEmail, contrasena_aleatoria, newPassword);
+        (0, validationUtils_1.handleInputValidationErrors)(inputValidationErrors, res);
+        // Buscar al usuario por nombre de usuario
+        const user = yield (0, passwordRecoveryController_1.findUserByUsernameRecoveryPass)(usernameOrEmail, res);
     }
     catch (error) {
         // Manejar errores internos del servidor

@@ -18,7 +18,6 @@ const validationUtils_1 = require("../../../../../utils/singup/validation/valida
 const usuariosModel_1 = __importDefault(require("../../../../../models/usuarios/usuariosModel"));
 const verificationsModel_1 = __importDefault(require("../../../../../models/verificaciones/verificationsModel"));
 const rolModel_1 = __importDefault(require("../../../../../models/rol/rolModel"));
-const sequelize_1 = require("sequelize");
 const userVerification_1 = require("../../../../../utils/acceso/login/userVerification/userVerification");
 const emailUtils_1 = require("../../../../../utils/singup/emailsend/emailUtils");
 const successMessages_1 = require("../../../../../middleware/successMessages");
@@ -38,7 +37,7 @@ const validateVerificationFieldsRecoveryPass = (usernameOrEmail) => {
     if (!usernameOrEmail) {
         errors.push(errorMessages_1.errorMessages.missingUsernameOrEmail);
     }
-    else if (!EMAIL_REGEX.test(usernameOrEmail)) {
+    else if (!EMAIL_REGEX.test(usernameOrEmail) && !/^[a-zA-Z0-9_]+$/.test(usernameOrEmail)) {
         errors.push(errorMessages_1.errorMessages.invalidEmail);
     }
     return errors;
@@ -51,26 +50,21 @@ exports.validateVerificationFieldsRecoveryPass = validateVerificationFieldsRecov
  * @returns Usuario encontrado.
  */
 const findUserByUsernameRecoveryPass = (usernameOrEmail, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const user = yield usuariosModel_1.default.findOne({
-        where: {
-            [sequelize_1.Op.or]: [
-                { usuario: usernameOrEmail },
-                { email: usernameOrEmail }
-            ]
-        },
-        include: [
-            {
-                model: verificationsModel_1.default, // Incluye la relación Verificacion
-            },
-            {
-                model: rolModel_1.default, // Incluye la relación con el modelo de rol
-            },
-        ],
-    });
+    let user = null;
+    if (EMAIL_REGEX.test(usernameOrEmail)) {
+        user = yield usuariosModel_1.default.findOne({
+            where: { email: usernameOrEmail },
+            include: [verificationsModel_1.default, rolModel_1.default],
+        });
+    }
+    else {
+        user = yield usuariosModel_1.default.findOne({
+            where: { usuario: usernameOrEmail },
+            include: [verificationsModel_1.default, rolModel_1.default],
+        });
+    }
     if (!user) {
-        // Devuelve un error si el usuario no existe
         res.status(400).json({ msg: errorMessages_1.errorMessages.userNotExists(usernameOrEmail) });
-        // En este punto, puedes lanzar un error o devolver un objeto que indique la ausencia del usuario.
         throw new Error("Usuario no encontrado");
     }
     return user;

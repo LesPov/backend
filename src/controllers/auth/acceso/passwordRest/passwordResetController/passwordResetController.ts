@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
 import { errorMessages } from '../../../../../middleware/errorMessages';
 import { successMessages } from '../../../../../middleware/successMessages';
+import { handleInputValidationErrors } from '../../../../../utils/singup/validation/validationUtils';
+import { findUserByUsernameRecoveryPass } from '../passwordRecoveryController/passwordRecoveryController';
 
 
 
@@ -12,16 +14,38 @@ const PASSWORD_REGEX_SPECIAL = /[&$@_/-]/;
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 
+/**
+ * Validar campos requeridos para el envío de .
+ * @param usuario Nombre de usuario.
+ * @param celular Número de teléfono.
+ * @returns Array de mensajes de error, vacío si no hay errores.
+ */
 
-export const passwordresetPass= async (req: Request, res: Response) => {
+export const validateVerificationFieldsResetPass = (usernameOrEmail: string, contrasena_aleatoria: string, newPassword: string): string[] => {
+    const errors: string[] = [];
+
+    if (!usernameOrEmail || !contrasena_aleatoria || !newPassword) {
+        errors.push(errorMessages.missingUsernameOrEmail);
+    } else if (!EMAIL_REGEX.test(usernameOrEmail) && !/^[a-zA-Z0-9_]+$/.test(usernameOrEmail)) {
+        errors.push(errorMessages.invalidEmail);
+    }
+
+    return errors;
+};
+
+
+export const passwordresetPass = async (req: Request, res: Response) => {
     try {
 
-        const { usernameOrEmail } = req.body;
-    
-        // Responder con un mensaje de éxito si el correo electrónico se envía correctamente.
-        res.json({
-            msg: successMessages,
-        });
+        const { usernameOrEmail, contrasena_aleatoria, newPassword } = req.body;
+
+        // Validar la entrada de datos
+        const inputValidationErrors = validateVerificationFieldsResetPass(usernameOrEmail, contrasena_aleatoria, newPassword);
+        handleInputValidationErrors(inputValidationErrors, res);
+
+        // Buscar al usuario por nombre de usuario
+        const user = await findUserByUsernameRecoveryPass(usernameOrEmail, res);
+
     } catch (error) {
         // Manejar errores internos del servidor
         handleServerErrorRecoveryPass(error, res);

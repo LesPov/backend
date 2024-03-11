@@ -28,12 +28,13 @@ export const validateVerificationFieldsRecoveryPass = (usernameOrEmail: string):
 
     if (!usernameOrEmail) {
         errors.push(errorMessages.missingUsernameOrEmail);
-    } else if (!EMAIL_REGEX.test(usernameOrEmail)) {
+    } else if (!EMAIL_REGEX.test(usernameOrEmail) && !/^[a-zA-Z0-9_]+$/.test(usernameOrEmail)) {
         errors.push(errorMessages.invalidEmail);
     }
 
     return errors;
 };
+
 
 
 
@@ -44,32 +45,29 @@ export const validateVerificationFieldsRecoveryPass = (usernameOrEmail: string):
  * @returns Usuario encontrado.
  */
 export const findUserByUsernameRecoveryPass = async (usernameOrEmail: string, res: Response): Promise<UsuarioModel> => {
-    const user = await Usuario.findOne({
-        where: {
-            [Op.or]: [
-                { usuario: usernameOrEmail },
-                { email: usernameOrEmail }
-            ]
-        },
-        include: [
-            {
-                model: Verificacion, // Incluye la relación Verificacion
-            },
-            {
-                model: Rol, // Incluye la relación con el modelo de rol
-            },
-        ],
-    });
+    let user: UsuarioModel | null = null;
+
+    if (EMAIL_REGEX.test(usernameOrEmail)) {
+        user = await Usuario.findOne({
+            where: { email: usernameOrEmail },
+            include: [Verificacion, Rol],
+        });
+    } else {
+        user = await Usuario.findOne({
+            where: { usuario: usernameOrEmail },
+            include: [Verificacion, Rol],
+        });
+    }
+
     if (!user) {
-        // Devuelve un error si el usuario no existe
         res.status(400).json({ msg: errorMessages.userNotExists(usernameOrEmail) });
-        // En este punto, puedes lanzar un error o devolver un objeto que indique la ausencia del usuario.
         throw new Error("Usuario no encontrado");
     }
 
-    return user as UsuarioModel;
-
+    return user;
 };
+
+
 
 /**
  * Genera una contraseña aleatoria.
@@ -129,7 +127,7 @@ export const findOrCreateVerificationRecoveryPass= async (usuario_id: number) =>
  * @param newVerificationCode - Nuevo código de verificación.
  * @param expirationDate - Fecha de expiración del nuevo código de verificación.
  */
-export const updateVerificationCodeInfoRecoveryPass = async (verificationRecord: any, randomPassword: string, expirationDate: Date) => {
+export const updateVerificationCodeInfoRecoveryPass = async (verificationRecord: any, randomPassword : string, expirationDate: Date) => {
     try {
         await verificationRecord.update({
             contrasena_aleatoria: randomPassword,
