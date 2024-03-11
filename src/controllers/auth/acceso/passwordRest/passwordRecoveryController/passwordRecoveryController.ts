@@ -95,16 +95,16 @@ export const generateRandomPasswordRecoveryPass = (length: number): string => {
  */
 export const generateRandomVerificationDataRecoveryPass = () => {
     // Generate an 8-digit random password
-    const newPassword = generateRandomPasswordRecoveryPass(8);
+    const randomPassword = generateRandomPasswordRecoveryPass(8);
 
     // Calculate expiration date 24 hours from now
     const expirationDate = new Date();
     expirationDate.setHours(expirationDate.getMinutes() + VERIFICATION_CODE_EXPIRATION_HOURS);
 
     // Log the generated password
-    console.log('Generated Password:', newPassword);
+    console.log('Generated Password:', randomPassword);
 
-    return { verificationCode: newPassword, expirationDate };
+    return { randomPassword: randomPassword, expirationDate };
 };
 /**
  * Función que busca un registro de verificación para un usuario en la base de datos.
@@ -129,10 +129,10 @@ export const findOrCreateVerificationRecoveryPass= async (usuario_id: number) =>
  * @param newVerificationCode - Nuevo código de verificación.
  * @param expirationDate - Fecha de expiración del nuevo código de verificación.
  */
-export const updateVerificationCodeInfoRecoveryPass = async (verificationRecord: any, newPassCode: string, expirationDate: Date) => {
+export const updateVerificationCodeInfoRecoveryPass = async (verificationRecord: any, randomPassword: string, expirationDate: Date) => {
     try {
         await verificationRecord.update({
-            contrasena_aleatoria: newPassCode,
+            contrasena_aleatoria: randomPassword,
             expiracion_codigo_verificacion: expirationDate
         });
     } catch (error) {
@@ -159,15 +159,15 @@ export const passwordRecoveryPass = async (req: Request, res: Response) => {
         checkUserVerificationStatusLogin(user, res);
 
         // Generar código y fecha de expiración
-        const { verificationCode, expirationDate } = generateRandomVerificationDataRecoveryPass();
+        const { randomPassword, expirationDate } = generateRandomVerificationDataRecoveryPass();
         // Buscar o crear un registro de verificación para el usuario
         const verificationRecord = await findOrCreateVerificationRecoveryPass(user.usuario_id);
 
         // Actualizar la información del código de verificación en la base de datos
-        await updateVerificationCodeInfoRecoveryPass(verificationRecord, verificationCode, expirationDate);
+        await updateVerificationCodeInfoRecoveryPass(verificationRecord, randomPassword, expirationDate);
 
         // Envía un correo electrónico con la nueva contraseña aleatoria
-        const emailSent = await sendPasswordResetEmail(user.email, user.usuario, verificationCode);
+        const emailSent = await sendPasswordResetEmail(user.email, user.usuario, randomPassword);
         // Responder con un mensaje de éxito si el correo electrónico se envía correctamente.
         res.json({
             msg: successMessages.passwordResetEmailSent,
