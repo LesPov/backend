@@ -58,7 +58,8 @@ export const errorMessages = {
   incorrectPasswordWithAttempts: 'se requiere la contraseña normal',
   incorrectRandomPassword: 'la contraseña no es valida',
   userAlreadyVerifiedInvalidCode: 'El usuario ya está verificado, pero el código proporcionado es incorrecto.',
-
+  expiredPassword:'la contraseña ya expìro manito',
   passwordNoSpecialChar1: 'La contraseña debe contener al menos uno de los siguientes signos: & $ @ _ - /',
   errorMessages: 'Error al subir img',
+  expiredVerificationCode:'La contraseña aleatoria ha expirado. Por favor, solicite una nueva.'
 };

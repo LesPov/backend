@@ -9,11 +9,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.handleServerErrorRecoveryPass = exports.passwordresetPass = exports.validateVerificationFieldsResetPass = void 0;
+exports.handleServerErrorRecoveryPass = exports.passwordresetPass = exports.validateVerificationCodeExpiration = exports.validateVerificationFieldsResetPass = void 0;
 const errorMessages_1 = require("../../../../../middleware/errorMessages");
 const validationUtils_1 = require("../../../../../utils/singup/validation/validationUtils");
 const passwordRecoveryController_1 = require("../passwordRecoveryController/passwordRecoveryController");
 const userVerification_1 = require("../../../../../utils/acceso/login/userVerification/userVerification");
+const VERIFICATION_CODE_EXPIRATION_HOURS = 1;
 const PASSWORD_MIN_LENGTH = 10;
 const PASSWORD_REGEX_NUMBER = /\d/;
 const PASSWORD_REGEX_UPPERCASE = /[A-Z]/;
@@ -44,8 +45,8 @@ exports.validateVerificationFieldsResetPass = validateVerificationFieldsResetPas
  * @param randomPassword - Contraseña aleatoria proporcionada.
  * @returns {boolean} - True si la contraseña aleatoria es válida, false de lo contrario.
  */
-const validateRandomPassword = (verification, res, contrasena_aleatoria) => {
-    if (!verification || !contrasena_aleatoria || contrasena_aleatoria.length !== 8) {
+const validateRandomPassword = (verificacion, res, contrasena_aleatoria) => {
+    if (!verificacion || !contrasena_aleatoria || contrasena_aleatoria.length !== 8) {
         res.status(400).json({
             msg: errorMessages_1.errorMessages.invalidPassword,
             details: "La contraseña aleatoria debe tener exactamente 8 caracteres.",
@@ -53,16 +54,28 @@ const validateRandomPassword = (verification, res, contrasena_aleatoria) => {
         return false;
     }
     // Verificar si la contraseña aleatoria es la misma que la almacenada en la base de datos
-    if (verification.contrasena_aleatoria !== contrasena_aleatoria) {
+    if (verificacion.contrasena_aleatoria !== contrasena_aleatoria) {
         res.status(400).json({
             msg: errorMessages_1.errorMessages.invalidPassword,
             details: "La contraseña aleatoria proporcionada no coincide con la almacenada en la base de datos.",
         });
         return false;
     }
+    // Verificar si la contraseña aleatoria ha expirado
+    if (!(0, exports.validateVerificationCodeExpiration)(verificacion.expiracion_codigo_verificacion)) {
+        res.status(400).json({
+            msg: errorMessages_1.errorMessages.expiredVerificationCode,
+        });
+        return false;
+    }
     // Verificar criterios adicionales si es necesario (e.g., uppercase, lowercase, numbers, special characters)
     return true;
 };
+const validateVerificationCodeExpiration = (expirationDate) => {
+    const currentDateTime = new Date();
+    return expirationDate > currentDateTime;
+};
+exports.validateVerificationCodeExpiration = validateVerificationCodeExpiration;
 const passwordresetPass = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { usernameOrEmail, contrasena_aleatoria, newPassword } = req.body;
@@ -75,8 +88,9 @@ const passwordresetPass = (req, res) => __awaiter(void 0, void 0, void 0, functi
         (0, userVerification_1.checkUserVerificationStatusLogin)(user, res);
         // Buscar o crear un registro de verificación para el usuario
         const verification = yield (0, passwordRecoveryController_1.findOrCreateVerificationRecoveryPass)(user.usuario_id);
-        // Validar la contraseña aleatoria directamente en la condición
+        // Validar la contraseña aleatoria y si ya expiración 
         validateRandomPassword(verification, res, contrasena_aleatoria);
+        // // Maneja el inicio de sesión fallido
     }
     catch (error) {
         // Manejar errores internos del servidor

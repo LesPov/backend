@@ -3,10 +3,13 @@ import { errorMessages } from '../../../../../middleware/errorMessages';
 import { successMessages } from '../../../../../middleware/successMessages';
 import { handleInputValidationErrors } from '../../../../../utils/singup/validation/validationUtils';
 import { findOrCreateVerificationRecoveryPass, findUserByUsernameRecoveryPass } from '../passwordRecoveryController/passwordRecoveryController';
-import { checkUserVerificationStatusLogin } from '../../../../../utils/acceso/login/userVerification/userVerification';
+import { checkLoginAttemptsAndBlockAccount, checkUserVerificationStatusLogin } from '../../../../../utils/acceso/login/userVerification/userVerification';
 import { VerificacionModel } from '../../../../../models/verificaciones/verificationsModel';
+import { findUserByUserName } from '../../../../../utils/acceso/login/lockAccount/lockAccount';
+import { handleMaxLoginAttempts, updateLoginAttempts } from '../../../../../utils/acceso/login/passwordValidation/passwordValidation';
 
 
+const VERIFICATION_CODE_EXPIRATION_HOURS = 1;
 
 const PASSWORD_MIN_LENGTH = 10;
 const PASSWORD_REGEX_NUMBER = /\d/;
@@ -43,8 +46,8 @@ export const validateVerificationFieldsResetPass = (usernameOrEmail: string, con
  * @param randomPassword - Contraseña aleatoria proporcionada.
  * @returns {boolean} - True si la contraseña aleatoria es válida, false de lo contrario.
  */
-const validateRandomPassword = (verification: VerificacionModel | null, res: Response, contrasena_aleatoria: string): boolean => {
-    if (!verification || !contrasena_aleatoria || contrasena_aleatoria.length !== 8) {
+const validateRandomPassword = (verificacion: VerificacionModel | null, res: Response, contrasena_aleatoria: string): boolean => {
+    if (!verificacion || !contrasena_aleatoria || contrasena_aleatoria.length !== 8) {
         res.status(400).json({
             msg: errorMessages.invalidPassword,
             details: "La contraseña aleatoria debe tener exactamente 8 caracteres.",
@@ -53,10 +56,18 @@ const validateRandomPassword = (verification: VerificacionModel | null, res: Res
     }
 
     // Verificar si la contraseña aleatoria es la misma que la almacenada en la base de datos
-    if (verification.contrasena_aleatoria !== contrasena_aleatoria) {
+    if (verificacion.contrasena_aleatoria !== contrasena_aleatoria) {
         res.status(400).json({
             msg: errorMessages.invalidPassword,
             details: "La contraseña aleatoria proporcionada no coincide con la almacenada en la base de datos.",
+        });
+        return false;
+    }
+
+    // Verificar si la contraseña aleatoria ha expirado
+    if (!validateVerificationCodeExpiration(verificacion.expiracion_codigo_verificacion)) {
+        res.status(400).json({
+            msg: errorMessages.expiredVerificationCode,
         });
         return false;
     }
@@ -67,6 +78,10 @@ const validateRandomPassword = (verification: VerificacionModel | null, res: Res
 };
 
 
+export const validateVerificationCodeExpiration = (expirationDate: Date): boolean => {
+    const currentDateTime = new Date();
+    return expirationDate > currentDateTime;
+};
 
 
 export const passwordresetPass = async (req: Request, res: Response) => {
@@ -89,9 +104,11 @@ export const passwordresetPass = async (req: Request, res: Response) => {
         // Buscar o crear un registro de verificación para el usuario
         const verification = await findOrCreateVerificationRecoveryPass(user.usuario_id);
 
-        // Validar la contraseña aleatoria directamente en la condición
+        // Validar la contraseña aleatoria y si ya expiración 
         validateRandomPassword(verification, res, contrasena_aleatoria);
-        
+
+        // // Maneja el inicio de sesión fallido
+
     } catch (error) {
         // Manejar errores internos del servidor
         handleServerErrorRecoveryPass(error, res);

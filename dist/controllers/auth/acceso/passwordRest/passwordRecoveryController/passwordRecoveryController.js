@@ -24,7 +24,7 @@ const successMessages_1 = require("../../../../../middleware/successMessages");
 /**
  * Constante que define la cantidad de horas antes de que expire un código de verificación.
  */
-const VERIFICATION_CODE_EXPIRATION_HOURS = 5;
+const VERIFICATION_CODE_EXPIRATION_HOURS = 1;
 const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 /**
  * Validar campos requeridos para el envío de .

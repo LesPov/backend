@@ -3,6 +3,7 @@ import Verificacion from "../../../../models/verificaciones/verificationsModel";
 import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import { findUserByUserName, lockAccount } from "../lockAccount/lockAccount";
+import { validateVerificationCodeExpiration } from "../../../../controllers/auth/acceso/passwordRest/passwordResetController/passwordResetController";
 
 // Máximo de intentos de inicio de sesión permitidos
 const BLOCK_DURATION_MINUTES = 3;
@@ -35,7 +36,7 @@ const verifyBcryptPassword = async (password: string, hashedPassword: string): P
  * Actualiza el número de intentos de inicio de sesión en la tabla de Verificacion.
  * @param user Usuario encontrado.
  */
-const updateLoginAttempts = async (user: any): Promise<void> => {
+export const updateLoginAttempts = async (user: any): Promise<void> => {
     const currentLoginAttempts = user.verificacion.intentos_ingreso || 0;
     const updatedLoginAttempts = currentLoginAttempts >= MAX_LOGIN_ATTEMPTS ? MAX_LOGIN_ATTEMPTS : currentLoginAttempts + 1;
 
@@ -51,7 +52,7 @@ const updateLoginAttempts = async (user: any): Promise<void> => {
  * @param user Usuario encontrado.
  * @param res Objeto de respuesta HTTP.
  */
-const handleMaxLoginAttempts = async (user: any, res: Response): Promise<void> => {
+export const handleMaxLoginAttempts = async (user: any, res: Response): Promise<void> => {
     if (user.verificacion.intentos_ingreso >= MAX_LOGIN_ATTEMPTS) {
         await lockAccount(user.usuario);
         res.status(400).json({
@@ -59,6 +60,7 @@ const handleMaxLoginAttempts = async (user: any, res: Response): Promise<void> =
         });
     }
 };
+
 /**
  * Verifica la contraseña del usuario.
  * @param passwordOrRandomPassword Contraseña o contraseña aleatoria proporcionada.
@@ -72,12 +74,21 @@ export const verifyUserPassworde = async (
 ): Promise<void> => {
     try {
         // Verifica si la contraseña es válida
-
         const passwordValid = await isPasswordValid(passwordOrRandomPassword, user);
 
         if (!passwordValid) {
             // Maneja el inicio de sesión fallido
             await handleFailedLogin(user, res);
+        } else if (passwordOrRandomPassword.length === 8) {
+            // Si la contraseña es una contraseña aleatoria, verifica la expiración
+            const verificationExpirationValid = validateVerificationCodeExpiration(user.verificacion.expiracion_codigo_verificacion);
+
+            if (!verificationExpirationValid) {
+                // La contraseña aleatoria ha expirado, maneja el error
+                res.status(400).json({
+                    msg: errorMessages.expiredVerificationCode,
+                });
+            }
         }
     } catch (error) {
         console.error('Error al verificar la contraseña:', error);
