@@ -23,11 +23,11 @@ const path_1 = __importDefault(require("path"));
  * @param {string} randomPassword - Nueva contraseña aleatoria generada.
  * @returns {Promise<boolean>} - Indica si el correo de recuperación de contraseña se envió con éxito.
  */
-const sendPasswordResetEmail = (email, username, randomPassword) => __awaiter(void 0, void 0, void 0, function* () {
+const sendPasswordResetEmail = (email, usuario, verificationCode) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const templatePath = path_1.default.join(__dirname, '..', '..', '..', 'controllers', 'templates', 'randomPasswordEmail.html');
         const emailTemplate = fs_1.default.readFileSync(templatePath, 'utf-8');
-        const personalizedEmail = emailTemplate.replace('{{ username }}', username).replace('{{ randomPassword }}', randomPassword);
+        const personalizedEmail = emailTemplate.replace('{{ usuario }}', usuario).replace('{{ verificationCode }}', verificationCode);
         const transporter = nodemailer_1.default.createTransport({
             service: 'gmail',
             auth: {

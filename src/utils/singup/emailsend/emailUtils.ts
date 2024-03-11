@@ -9,13 +9,13 @@ import path from 'path';
  * @param {string} randomPassword - Nueva contraseña aleatoria generada.
  * @returns {Promise<boolean>} - Indica si el correo de recuperación de contraseña se envió con éxito.
  */
-export const sendPasswordResetEmail = async (email: string, username: string, randomPassword: string): Promise<boolean> => {
+export const sendPasswordResetEmail = async (email: string, usuario: string, verificationCode: string): Promise<boolean> => {
   try {
     const templatePath = path.join(__dirname, '..', '..', '..', 'controllers', 'templates', 'randomPasswordEmail.html');
     const emailTemplate = fs.readFileSync(templatePath, 'utf-8');
-    const personalizedEmail = emailTemplate.replace('{{ username }}', username).replace('{{ randomPassword }}', randomPassword);
 
-    const transporter = nodemailer.createTransport({
+    const personalizedEmail = emailTemplate.replace('{{ usuario }}', usuario).replace('{{ verificationCode }}', verificationCode);
+        const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
         user: process.env.MAIL_USER,

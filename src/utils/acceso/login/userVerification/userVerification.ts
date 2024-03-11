@@ -30,6 +30,18 @@ const checkPhoneVerification = (user: any, res: Response) => {
 };
 
 /**
+ * Verifica si el teléfono del usuario está verificado.
+ * @param user Usuario encontrado.
+ * @param res Objeto de respuesta HTTP.
+ */
+const checkVerificationverificado = (user: any, res: Response) => {
+    if (!user.verificacion.verificado) {
+        return res.status(400).json({
+            msg: errorMessages.verificadoVericationRequired,
+        });
+    }
+};
+/**
  * Verifica el estado de verificación del usuario.
  * @param user Usuario encontrado.
  * @param res Objeto de respuesta HTTP.
@@ -37,6 +49,8 @@ const checkPhoneVerification = (user: any, res: Response) => {
 export const checkUserVerificationStatusLogin = (user: any, res: Response) => {
     checkEmailVerification(user, res);
     checkPhoneVerification(user, res);
+    checkVerificationverificado(user, res);
+
 };
 
 
