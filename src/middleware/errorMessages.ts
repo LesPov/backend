@@ -50,5 +50,4 @@ export const errorMessages = {
   missingUsernameOrEmail: 'Todos los campos son obligatorios. Se requiere el nombre de usuario o correo electrónico.',
   userNotFound: 'Usuario no encontrado',
   passwordValidationFailed: 'La contraseña no cumple con los requisitos de validación',
-
 };

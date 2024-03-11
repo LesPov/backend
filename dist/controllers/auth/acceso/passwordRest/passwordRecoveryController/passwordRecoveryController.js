@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.handleServerErrorRecoveryPass = exports.passwordRecoveryPass = exports.updateVerificationCodeInfo = exports.findOrCreateVerificationRecord = exports.generateRandomVerificationDataRecoveryPass = exports.generateRandomPasswordRecoveryPass = exports.findUserByUsernameRecoveryPass = exports.validateVerificationFieldsRecoveryPass = void 0;
+exports.handleServerErrorRecoveryPass = exports.passwordRecoveryPass = exports.updateVerificationCodeInfoRecoveryPass = exports.findOrCreateVerificationRecoveryPass = exports.generateRandomVerificationDataRecoveryPass = exports.generateRandomPasswordRecoveryPass = exports.findUserByUsernameRecoveryPass = exports.validateVerificationFieldsRecoveryPass = void 0;
 const errorMessages_1 = require("../../../../../middleware/errorMessages");
 const validationUtils_1 = require("../../../../../utils/singup/validation/validationUtils");
 const usuariosModel_1 = __importDefault(require("../../../../../models/usuarios/usuariosModel"));
@@ -26,6 +26,7 @@ const successMessages_1 = require("../../../../../middleware/successMessages");
  * Constante que define la cantidad de horas antes de que expire un código de verificación.
  */
 const VERIFICATION_CODE_EXPIRATION_HOURS = 5;
+const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 /**
  * Validar campos requeridos para el envío de .
  * @param usuario Nombre de usuario.
@@ -36,6 +37,9 @@ const validateVerificationFieldsRecoveryPass = (usernameOrEmail) => {
     const errors = [];
     if (!usernameOrEmail) {
         errors.push(errorMessages_1.errorMessages.missingUsernameOrEmail);
+    }
+    else if (!EMAIL_REGEX.test(usernameOrEmail)) {
+        errors.push(errorMessages_1.errorMessages.invalidEmail);
     }
     return errors;
 };
@@ -109,14 +113,14 @@ exports.generateRandomVerificationDataRecoveryPass = generateRandomVerificationD
  * @param usuario_id - ID del usuario.
  * @returns Registro de verificación.
  */
-const findOrCreateVerificationRecord = (usuario_id) => __awaiter(void 0, void 0, void 0, function* () {
+const findOrCreateVerificationRecoveryPass = (usuario_id) => __awaiter(void 0, void 0, void 0, function* () {
     let verificationRecord = yield verificationsModel_1.default.findOne({ where: { usuario_id } });
     if (!verificationRecord) {
         verificationRecord = yield verificationsModel_1.default.create({ usuario_id });
     }
     return verificationRecord;
 });
-exports.findOrCreateVerificationRecord = findOrCreateVerificationRecord;
+exports.findOrCreateVerificationRecoveryPass = findOrCreateVerificationRecoveryPass;
 /**
  * Función que actualiza la información del código de verificación y su fecha de expiración
  * en el registro de verificación en la base de datos.
@@ -124,7 +128,7 @@ exports.findOrCreateVerificationRecord = findOrCreateVerificationRecord;
  * @param newVerificationCode - Nuevo código de verificación.
  * @param expirationDate - Fecha de expiración del nuevo código de verificación.
  */
-const updateVerificationCodeInfo = (verificationRecord, newPassCode, expirationDate) => __awaiter(void 0, void 0, void 0, function* () {
+const updateVerificationCodeInfoRecoveryPass = (verificationRecord, newPassCode, expirationDate) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         yield verificationRecord.update({
             contrasena_aleatoria: newPassCode,
@@ -136,7 +140,7 @@ const updateVerificationCodeInfo = (verificationRecord, newPassCode, expirationD
         throw new Error("Error actualizando el código de verificación");
     }
 });
-exports.updateVerificationCodeInfo = updateVerificationCodeInfo;
+exports.updateVerificationCodeInfoRecoveryPass = updateVerificationCodeInfoRecoveryPass;
 const passwordRecoveryPass = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { usernameOrEmail } = req.body;
@@ -150,9 +154,9 @@ const passwordRecoveryPass = (req, res) => __awaiter(void 0, void 0, void 0, fun
         // Generar código y fecha de expiración
         const { verificationCode, expirationDate } = (0, exports.generateRandomVerificationDataRecoveryPass)();
         // Buscar o crear un registro de verificación para el usuario
-        const verificationRecord = yield (0, exports.findOrCreateVerificationRecord)(user.usuario_id);
+        const verificationRecord = yield (0, exports.findOrCreateVerificationRecoveryPass)(user.usuario_id);
         // Actualizar la información del código de verificación en la base de datos
-        yield (0, exports.updateVerificationCodeInfo)(verificationRecord, verificationCode, expirationDate);
+        yield (0, exports.updateVerificationCodeInfoRecoveryPass)(verificationRecord, verificationCode, expirationDate);
         // Envía un correo electrónico con la nueva contraseña aleatoria
         const emailSent = yield (0, emailUtils_1.sendPasswordResetEmail)(user.email, user.usuario, verificationCode);
         // Responder con un mensaje de éxito si el correo electrónico se envía correctamente.
