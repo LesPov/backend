@@ -7,6 +7,7 @@ import Rol from '../../../../../models/rol/rolModel';
 import { Op } from 'sequelize';
 import { checkUserVerificationStatusLogin } from '../../../../../utils/acceso/login/userVerification/userVerification';
 import { sendPasswordResetEmail } from '../../../../../utils/singup/emailsend/emailUtils';
+import { successMessages } from '../../../../../middleware/successMessages';
 
 
 /**
@@ -161,7 +162,10 @@ export const passwordRecoveryPass = async (req: Request, res: Response) => {
 
         // Envía un correo electrónico con la nueva contraseña aleatoria
         const emailSent = await sendPasswordResetEmail(user.email, user.usuario, verificationCode);
-
+        // Responder con un mensaje de éxito si el correo electrónico se envía correctamente.
+        res.json({
+            msg: successMessages.passwordResetEmailSent,
+        });
     } catch (error) {
         // Manejar errores internos del servidor
         handleServerErrorRecoveryPass(error, res);

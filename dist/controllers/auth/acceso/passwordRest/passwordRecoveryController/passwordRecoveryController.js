@@ -21,6 +21,7 @@ const rolModel_1 = __importDefault(require("../../../../../models/rol/rolModel")
 const sequelize_1 = require("sequelize");
 const userVerification_1 = require("../../../../../utils/acceso/login/userVerification/userVerification");
 const emailUtils_1 = require("../../../../../utils/singup/emailsend/emailUtils");
+const successMessages_1 = require("../../../../../middleware/successMessages");
 /**
  * Constante que define la cantidad de horas antes de que expire un código de verificación.
  */
@@ -154,6 +155,10 @@ const passwordRecoveryPass = (req, res) => __awaiter(void 0, void 0, void 0, fun
         yield (0, exports.updateVerificationCodeInfo)(verificationRecord, verificationCode, expirationDate);
         // Envía un correo electrónico con la nueva contraseña aleatoria
         const emailSent = yield (0, emailUtils_1.sendPasswordResetEmail)(user.email, user.usuario, verificationCode);
+        // Responder con un mensaje de éxito si el correo electrónico se envía correctamente.
+        res.json({
+            msg: successMessages_1.successMessages.passwordResetEmailSent,
+        });
     }
     catch (error) {
         // Manejar errores internos del servidor

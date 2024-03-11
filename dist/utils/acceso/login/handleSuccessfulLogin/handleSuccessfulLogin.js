@@ -28,7 +28,7 @@ const handleSuccessfulLogin = (user, res, contrasena) => __awaiter(void 0, void 
     // Obtiene la información del usuario, como el ID y el rol.
     const { userId, rol } = getUserInfo(user);
     // Retorna la respuesta JSON con mensajes, token, ID de usuario, rol y contraseña aleatoria si es aplicable.
-    return res.json({ msg, token, userId, rol, passwordorrandomPassword: getPasswordOrRandomPassword(user, contrasena) });
+    return res.json({ msg, token, userId, rol, contraseñaAleatorea: getPasswordOrRandomPassword(user, contrasena) });
 });
 exports.handleSuccessfulLogin = handleSuccessfulLogin;
 /**
