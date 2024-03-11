@@ -17,7 +17,7 @@ export const errorMessages = {
   userNotVerified: 'El usuario aún no ha sido verificado. Verifica tu correo electrónico para activar tu cuenta.',
   numberNotVerified: 'El usuario aún no ha sido verificado. Verifica tu numero celular para activar tu cuenta.',
   accountLocked: 'La cuenta está bloqueada temporalmente debido a múltiples intentos fallidos. Inténtalo de nuevo más tarde.',
- 
+
   accountLockedv1: (timeLeft: string) => `La cuenta está bloqueada temporalmente debido a múltiples intentos fallidos. Inténtalo de nuevo más tarde. Tiempo restante: ${timeLeft} minutos.`,
   incorrectPassword: (attempts: number) => ` Contraseña incorrecta. Intentos fallidos: ${attempts}`,
   verificationCodeNotFound: `Codigo a expirado registrate de nuevo `,
@@ -50,4 +50,15 @@ export const errorMessages = {
   missingUsernameOrEmail: 'Todos los campos son obligatorios. Se requiere el nombre de usuario o correo electrónico.',
   userNotFound: 'Usuario no encontrado',
   passwordValidationFailed: 'La contraseña no cumple con los requisitos de validación',
+
+  unverifiedAccount: 'Tu correo electrónico o número teléfono no han sido verificados.',
+  invalidRandomPassword: 'Contraseña aleatoria incorrecta',
+  invalidNewPassword: 'contraseña lol',
+  invalidRandomPassworde: 'ya expiro la contraseña',
+  incorrectPasswordWithAttempts: 'se requiere la contraseña normal',
+  incorrectRandomPassword: 'la contraseña no es valida',
+  userAlreadyVerifiedInvalidCode: 'El usuario ya está verificado, pero el código proporcionado es incorrecto.',
+
+  passwordNoSpecialChar1: 'La contraseña debe contener al menos uno de los siguientes signos: & $ @ _ - /',
+  errorMessages: 'Error al subir img',
 };
