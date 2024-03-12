@@ -62,5 +62,6 @@ exports.errorMessages = {
     expiredPassword: 'la contraseña ya expìro manito',
     passwordNoSpecialChar1: 'La contraseña debe contener al menos uno de los siguientes signos: & $ @ _ - /',
     errorMessages: 'Error al subir img',
-    expiredVerificationCode: 'La contraseña aleatoria ha expirado. Por favor, solicite una nueva.'
+    expiredVerificationCode: 'La contraseña aleatoria ha expirado. Por favor, solicite una nueva.',
+    accountBlocked: 'cuenata vloqueada'
 };
