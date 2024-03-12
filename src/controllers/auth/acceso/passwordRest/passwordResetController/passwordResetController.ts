@@ -19,24 +19,33 @@ const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 
 /**
- * Validar campos requeridos para el envío de .
- * @param usuario Nombre de usuario.
- * @param celular Número de teléfono.
+ * Validar campos requeridos para el envío de correo de verificación para restablecimiento de contraseña.
+ * @param usernameOrEmail Nombre de usuario o correo electrónico.
+ * @param contrasena_aleatoria Contraseña aleatoria generada.
+ * @param newPassword Nueva contraseña ingresada.
  * @returns Array de mensajes de error, vacío si no hay errores.
  */
 
 export const validateVerificationFieldsResetPass = (usernameOrEmail: string, contrasena_aleatoria: string, newPassword: string): string[] => {
     const errors: string[] = [];
 
-    if (!usernameOrEmail || !contrasena_aleatoria || !newPassword) {
-        errors.push(errorMessages.missingUsernameOrEmail);
-    } else if (!EMAIL_REGEX.test(usernameOrEmail) && !/^[a-zA-Z0-9_]+$/.test(usernameOrEmail)) {
-        errors.push(errorMessages.invalidEmail);
-    }
+    validateRequiredFields(usernameOrEmail, contrasena_aleatoria, newPassword, errors);
+    validateUsernameOrEmail(usernameOrEmail, errors);
 
     return errors;
 };
 
+const validateRequiredFields = (usernameOrEmail: string, contrasena_aleatoria: string, newPassword: string, errors: string[]) => {
+    if (!usernameOrEmail || !contrasena_aleatoria || !newPassword) {
+        errors.push(errorMessages.missingUsernameOrEmail);
+    }
+};
+
+const validateUsernameOrEmail = (usernameOrEmail: string, errors: string[]) => {
+    if (!EMAIL_REGEX.test(usernameOrEmail) && !/^[a-zA-Z0-9_]+$/.test(usernameOrEmail)) {
+        errors.push(errorMessages.invalidEmail);
+    }
+};
 
 /**
  * Valida la contraseña aleatoria proporcionada.
@@ -45,34 +54,42 @@ export const validateVerificationFieldsResetPass = (usernameOrEmail: string, con
  * @param randomPassword - Contraseña aleatoria proporcionada.
  * @returns {boolean} - True si la contraseña aleatoria es válida, false de lo contrario.
  */
-const validateRandomPassword = (verificacion: VerificacionModel | null, res: Response, contrasena_aleatoria: string): boolean => {
+const validateRandomPassword = (verificacion: VerificacionModel, res: Response, contrasena_aleatoria: string): boolean => {
+    return isValidRandomPassword(verificacion, contrasena_aleatoria, res) &&
+        compareRandomPasswords(verificacion, contrasena_aleatoria, res) &&
+        checkVerificationCodeExpiration(verificacion, res);
+};
+
+const isValidRandomPassword = (verificacion: VerificacionModel | null, contrasena_aleatoria: string, res: Response): boolean => {
     if (!verificacion || !contrasena_aleatoria || contrasena_aleatoria.length !== 8) {
-        res.status(400).json({
-            msg: errorMessages.invalidPassword,
-        });
-        return false;
+        sendErrorResponse(res, errorMessages.invalidPassword);
     }
-
-    // Verificar si la contraseña aleatoria es la misma que la almacenada en la base de datos
-    if (verificacion.contrasena_aleatoria !== contrasena_aleatoria) {
-        res.status(400).json({
-            msg: errorMessages.invalidPasswordDB,
-        });
-        return false;
-    }
-
-    // Verificar si la contraseña aleatoria ha expirado
-    if (!validateVerificationCodeExpiration(verificacion.expiracion_codigo_verificacion)) {
-        res.status(400).json({
-            msg: errorMessages.expiredVerificationCode,
-        });
-        return false;
-    }
-
-    // Verificar criterios adicionales si es necesario (e.g., uppercase, lowercase, numbers, special characters)
-
     return true;
 };
+
+const compareRandomPasswords = (verificacion: VerificacionModel, contrasena_aleatoria: string, res: Response): boolean => {
+    return compareValues(verificacion.contrasena_aleatoria, contrasena_aleatoria, res, errorMessages.invalidPasswordDB);
+};
+
+const checkVerificationCodeExpiration = (verificacion: VerificacionModel, res: Response): boolean => {
+    return validateVerificationCodeExpiration(verificacion.expiracion_codigo_verificacion);
+};
+
+const compareValues = (value1: string, value2: string, res: Response, errorMessage: string): boolean => {
+    if (value1 !== value2) {
+        sendErrorResponse(res, errorMessage);
+        return false;
+    }
+    return true;
+};
+
+const sendErrorResponse = (res: Response, errorMessage: string): void => {
+    res.status(400).json({
+        msg: errorMessage,
+    });
+};
+
+// Puedes agregar funciones adicionales para verificar criterios adicionales como mayúsculas, minúsculas, números, caracteres especiales, etc.
 
 
 export const validateVerificationCodeExpiration = (expirationDate: Date): boolean => {
@@ -170,7 +187,7 @@ const validatePasswordErrors = (res: Response, newPassword: string): string[] =>
  * @param randomPassword - Contraseña aleatoria proporcionada.
  * @param newPassword - Nueva contraseña a establecer.
  */
-const validateRandomPasswordAndNewPassword = (verificacion: VerificacionModel | null, res: Response, contrasena_aleatoria: string, newPassword: string): void => {
+const validateRandomPasswordAndNewPassword = (verificacion: VerificacionModel , res: Response, contrasena_aleatoria: string, newPassword: string): void => {
     if (!validateRandomPassword(verificacion, res, contrasena_aleatoria)) {
         return;
     }

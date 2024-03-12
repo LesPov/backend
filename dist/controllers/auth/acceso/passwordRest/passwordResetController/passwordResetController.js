@@ -26,22 +26,29 @@ const PASSWORD_REGEX_LOWERCASE = /[a-z]/;
 const PASSWORD_REGEX_SPECIAL = /[&$@_/-]/;
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 /**
- * Validar campos requeridos para el envío de .
- * @param usuario Nombre de usuario.
- * @param celular Número de teléfono.
+ * Validar campos requeridos para el envío de correo de verificación para restablecimiento de contraseña.
+ * @param usernameOrEmail Nombre de usuario o correo electrónico.
+ * @param contrasena_aleatoria Contraseña aleatoria generada.
+ * @param newPassword Nueva contraseña ingresada.
  * @returns Array de mensajes de error, vacío si no hay errores.
  */
 const validateVerificationFieldsResetPass = (usernameOrEmail, contrasena_aleatoria, newPassword) => {
     const errors = [];
-    if (!usernameOrEmail || !contrasena_aleatoria || !newPassword) {
-        errors.push(errorMessages_1.errorMessages.missingUsernameOrEmail);
-    }
-    else if (!EMAIL_REGEX.test(usernameOrEmail) && !/^[a-zA-Z0-9_]+$/.test(usernameOrEmail)) {
-        errors.push(errorMessages_1.errorMessages.invalidEmail);
-    }
+    validateRequiredFields(usernameOrEmail, contrasena_aleatoria, newPassword, errors);
+    validateUsernameOrEmail(usernameOrEmail, errors);
     return errors;
 };
 exports.validateVerificationFieldsResetPass = validateVerificationFieldsResetPass;
+const validateRequiredFields = (usernameOrEmail, contrasena_aleatoria, newPassword, errors) => {
+    if (!usernameOrEmail || !contrasena_aleatoria || !newPassword) {
+        errors.push(errorMessages_1.errorMessages.missingUsernameOrEmail);
+    }
+};
+const validateUsernameOrEmail = (usernameOrEmail, errors) => {
+    if (!EMAIL_REGEX.test(usernameOrEmail) && !/^[a-zA-Z0-9_]+$/.test(usernameOrEmail)) {
+        errors.push(errorMessages_1.errorMessages.invalidEmail);
+    }
+};
 /**
  * Valida la contraseña aleatoria proporcionada.
  * @param verification - Objeto de modelo de verificación.
@@ -50,29 +57,35 @@ exports.validateVerificationFieldsResetPass = validateVerificationFieldsResetPas
  * @returns {boolean} - True si la contraseña aleatoria es válida, false de lo contrario.
  */
 const validateRandomPassword = (verificacion, res, contrasena_aleatoria) => {
+    return isValidRandomPassword(verificacion, contrasena_aleatoria, res) &&
+        compareRandomPasswords(verificacion, contrasena_aleatoria, res) &&
+        checkVerificationCodeExpiration(verificacion, res);
+};
+const isValidRandomPassword = (verificacion, contrasena_aleatoria, res) => {
     if (!verificacion || !contrasena_aleatoria || contrasena_aleatoria.length !== 8) {
-        res.status(400).json({
-            msg: errorMessages_1.errorMessages.invalidPassword,
-        });
-        return false;
+        sendErrorResponse(res, errorMessages_1.errorMessages.invalidPassword);
     }
-    // Verificar si la contraseña aleatoria es la misma que la almacenada en la base de datos
-    if (verificacion.contrasena_aleatoria !== contrasena_aleatoria) {
-        res.status(400).json({
-            msg: errorMessages_1.errorMessages.invalidPasswordDB,
-        });
-        return false;
-    }
-    // Verificar si la contraseña aleatoria ha expirado
-    if (!(0, exports.validateVerificationCodeExpiration)(verificacion.expiracion_codigo_verificacion)) {
-        res.status(400).json({
-            msg: errorMessages_1.errorMessages.expiredVerificationCode,
-        });
-        return false;
-    }
-    // Verificar criterios adicionales si es necesario (e.g., uppercase, lowercase, numbers, special characters)
     return true;
 };
+const compareRandomPasswords = (verificacion, contrasena_aleatoria, res) => {
+    return compareValues(verificacion.contrasena_aleatoria, contrasena_aleatoria, res, errorMessages_1.errorMessages.invalidPasswordDB);
+};
+const checkVerificationCodeExpiration = (verificacion, res) => {
+    return (0, exports.validateVerificationCodeExpiration)(verificacion.expiracion_codigo_verificacion);
+};
+const compareValues = (value1, value2, res, errorMessage) => {
+    if (value1 !== value2) {
+        sendErrorResponse(res, errorMessage);
+        return false;
+    }
+    return true;
+};
+const sendErrorResponse = (res, errorMessage) => {
+    res.status(400).json({
+        msg: errorMessage,
+    });
+};
+// Puedes agregar funciones adicionales para verificar criterios adicionales como mayúsculas, minúsculas, números, caracteres especiales, etc.
 const validateVerificationCodeExpiration = (expirationDate) => {
     const currentDateTime = new Date();
     return expirationDate < currentDateTime; // Corrección: Cambio de '>=' a '<'
