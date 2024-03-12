@@ -47,7 +47,6 @@ export const validateVerificationFieldsResetPass = (usernameOrEmail: string, con
  */
 const validateRandomPassword = (verificacion: VerificacionModel | null, res: Response, contrasena_aleatoria: string): boolean => {
     if (!verificacion || !contrasena_aleatoria || contrasena_aleatoria.length !== 8) {
-        
         res.status(400).json({
             msg: errorMessages.invalidPassword,
         });
@@ -75,9 +74,10 @@ const validateRandomPassword = (verificacion: VerificacionModel | null, res: Res
     return true;
 };
 
+
 export const validateVerificationCodeExpiration = (expirationDate: Date): boolean => {
     const currentDateTime = new Date();
-    return expirationDate >= currentDateTime;  // Cambio de '>' a '>='
+    return expirationDate < currentDateTime;  // Corrección: Cambio de '>=' a '<'
 };
 
 

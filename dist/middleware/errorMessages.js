@@ -49,7 +49,7 @@ exports.errorMessages = {
     phoneVerificationRequired: 'El usuario aún no ha sido verificado. Verifica tu numero celular para activar tu cuenta.',
     verificadoVericationRequired: 'El usuario aún no ha sido verificado. Verifica tu numero celular y correo para activar tu cuenta.',
     // Errores de recuperación y cambio de contraseña
-    missingUsernameOrEmail: 'Todos los campos son obligatorios. Se requiere el nombre de usuario o correo electrónico.',
+    missingUsernameOrEmail: 'Todos los campos son obligatorios',
     userNotFound: 'Usuario no encontrado',
     passwordValidationFailed: 'La contraseña no cumple con los requisitos de validación',
     unverifiedAccount: 'Tu correo electrónico o número teléfono no han sido verificados.',

@@ -75,7 +75,7 @@ const validateRandomPassword = (verificacion, res, contrasena_aleatoria) => {
 };
 const validateVerificationCodeExpiration = (expirationDate) => {
     const currentDateTime = new Date();
-    return expirationDate >= currentDateTime; // Cambio de '>' a '>='
+    return expirationDate < currentDateTime; // Corrección: Cambio de '>=' a '<'
 };
 exports.validateVerificationCodeExpiration = validateVerificationCodeExpiration;
 ///////////////////////////////////////////
