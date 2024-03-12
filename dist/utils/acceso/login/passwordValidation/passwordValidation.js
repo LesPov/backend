@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.verifyUserPassworde = exports.handleMaxLoginAttempts = exports.updateLoginAttempts = void 0;
+exports.isPasswordValid = exports.verifyUserPassworde = exports.handleMaxLoginAttempts = exports.updateLoginAttempts = void 0;
 const errorMessages_1 = require("../../../../middleware/errorMessages");
 const verificationsModel_1 = __importDefault(require("../../../../models/verificaciones/verificationsModel"));
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
@@ -74,7 +74,7 @@ exports.handleMaxLoginAttempts = handleMaxLoginAttempts;
 const verifyUserPassworde = (passwordOrRandomPassword, user, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         // Verifica si la contraseña es válida
-        const passwordValid = yield isPasswordValid(passwordOrRandomPassword, user);
+        const passwordValid = yield (0, exports.isPasswordValid)(passwordOrRandomPassword, user);
         if (!passwordValid) {
             // Maneja el inicio de sesión fallido
             yield handleFailedLogin(user, res);
@@ -107,6 +107,7 @@ const isPasswordValid = (passwordOrRandomPassword, user) => __awaiter(void 0, vo
         ? verifyRandomPassword(passwordOrRandomPassword, user)
         : yield verifyBcryptPassword(passwordOrRandomPassword, user.contrasena);
 });
+exports.isPasswordValid = isPasswordValid;
 /**
  * Maneja un intento fallido de inicio de sesión.
  * @param user Usuario encontrado.

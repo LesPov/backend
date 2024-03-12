@@ -18,4 +18,6 @@ exports.successMessages = {
     passwordResetEmailSent: 'Se ha enviado un correo electrónico con las instrucciones para restablecer la contraseña.',
     passwordUpdated: 'Contraseña actualizada con éxito.',
     profilePictureUploaded: 'la imagen fue actualizada',
+    loginAttemptsUpdated: 'intentos actualizados ',
+    loginAttemptsNotExceeded: 'Intentos de inicio de sesión no superados',
 };

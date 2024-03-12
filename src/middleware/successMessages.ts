@@ -25,5 +25,8 @@
     passwordUpdated: 'Contraseña actualizada con éxito.',
   
     profilePictureUploaded: 'la imagen fue actualizada',
+
+    loginAttemptsUpdated:'intentos actualizados ',
+    loginAttemptsNotExceeded:'Intentos de inicio de sesión no superados',
   };
   

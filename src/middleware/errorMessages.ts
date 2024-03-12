@@ -13,11 +13,12 @@ export const errorMessages = {
 
   // Errores de login 
   userNotExists: (username: string) => `No existe un usuario con el nombre ${username} en la base de datos`,
-  invalidPassword: 'Contraseña incorrecta',
+  invalidPassword: 'Contraseña aleatorea incorrecta, la contraseña aleatoria debe tener exactamente 8 caracteres.',
+  invalidPasswordDB: 'La contraseña aleatoria proporcionada no coincide con la almacenada en la base de datos, o no exite',
   userNotVerified: 'El usuario aún no ha sido verificado. Verifica tu correo electrónico para activar tu cuenta.',
   numberNotVerified: 'El usuario aún no ha sido verificado. Verifica tu numero celular para activar tu cuenta.',
   accountLocked: 'La cuenta está bloqueada temporalmente debido a múltiples intentos fallidos. Inténtalo de nuevo más tarde.',
-
+  failedPasswordReset:'loll',
   accountLockedv1: (timeLeft: string) => `La cuenta está bloqueada temporalmente debido a múltiples intentos fallidos. Inténtalo de nuevo más tarde. Tiempo restante: ${timeLeft} minutos.`,
   incorrectPassword: (attempts: number) => ` Contraseña incorrecta. Intentos fallidos: ${attempts}`,
   verificationCodeNotFound: `Codigo a expirado registrate de nuevo `,

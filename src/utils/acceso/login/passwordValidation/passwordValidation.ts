@@ -101,7 +101,7 @@ export const verifyUserPassworde = async (
  * @param user Usuario encontrado.
  * @returns True si la contraseña es válida, false en caso contrario.
  */
-const isPasswordValid = async (passwordOrRandomPassword: string, user: any): Promise<boolean> => {
+export const isPasswordValid = async (passwordOrRandomPassword: string, user: any): Promise<boolean> => {
     // Verifica si la longitud de la contraseña es igual a 8 para determinar si es una contraseña aleatoria
     return passwordOrRandomPassword.length === 8
         ? verifyRandomPassword(passwordOrRandomPassword, user)
