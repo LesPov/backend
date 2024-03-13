@@ -37,17 +37,8 @@ export const validateVerificationFieldsResetPass = (usernameOrEmail: string, con
 
     return errors;
 };
-
-
-/**
- * Valida la contraseña aleatoria proporcionada.
- * @param verification - Objeto de modelo de verificación.
- * @param res - Objeto de respuesta.
- * @param randomPassword - Contraseña aleatoria proporcionada.
- * @returns {boolean} - True si la contraseña aleatoria es válida, false de lo contrario.
- */
 const validateRandomPassword = async (verificacion: VerificacionModel | null, res: Response, contrasena_aleatoria: string): Promise<boolean> => {
-    
+
     // Verifica si el objeto de verificación o la contraseña aleatoria son nulos
     if (!verificacion || !contrasena_aleatoria) {
         res.status(400).json({
@@ -55,7 +46,6 @@ const validateRandomPassword = async (verificacion: VerificacionModel | null, re
         });
         return false;
     }
-
     // Verifica la longitud de la contraseña aleatoria
     if (contrasena_aleatoria.length !== 8) {
         // Incrementa el contador de intentos fallidos y maneja el bloqueo de la cuenta si es necesario
@@ -73,7 +63,6 @@ const validateRandomPassword = async (verificacion: VerificacionModel | null, re
         });
         return false;
     }
-
     // Verifica si la contraseña aleatoria coincide con la almacenada en el objeto de verificación
     if (verificacion.contrasena_aleatoria !== contrasena_aleatoria) {
         // Incrementa el contador de intentos fallidos y maneja el bloqueo de la cuenta si es necesario
@@ -91,7 +80,6 @@ const validateRandomPassword = async (verificacion: VerificacionModel | null, re
         });
         return false;
     }
-
     // Verifica si el código de verificación ha expirado
     if (isVerificationCodeExpired(verificacion.expiracion_codigo_verificacion)) {
         res.status(400).json({
@@ -99,13 +87,10 @@ const validateRandomPassword = async (verificacion: VerificacionModel | null, re
         });
         return false;
     }
-
   
-
     // La contraseña aleatoria ha pasado todas las validaciones
     return true;
 };
-
 /**
  * Incrementa el contador de intentos fallidos e actualiza la fecha de expiración.
  * @param verification - Objeto de modelo de verificación.
@@ -117,8 +102,6 @@ const incrementFailedAttempts = async (verification: VerificacionModel): Promise
     verification.expiracion_intentos_ingreso = calculateLockoutExpiration();
     await verification.save();
 };
-
-
 /**
  * Calcula la fecha de expiración para el bloqueo de la cuenta.
  * @returns Fecha de expiración para el bloqueo de la cuenta.
@@ -129,8 +112,15 @@ const calculateLockoutExpiration = (): Date => {
     currentDateTime.setMinutes(currentDateTime.getMinutes() + lockoutDurationMinutes);
     return currentDateTime;
 };
-
-
+/**
+ * Verifica si la cuenta está bloqueada.
+ * @param verification - Objeto de modelo de verificación.
+ * @returns True si la cuenta está bloqueada, false de lo contrario.
+ */
+const isAccountLockedOut = (verification: VerificacionModel): boolean => {
+    const currentDateTime = new Date();
+    return verification.intentos_ingreso >= 5 && verification.expiracion_intentos_ingreso > currentDateTime;
+};
 /**
  * Valida si la contraseña aleatoria ha expirado.
  * @param expirationDate - Fecha de expiración almacenada en el registro de verificación.
@@ -140,8 +130,6 @@ const isVerificationCodeExpired = (expirationDate: Date): boolean => {
     const currentDateTime = new Date();
     return currentDateTime > expirationDate;
 };
-
-
 /////////////////////////////////////////
 /**
  * Valida la longitud mínima de la contraseña.
@@ -151,7 +139,6 @@ const isVerificationCodeExpired = (expirationDate: Date): boolean => {
 const validateLength = (newPassword: string): string | null => {
     return newPassword.length < PASSWORD_MIN_LENGTH ? errorMessages.passwordTooShort : null;
 };
-
 /**
 * Valida la presencia de al menos una letra mayúscula en la contraseña.
 * @param newPassword - Nueva contraseña a validar.
@@ -160,7 +147,6 @@ const validateLength = (newPassword: string): string | null => {
 const validateUppercase = (newPassword: string): string | null => {
     return PASSWORD_REGEX_UPPERCASE.test(newPassword) ? null : errorMessages.passwordNoUppercase;
 };
-
 /**
 * Valida la presencia de al menos una letra minúscula en la contraseña.
 * @param newPassword - Nueva contraseña a validar.
@@ -169,7 +155,6 @@ const validateUppercase = (newPassword: string): string | null => {
 const validateLowercase = (newPassword: string): string | null => {
     return PASSWORD_REGEX_LOWERCASE.test(newPassword) ? null : errorMessages.passwordNoLowercase;
 };
-
 /**
 * Valida la presencia de al menos un número en la contraseña.
 * @param newPassword - Nueva contraseña a validar.
@@ -178,7 +163,6 @@ const validateLowercase = (newPassword: string): string | null => {
 const validateNumber = (newPassword: string): string | null => {
     return PASSWORD_REGEX_NUMBER.test(newPassword) ? null : errorMessages.passwordNoNumber;
 };
-
 /**
 * Valida la presencia de al menos un carácter especial en la contraseña.
 * @param newPassword - Nueva contraseña a validar.
@@ -187,7 +171,6 @@ const validateNumber = (newPassword: string): string | null => {
 const validateSpecialChar = (newPassword: string): string | null => {
     return PASSWORD_REGEX_SPECIAL.test(newPassword) ? null : errorMessages.passwordNoSpecialChar;
 };
-
 /**
 * Valida la nueva contraseña según las reglas establecidas.
 * @param newPassword - Nueva contraseña a validar.
@@ -201,10 +184,8 @@ const validateNewPassword = (newPassword: string): string[] => {
         validateNumber(newPassword),
         validateSpecialChar(newPassword),
     ].filter((error) => error !== null) as string[];
-
     return errors;
 };
-
 /**
  * Valida los errores de la contraseña.
  * @param res - Objeto de respuesta.
@@ -223,7 +204,6 @@ const validatePasswordErrors = (res: Response, newPassword: string): string[] =>
         return [];  // No errors, return an empty array
     }
 };
-
 /**
  * Valida la contraseña aleatoria y la nueva contraseña antes de restablecerla.
  * @param verification - Objeto de modelo de verificación.
@@ -235,13 +215,11 @@ const validateRandomPasswordAndNewPassword = (verificacion: VerificacionModel | 
     if (!validateRandomPassword(verificacion, res, contrasena_aleatoria)) {
         return;
     }
-
     const passwordErrors = validatePasswordErrors(res, newPassword);
     if (passwordErrors.length > 0) {
         return;
     }
 };
-
 /////////////////////////////////////////////////////
 /**
  * Actualiza y borra la contraseña del usuario.
@@ -252,57 +230,42 @@ const validateRandomPasswordAndNewPassword = (verificacion: VerificacionModel | 
 const updateAndClearPassword = async (user: UsuarioModel, verificacion: VerificacionModel | null, newPassword: string): Promise<void> => {
     const hashedPassword = await bcrypt.hash(newPassword, 10);
     user.contrasena = hashedPassword;
-
     if (verificacion) {
         verificacion.contrasena_aleatoria = '';
         verificacion.expiracion_codigo_verificacion = new Date();
         verificacion.intentos_ingreso = 0; // Reiniciar el contador de intentos fallidos
         await verificacion.save();
     }
-
     await user.save();
 };
-
-
 /////////////////////////////////////////////////////
-
 //////////////////////////////////////////////////////
-
 export const passwordresetPass = async (req: Request, res: Response) => {
     try {
         const { usernameOrEmail, contrasena_aleatoria, newPassword } = req.body;
-
         // Validar la entrada de datos
         const inputValidationErrors = validateVerificationFieldsResetPass(
             usernameOrEmail,
             contrasena_aleatoria,
             newPassword
         );
-
-
         // Buscar al usuario por nombre de usuario
         const user = await findUserByUsernameRecoveryPass(usernameOrEmail, res);
         // Verificar la propiedad de verificación del usuario
         checkUserVerificationStatusLogin(user, res);
-
         // Verificar si el usuario ha excedido el número máximo de intentos de inicio de sesión y manejar el bloqueo de la cuenta
         await checkLoginAttemptsAndBlockAccount(user, res);
-
         // Buscar o crear un registro de verificación para el usuario
         const verification = await findOrCreateVerificationRecoveryPass(user.usuario_id);
-
         // Validar la contraseña aleatoria y si ya expiración 
         const isRandomPasswordValid = await validateRandomPassword(verification, res, contrasena_aleatoria);
         if (!isRandomPasswordValid) {
             return; // ¡Importante! Salir de la función después de enviar la respuesta
         }
-
         // Validar la nueva contraseña
         validateRandomPasswordAndNewPassword(verification, res, contrasena_aleatoria, newPassword);
-
         // Actualizar y borrar la contraseña del usuario
         await updateAndClearPassword(user, verification, newPassword);
-
         // Restablecimiento de contraseña exitoso
         res.status(200).json({ msg: successMessages.passwordUpdated });
     } catch (error) {
@@ -310,9 +273,6 @@ export const passwordresetPass = async (req: Request, res: Response) => {
         handleServerErrorRecoveryPass(error, res);
     }
 };
-
-
-
 /** 
  * Maneja errores internos del servidor.
  * @param error El error ocurrido.

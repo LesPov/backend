@@ -43,13 +43,6 @@ const validateVerificationFieldsResetPass = (usernameOrEmail, contrasena_aleator
     return errors;
 };
 exports.validateVerificationFieldsResetPass = validateVerificationFieldsResetPass;
-/**
- * Valida la contraseña aleatoria proporcionada.
- * @param verification - Objeto de modelo de verificación.
- * @param res - Objeto de respuesta.
- * @param randomPassword - Contraseña aleatoria proporcionada.
- * @returns {boolean} - True si la contraseña aleatoria es válida, false de lo contrario.
- */
 const validateRandomPassword = (verificacion, res, contrasena_aleatoria) => __awaiter(void 0, void 0, void 0, function* () {
     // Verifica si el objeto de verificación o la contraseña aleatoria son nulos
     if (!verificacion || !contrasena_aleatoria) {
@@ -122,6 +115,15 @@ const calculateLockoutExpiration = () => {
     const currentDateTime = new Date();
     currentDateTime.setMinutes(currentDateTime.getMinutes() + lockoutDurationMinutes);
     return currentDateTime;
+};
+/**
+ * Verifica si la cuenta está bloqueada.
+ * @param verification - Objeto de modelo de verificación.
+ * @returns True si la cuenta está bloqueada, false de lo contrario.
+ */
+const isAccountLockedOut = (verification) => {
+    const currentDateTime = new Date();
+    return verification.intentos_ingreso >= 5 && verification.expiracion_intentos_ingreso > currentDateTime;
 };
 /**
  * Valida si la contraseña aleatoria ha expirado.
