@@ -24,7 +24,7 @@ const successMessages_1 = require("../../../../../middleware/successMessages");
 /**
  * Constante que define la cantidad de horas antes de que expire un código de verificación.
  */
-const VERIFICATION_CODE_EXPIRATION_HOURS = 2;
+const VERIFICATION_CODE_EXPIRATION_MINUTES = 2;
 const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 /**
  * Validar campos requeridos para el envío de .
@@ -93,9 +93,9 @@ exports.generateRandomPasswordRecoveryPass = generateRandomPasswordRecoveryPass;
 const generateRandomVerificationDataRecoveryPass = () => {
     // Generate an 8-digit random password
     const randomPassword = (0, exports.generateRandomPasswordRecoveryPass)(8);
-    // Calculate expiration date 24 hours from now
+    // Calculate expiration date 2 MINUTOS
     const expirationDate = new Date();
-    expirationDate.setHours(expirationDate.getMinutes() + VERIFICATION_CODE_EXPIRATION_HOURS);
+    expirationDate.setMinutes(expirationDate.getMinutes() + VERIFICATION_CODE_EXPIRATION_MINUTES);
     // Log the generated password
     console.log('Generated Password:', randomPassword);
     return { randomPassword: randomPassword, expirationDate };

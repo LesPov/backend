@@ -3,7 +3,6 @@ import Verificacion from "../../../../models/verificaciones/verificationsModel";
 import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import { findUserByUserName, lockAccount } from "../lockAccount/lockAccount";
-import { validateVerificationCodeExpiration } from "../../../../controllers/auth/acceso/passwordRest/passwordResetController/passwordResetController";
 
 // Máximo de intentos de inicio de sesión permitidos
 const BLOCK_DURATION_MINUTES = 3;
@@ -60,7 +59,6 @@ export const handleMaxLoginAttempts = async (user: any, res: Response): Promise<
         });
     }
 };
-
 /**
  * Verifica la contraseña del usuario.
  * @param passwordOrRandomPassword Contraseña o contraseña aleatoria proporcionada.
@@ -74,21 +72,12 @@ export const verifyUserPassworde = async (
 ): Promise<void> => {
     try {
         // Verifica si la contraseña es válida
+
         const passwordValid = await isPasswordValid(passwordOrRandomPassword, user);
 
         if (!passwordValid) {
             // Maneja el inicio de sesión fallido
             await handleFailedLogin(user, res);
-        } else if (passwordOrRandomPassword.length === 8) {
-            // Si la contraseña es una contraseña aleatoria, verifica la expiración
-            const verificationExpirationValid = validateVerificationCodeExpiration(user.verificacion.expiracion_codigo_verificacion);
-
-            if (!verificationExpirationValid) {
-                // La contraseña aleatoria ha expirado, maneja el error
-                res.status(400).json({
-                    msg: errorMessages.expiredVerificationCode,
-                });
-            }
         }
     } catch (error) {
         console.error('Error al verificar la contraseña:', error);
@@ -101,7 +90,7 @@ export const verifyUserPassworde = async (
  * @param user Usuario encontrado.
  * @returns True si la contraseña es válida, false en caso contrario.
  */
-export const isPasswordValid = async (passwordOrRandomPassword: string, user: any): Promise<boolean> => {
+const isPasswordValid = async (passwordOrRandomPassword: string, user: any): Promise<boolean> => {
     // Verifica si la longitud de la contraseña es igual a 8 para determinar si es una contraseña aleatoria
     return passwordOrRandomPassword.length === 8
         ? verifyRandomPassword(passwordOrRandomPassword, user)

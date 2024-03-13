@@ -12,12 +12,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.isPasswordValid = exports.verifyUserPassworde = exports.handleMaxLoginAttempts = exports.updateLoginAttempts = void 0;
+exports.verifyUserPassworde = exports.handleMaxLoginAttempts = exports.updateLoginAttempts = void 0;
 const errorMessages_1 = require("../../../../middleware/errorMessages");
 const verificationsModel_1 = __importDefault(require("../../../../models/verificaciones/verificationsModel"));
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const lockAccount_1 = require("../lockAccount/lockAccount");
-const passwordResetController_1 = require("../../../../controllers/auth/acceso/passwordRest/passwordResetController/passwordResetController");
 // Máximo de intentos de inicio de sesión permitidos
 const BLOCK_DURATION_MINUTES = 3;
 const MAX_LOGIN_ATTEMPTS = 5;
@@ -74,20 +73,10 @@ exports.handleMaxLoginAttempts = handleMaxLoginAttempts;
 const verifyUserPassworde = (passwordOrRandomPassword, user, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         // Verifica si la contraseña es válida
-        const passwordValid = yield (0, exports.isPasswordValid)(passwordOrRandomPassword, user);
+        const passwordValid = yield isPasswordValid(passwordOrRandomPassword, user);
         if (!passwordValid) {
             // Maneja el inicio de sesión fallido
             yield handleFailedLogin(user, res);
-        }
-        else if (passwordOrRandomPassword.length === 8) {
-            // Si la contraseña es una contraseña aleatoria, verifica la expiración
-            const verificationExpirationValid = (0, passwordResetController_1.validateVerificationCodeExpiration)(user.verificacion.expiracion_codigo_verificacion);
-            if (!verificationExpirationValid) {
-                // La contraseña aleatoria ha expirado, maneja el error
-                res.status(400).json({
-                    msg: errorMessages_1.errorMessages.expiredVerificationCode,
-                });
-            }
         }
     }
     catch (error) {
@@ -107,7 +96,6 @@ const isPasswordValid = (passwordOrRandomPassword, user) => __awaiter(void 0, vo
         ? verifyRandomPassword(passwordOrRandomPassword, user)
         : yield verifyBcryptPassword(passwordOrRandomPassword, user.contrasena);
 });
-exports.isPasswordValid = isPasswordValid;
 /**
  * Maneja un intento fallido de inicio de sesión.
  * @param user Usuario encontrado.
