@@ -124,15 +124,6 @@ const calculateLockoutExpiration = () => {
     return currentDateTime;
 };
 /**
- * Verifica si la cuenta está bloqueada.
- * @param verification - Objeto de modelo de verificación.
- * @returns True si la cuenta está bloqueada, false de lo contrario.
- */
-const isAccountLockedOut = (verification) => {
-    const currentDateTime = new Date();
-    return verification.intentos_ingreso >= 5 && verification.expiracion_intentos_ingreso > currentDateTime;
-};
-/**
  * Valida si la contraseña aleatoria ha expirado.
  * @param expirationDate - Fecha de expiración almacenada en el registro de verificación.
  * @returns {boolean} - True si la contraseña aleatoria ha expirado, false si no ha expirado.
