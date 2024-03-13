@@ -63,5 +63,7 @@ export const errorMessages = {
   passwordNoSpecialChar1: 'La contraseña debe contener al menos uno de los siguientes signos: & $ @ _ - /',
   errorMessages: 'Error al subir img',
   expiredVerificationCode:'La contraseña aleatoria ha expirado. Por favor, solicite una nueva.',
-  accountBlocked:'cuenata vloqueada'
+  accountBlocked:'cuenata vloqueada',
+  invalidPasswordLength:'la contraseña aleatorea debe ser de 8 digitos'
+
 };
