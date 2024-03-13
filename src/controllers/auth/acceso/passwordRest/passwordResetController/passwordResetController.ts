@@ -47,6 +47,7 @@ export const validateVerificationFieldsResetPass = (usernameOrEmail: string, con
  * @returns {boolean} - True si la contraseña aleatoria es válida, false de lo contrario.
  */
 const validateRandomPassword = async (verificacion: VerificacionModel | null, res: Response, contrasena_aleatoria: string): Promise<boolean> => {
+    
     // Verifica si el objeto de verificación o la contraseña aleatoria son nulos
     if (!verificacion || !contrasena_aleatoria) {
         res.status(400).json({
