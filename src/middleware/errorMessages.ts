@@ -64,6 +64,8 @@ export const errorMessages = {
   errorMessages: 'Error al subir img',
   expiredVerificationCode:'La contraseña aleatoria ha expirado. Por favor, solicite una nueva.',
   accountBlocked:'cuenata vloqueada',
-  invalidPasswordLength:'la contraseña aleatorea debe ser de 8 digitos'
+  invalidRandomPasswordLength:'la contraseña aleatorea debe ser de 8 digitos',
+  invalidPasswordLength:'la contraseña normal debe ser de mas  10 digitos'
+
 
 };

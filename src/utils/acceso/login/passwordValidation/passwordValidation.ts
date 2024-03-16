@@ -21,9 +21,9 @@ const verifyRandomPassword = (randomPassword: string, user: any): boolean => {
 };
 
 /**
- * Verifica la contraseña utilizando bcrypt.
+ * Verifica la contraseña normal.
  * @param password Contraseña proporcionada.
- * @param hashedPassword Contraseña almacenada en la base de datos.
+ * @param contrasena Contraseña almacenada en la base de datos.
  * @returns true si la contraseña es válida, false en caso contrario.
  */
 const verifyBcryptPassword = async (password: string, hashedPassword: string): Promise<boolean> => {

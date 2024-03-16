@@ -30,7 +30,7 @@ const checkPhoneVerification = (user: any, res: Response) => {
 };
 
 /**
- * Verifica si el teléfono del usuario está verificado.
+ * Verifica si esta  usuario está verificado.
  * @param user Usuario encontrado.
  * @param res Objeto de respuesta HTTP.
  */

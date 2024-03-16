@@ -31,9 +31,9 @@ const verifyRandomPassword = (randomPassword, user) => {
     return randomPassword === user.verificacion.contrasena_aleatoria;
 };
 /**
- * Verifica la contraseña utilizando bcrypt.
+ * Verifica la contraseña normal.
  * @param password Contraseña proporcionada.
- * @param hashedPassword Contraseña almacenada en la base de datos.
+ * @param contrasena Contraseña almacenada en la base de datos.
  * @returns true si la contraseña es válida, false en caso contrario.
  */
 const verifyBcryptPassword = (password, hashedPassword) => __awaiter(void 0, void 0, void 0, function* () {
