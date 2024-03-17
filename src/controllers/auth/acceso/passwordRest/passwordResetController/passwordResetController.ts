@@ -6,7 +6,7 @@ import { findOrCreateVerificationRecoveryPass, findUserByUsernameRecoveryPass } 
 import { VerificacionModel } from '../../../../../models/verificaciones/verificationsModel';
 import { UsuarioModel } from '../../../../../models/usuarios/usuariosModel';
 import bcrypt from 'bcryptjs';
-import { checkUserVerificationStatusLogin } from '../../loginController';
+import { checkUserVerificationStatusLogin } from '../../../../../utils/acceso/login/checkVerificationStatus/checkVerificationStatus';
 
 
 const PASSWORD_MIN_LENGTH = 10;

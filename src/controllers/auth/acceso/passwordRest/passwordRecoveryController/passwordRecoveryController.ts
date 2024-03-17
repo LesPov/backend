@@ -5,9 +5,9 @@ import Usuario, { UsuarioModel } from '../../../../../models/usuarios/usuariosMo
 import Verificacion, { VerificacionModel } from '../../../../../models/verificaciones/verificationsModel';
 import Rol from '../../../../../models/rol/rolModel';
 import { Op } from 'sequelize';
-import { checkUserVerificationStatusLogin } from '../../loginController';
 import { sendPasswordResetEmail } from '../../../../../utils/singup/emailsend/emailUtils';
 import { successMessages } from '../../../../../middleware/successMessages';
+import { checkUserVerificationStatusLogin } from '../../../../../utils/acceso/login/checkVerificationStatus/checkVerificationStatus';
 
 
 /**
