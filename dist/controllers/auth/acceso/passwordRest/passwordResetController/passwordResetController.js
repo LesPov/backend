@@ -19,6 +19,8 @@ const validationUtils_1 = require("../../../../../utils/singup/validation/valida
 const passwordRecoveryController_1 = require("../passwordRecoveryController/passwordRecoveryController");
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const checkVerificationStatus_1 = require("../../../../../utils/acceso/login/checkVerificationStatus/checkVerificationStatus");
+const userVerification_1 = require("../../../../../utils/acceso/login/userVerification/userVerification");
+const chekLoginBlockAcount_1 = require("../../../../../utils/acceso/login/chekLoginBlockAcount/chekLoginBlockAcount");
 const PASSWORD_MIN_LENGTH = 10;
 const PASSWORD_REGEX_NUMBER = /\d/;
 const PASSWORD_REGEX_UPPERCASE = /[A-Z]/;
@@ -43,60 +45,6 @@ const validateVerificationFieldsResetPass = (usernameOrEmail, contrasena_aleator
     return errors;
 };
 exports.validateVerificationFieldsResetPass = validateVerificationFieldsResetPass;
-/**
- * Valida si la contraseña aleatoria cumple con los criterios.
- * @param contrasena_aleatoria - Contraseña aleatoria proporcionada.
- * @param res - Objeto de respuesta.
- * @returns {boolean} - True si la contraseña aleatoria es válida, false de lo contrario.
- */
-const isValidRandomPassword = (contrasena_aleatoria, res) => {
-    // Verificar longitud de la contraseña aleatoria
-    if (contrasena_aleatoria.length !== 8) {
-        res.status(400).json({ msg: errorMessages_1.errorMessages.invalidPassword });
-        return false;
-    }
-    return true;
-};
-/**
-* Valida si la contraseña aleatoria coincide con la almacenada en la base de datos.
-* @param verification - Objeto de modelo de verificación.
-* @param randomPassword - Contraseña aleatoria proporcionada.
-* @param res - Objeto de respuesta.
-* @returns {boolean} - True si la contraseña aleatoria coincide, false de lo contrario.
-*/
-const isRandomPasswordMatchingDB = (verification, randomPassword, res) => {
-    if (!verification || !randomPassword || verification.contrasena_aleatoria !== randomPassword) {
-        res.status(400).json({ msg: errorMessages_1.errorMessages.invalidPasswordDB });
-        return false;
-    }
-    return true;
-};
-/**
- * Valida si la contraseña aleatoria ha expirado.
- * @param expirationDate - Fecha de expiración almacenada en el registro de verificación.
- * @param res - Objeto de respuesta.
- * @returns {boolean} - True si la contraseña aleatoria ha expirado, false si no ha expirado.
- */
-const isVerificationCodeExpiredResetPass = (expirationDate, res) => {
-    const currentDateTime = new Date();
-    if (currentDateTime > expirationDate) {
-        res.status(400).json({ msg: errorMessages_1.errorMessages.verificationCodeExpired });
-        return true;
-    }
-    return false;
-};
-/**
- * Valida la contraseña aleatoria proporcionada.
- * @param verification - Objeto de modelo de verificación.
- * @param res - Objeto de respuesta.
- * @param contrasena_aleatoria - Contraseña aleatoria proporcionada.
- * @returns {boolean} - True si la contraseña aleatoria es válida, false de lo contrario.
- */
-const validateRandomPasswordResetPass = (verification, res, contrasena_aleatoria) => {
-    return (isValidRandomPassword(contrasena_aleatoria, res) &&
-        isRandomPasswordMatchingDB(verification, contrasena_aleatoria, res) &&
-        (verification ? !isVerificationCodeExpiredResetPass(verification.expiracion_codigo_verificacion, res) : true));
-};
 /////////////////////////////////////////
 /**
  * Valida la longitud mínima de la contraseña.
@@ -172,22 +120,6 @@ const validatePasswordErrorsResetPass = (res, newPassword) => {
         return []; // No errors, return an empty array
     }
 };
-/**
- * Valida la contraseña aleatoria y la nueva contraseña antes de restablecerla.
- * @param verification - Objeto de modelo de verificación.
- * @param res - Objeto de respuesta.
- * @param contrasena_aleatoria - Contraseña aleatoria proporcionada.
- * @param newPassword - Nueva contraseña a establecer.
- */
-const validateRandomPasswordAndNewPasswordResetPass = (verificacion, res, contrasena_aleatoria, newPassword) => {
-    if (!validateRandomPasswordResetPass(verificacion, res, contrasena_aleatoria)) {
-        return;
-    }
-    const passwordErrors = validatePasswordErrorsResetPass(res, newPassword);
-    if (passwordErrors.length > 0) {
-        return;
-    }
-};
 /////////////////////////////////////////////////////
 /**
  * Actualiza y borra la contraseña del usuario.
@@ -219,10 +151,16 @@ const passwordresetPass = (req, res) => __awaiter(void 0, void 0, void 0, functi
         (0, checkVerificationStatus_1.checkUserVerificationStatusLogin)(user, res);
         // Buscar o crear un registro de verificación para el usuario
         const verification = yield (0, passwordRecoveryController_1.findOrCreateVerificationRecoveryPass)(user.usuario_id);
-        // Validar la contraseña aleatoria y si ya expiración 
-        validateRandomPasswordResetPass(verification, res, contrasena_aleatoria);
-        // Validar la nueva contraseñ
-        validateRandomPasswordAndNewPasswordResetPass(verification, res, contrasena_aleatoria, newPassword);
+        // Verificar la contraseña del usuario
+        yield (0, userVerification_1.verifyUserPasswordelogin)(contrasena_aleatoria, user, res);
+        // Verificar si el usuario ha excedido el número máximo de intentos de inicio de sesión y manejar el bloqueo de la cuenta
+        yield (0, chekLoginBlockAcount_1.checkLoginAttemptsAndBlockAccountlogin)(user, res);
+        // Validar la nueva contraseña
+        const passwordErrors = validatePasswordErrorsResetPass(res, newPassword);
+        if (passwordErrors.length > 0) {
+            // Si hay errores en la nueva contraseña, no se actualiza la contraseña en la base de datos
+            return;
+        }
         // Actualizar y borrar la contraseña del usuario
         yield updateAndClearPasswordResetPass(user, verification, newPassword);
         // Restablecimiento de contraseña exitoso
