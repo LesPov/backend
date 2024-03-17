@@ -17,8 +17,8 @@ const errorMessages_1 = require("../../../../../middleware/errorMessages");
 const successMessages_1 = require("../../../../../middleware/successMessages");
 const validationUtils_1 = require("../../../../../utils/singup/validation/validationUtils");
 const passwordRecoveryController_1 = require("../passwordRecoveryController/passwordRecoveryController");
-const userVerification_1 = require("../../../../../utils/acceso/login/userVerification/userVerification");
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
+const loginController_1 = require("../../loginController");
 const PASSWORD_MIN_LENGTH = 10;
 const PASSWORD_REGEX_NUMBER = /\d/;
 const PASSWORD_REGEX_UPPERCASE = /[A-Z]/;
@@ -216,7 +216,7 @@ const passwordresetPass = (req, res) => __awaiter(void 0, void 0, void 0, functi
         // Buscar al usuario por nombre de usuario
         const user = yield (0, passwordRecoveryController_1.findUserByUsernameRecoveryPass)(usernameOrEmail, res);
         // Verificar la propiedad de verificación del usuario
-        (0, userVerification_1.checkUserVerificationStatusLogin)(user, res);
+        (0, loginController_1.checkUserVerificationStatusLogin)(user, res);
         // Buscar o crear un registro de verificación para el usuario
         const verification = yield (0, passwordRecoveryController_1.findOrCreateVerificationRecoveryPass)(user.usuario_id);
         // Validar la contraseña aleatoria y si ya expiración 

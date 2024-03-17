@@ -1,44 +1,60 @@
 import { errorMessages } from "../../../../middleware/errorMessages";
 import Rol from "../../../../models/rol/rolModel";
-import Usuario from "../../../../models/usuarios/usuariosModel";
+import Usuario, { UsuarioModel } from "../../../../models/usuarios/usuariosModel";
 import Verificacion from "../../../../models/verificaciones/verificationsModel";
 import { Request, Response } from 'express';
 
+
+
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 /**
- * Validar campos requeridos para el envío de códigos de verificación por SMS.
+ * Validar campos requeridos para el envío de .
  * @param usuario Nombre de usuario.
- * @param celular Número de teléfono.
+ * @param contraseña  Contraseña proporcionada.
  * @returns Array de mensajes de error, vacío si no hay errores.
  */
-export const validateVerificationFieldsLogin = (usuario: string, contrasena_aleatoria: string): string[] => {
+export const validateVerificationFieldslogin = (usernameOrEmail: string, contrasena: string): string[] => {
     const errors: string[] = [];
-    if (!usuario || !contrasena_aleatoria) {
-        errors.push(errorMessages.requiredFields);
+
+    if (!usernameOrEmail || !contrasena) {
+        errors.push(errorMessages.missingUsernameOrEmail);
+    } else if (!EMAIL_REGEX.test(usernameOrEmail) && !/^[a-zA-Z0-9_]+$/.test(usernameOrEmail)) {
+        errors.push(errorMessages.invalidEmail);
     }
+
+
     return errors;
 };
+
+
+
 /**
- * Buscar un usuario por nombre de usuario, incluyendo su información de verificación.
+ * Buscar un usuario por nombre de usuari o email  incluyendo su información de verificación y rol.
  * @param usuario Nombre de usuario.
  * @param res Objeto de respuesta HTTP.
  * @returns Usuario encontrado.
  */
-export const findUserByUsernameLogin = async (usuario: string, res: Response) => {
-    const user = await Usuario.findOne({
-        where: { usuario: usuario },
-        include: [
-            {
-                model: Verificacion, // Incluye la relación Verificacion
-            },
-            {
-                model: Rol, // Incluye la relación con el modelo de rol
-            },
-        ],
-    });
+export const findUserByUsernameLogin = async (usernameOrEmail: string, res: Response): Promise<UsuarioModel> => {
+    let user: UsuarioModel | null = null;
+
+    if (EMAIL_REGEX.test(usernameOrEmail)) {
+        user = await Usuario.findOne({
+            where: { email: usernameOrEmail },
+            include: [Verificacion, Rol],
+        });
+    } else {
+        user = await Usuario.findOne({
+            where: { usuario: usernameOrEmail },
+            include: [Verificacion, Rol],
+        });
+    }
 
     if (!user) {
-        return res.status(400).json({ msg: errorMessages.userNotExists(usuario) });
+        res.status(400).json({ msg: errorMessages.userNotExists(usernameOrEmail) });
+        throw new Error("Usuario no encontrado");
     }
+
     return user;
 };
 

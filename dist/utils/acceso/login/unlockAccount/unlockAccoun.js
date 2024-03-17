@@ -15,12 +15,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.unlockAccount = void 0;
 const verificationsModel_1 = __importDefault(require("../../../../models/verificaciones/verificationsModel"));
 const lockAccount_1 = require("../lockAccount/lockAccount");
-/**
- * Desbloquear la cuenta de un usuario en base a su nombre de usuario.
- * @async
- * @param {string} usuario - El nombre de usuario del usuario cuya cuenta se desbloqueará.
- * @returns {Promise<void>} No devuelve ningún valor explícito, pero desbloquea la cuenta del usuario si es encontrado en la base de datos.
- */
 const unlockAccount = (usuario) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const user = yield findUserAndLoadVerificationInfo(usuario);

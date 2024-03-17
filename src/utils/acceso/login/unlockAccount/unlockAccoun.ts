@@ -1,12 +1,6 @@
 import Verificacion from "../../../../models/verificaciones/verificationsModel";
 import { findUserByUserName } from "../lockAccount/lockAccount";
 
-/**
- * Desbloquear la cuenta de un usuario en base a su nombre de usuario.
- * @async
- * @param {string} usuario - El nombre de usuario del usuario cuya cuenta se desbloqueará.
- * @returns {Promise<void>} No devuelve ningún valor explícito, pero desbloquea la cuenta del usuario si es encontrado en la base de datos.
- */
 export const unlockAccount = async (usuario: any): Promise<void> => {
     try {
         const user = await findUserAndLoadVerificationInfo(usuario);

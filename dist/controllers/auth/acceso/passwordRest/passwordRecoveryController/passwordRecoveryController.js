@@ -18,13 +18,13 @@ const validationUtils_1 = require("../../../../../utils/singup/validation/valida
 const usuariosModel_1 = __importDefault(require("../../../../../models/usuarios/usuariosModel"));
 const verificationsModel_1 = __importDefault(require("../../../../../models/verificaciones/verificationsModel"));
 const rolModel_1 = __importDefault(require("../../../../../models/rol/rolModel"));
-const userVerification_1 = require("../../../../../utils/acceso/login/userVerification/userVerification");
+const loginController_1 = require("../../loginController");
 const emailUtils_1 = require("../../../../../utils/singup/emailsend/emailUtils");
 const successMessages_1 = require("../../../../../middleware/successMessages");
 /**
  * Constante que define la cantidad de horas antes de que expire un código de verificación.
  */
-const VERIFICATION_CODE_EXPIRATION_MINUTES = 2;
+const VERIFICATION_CODE_EXPIRATION_MINUTES = 3;
 const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 /**
  * Validar campos requeridos para el envío de .
@@ -144,7 +144,7 @@ const passwordRecoveryPass = (req, res) => __awaiter(void 0, void 0, void 0, fun
         // Buscar al usuario por nombre de usuario
         const user = yield (0, exports.findUserByUsernameRecoveryPass)(usernameOrEmail, res);
         // Verificar la propiedad de verificación del usuario
-        (0, userVerification_1.checkUserVerificationStatusLogin)(user, res);
+        (0, loginController_1.checkUserVerificationStatusLogin)(user, res);
         // Generar código y fecha de expiración
         const { randomPassword, expirationDate } = (0, exports.generateRandomVerificationDataRecoveryPass)();
         // Buscar o crear un registro de verificación para el usuario

@@ -65,5 +65,6 @@ exports.errorMessages = {
     expiredVerificationCode: 'La contraseña aleatoria ha expirado. Por favor, solicite una nueva.',
     accountBlocked: 'cuenata vloqueada',
     invalidRandomPasswordLength: 'la contraseña aleatorea debe ser de 8 digitos',
-    invalidPasswordLength: 'la contraseña normal debe ser de mas  10 digitos'
+    incorrectPasswor1d: 'Contraseña incorrecta',
+    expiredRandomPassword: 'La contraseña aleatoria ha expirado',
 };

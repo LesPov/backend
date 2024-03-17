@@ -5,6 +5,7 @@ import Verificacion from "../../../../models/verificaciones/verificationsModel";
 const BLOCK_DURATION_MINUTES = 3;
 const MAX_LOGIN_ATTEMPTS = 5;
 
+
 /**
  * Bloquea la cuenta del usuario después de varios intentos fallidos de inicio de sesión.
  * @async
@@ -41,7 +42,6 @@ export const handleLockAccountError = (error: any) => {
     console.error('Error al bloquear la cuenta:', error);
 };
 
-
 /**
  * Encuentra a un usuario por nombre de usuario e incluye información de verificación.
  * @param {string} usuario - El nombre de usuario del usuario a buscar.
@@ -70,7 +70,7 @@ export const calculateBlockExpirationDate = () => {
  * @param {Date} expirationDate - La fecha de vencimiento para el bloqueo de la cuenta.
  * @returns {Promise<void>} - Resuelve después de actualizar la tabla de verificación.
  */
-export const updateVerificationTable = async (user:any, expirationDate:Date) => {
+export const updateVerificationTable = async (user: any, expirationDate: Date) => {
     await Verificacion.update(
         {
             intentos_ingreso: MAX_LOGIN_ATTEMPTS,

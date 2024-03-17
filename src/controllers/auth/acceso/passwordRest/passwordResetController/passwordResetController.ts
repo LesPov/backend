@@ -3,10 +3,10 @@ import { errorMessages } from '../../../../../middleware/errorMessages';
 import { successMessages } from '../../../../../middleware/successMessages';
 import { handleInputValidationErrors } from '../../../../../utils/singup/validation/validationUtils';
 import { findOrCreateVerificationRecoveryPass, findUserByUsernameRecoveryPass } from '../passwordRecoveryController/passwordRecoveryController';
-import { checkUserVerificationStatusLogin } from '../../../../../utils/acceso/login/userVerification/userVerification';
 import { VerificacionModel } from '../../../../../models/verificaciones/verificationsModel';
 import { UsuarioModel } from '../../../../../models/usuarios/usuariosModel';
 import bcrypt from 'bcryptjs';
+import { checkUserVerificationStatusLogin } from '../../loginController';
 
 
 const PASSWORD_MIN_LENGTH = 10;

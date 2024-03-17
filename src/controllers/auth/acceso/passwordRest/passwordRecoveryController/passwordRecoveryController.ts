@@ -5,7 +5,7 @@ import Usuario, { UsuarioModel } from '../../../../../models/usuarios/usuariosMo
 import Verificacion, { VerificacionModel } from '../../../../../models/verificaciones/verificationsModel';
 import Rol from '../../../../../models/rol/rolModel';
 import { Op } from 'sequelize';
-import { checkUserVerificationStatusLogin } from '../../../../../utils/acceso/login/userVerification/userVerification';
+import { checkUserVerificationStatusLogin } from '../../loginController';
 import { sendPasswordResetEmail } from '../../../../../utils/singup/emailsend/emailUtils';
 import { successMessages } from '../../../../../middleware/successMessages';
 
@@ -13,7 +13,7 @@ import { successMessages } from '../../../../../middleware/successMessages';
 /**
  * Constante que define la cantidad de horas antes de que expire un código de verificación.
  */
-const VERIFICATION_CODE_EXPIRATION_MINUTES = 2;
+const VERIFICATION_CODE_EXPIRATION_MINUTES = 3;
 const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
 
