@@ -1,143 +1,17 @@
 import { Request, Response } from 'express';
-import { errorMessages } from '../../../../../middleware/errorMessages';
 import { successMessages } from '../../../../../middleware/successMessages';
 import { handleInputValidationErrors } from '../../../../../utils/singup/validation/validationUtils';
 import { findOrCreateVerificationRecoveryPass, findUserByUsernameRecoveryPass } from '../passwordRecoveryController/passwordRecoveryController';
-import { VerificacionModel } from '../../../../../models/verificaciones/verificationsModel';
-import { UsuarioModel } from '../../../../../models/usuarios/usuariosModel';
-import bcrypt from 'bcryptjs';
 import { checkUserVerificationStatusLogin } from '../../../../../utils/acceso/login/checkVerificationStatus/checkVerificationStatus';
 import { verifyUserPasswordelogin } from '../../../../../utils/acceso/login/userVerification/userVerification';
 import { checkLoginAttemptsAndBlockAccountlogin } from '../../../../../utils/acceso/login/chekLoginBlockAcount/chekLoginBlockAcount';
-
-
-const PASSWORD_MIN_LENGTH = 10;
-const PASSWORD_REGEX_NUMBER = /\d/;
-const PASSWORD_REGEX_UPPERCASE = /[A-Z]/;
-const PASSWORD_REGEX_LOWERCASE = /[a-z]/;
-const PASSWORD_REGEX_SPECIAL = /[&$@_/-]/;
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-/////////////////////////////////////////
-
-/**
- * Validar campos requeridos para el envío de .
- * @param usuario Nombre de usuario.
- * @param celular Número de teléfono.
- * @returns Array de mensajes de error, vacío si no hay errores.
- */
-
-export const validateVerificationFieldsResetPass = (usernameOrEmail: string, contrasena_aleatoria: string, newPassword: string): string[] => {
-    const errors: string[] = [];
-
-    if (!usernameOrEmail || !contrasena_aleatoria || !newPassword) {
-        errors.push(errorMessages.missingUsernameOrEmail);
-    } else if (!EMAIL_REGEX.test(usernameOrEmail) && !/^[a-zA-Z0-9_]+$/.test(usernameOrEmail)) {
-        errors.push(errorMessages.invalidEmail);
-    }
-
-    return errors;
-};
+import { handleServerErrordResetPass, validateVerificationFieldsResetPass } from '../../../../../utils/acceso/passwordRest/passwordResetController/validateFields/validateFields';
+import { validatePasswordErrorsResetPass } from '../../../../../utils/acceso/passwordRest/passwordResetController/validateNewPassword/validateNewPassword';
+import { updateAndClearPasswordResetPass } from '../../../../../utils/acceso/passwordRest/passwordResetController/updatePassword/updatePassword';
 
 
 
 
-
-/////////////////////////////////////////
-/**
- * Valida la longitud mínima de la contraseña.
-* @param newPassword - Nueva contraseña a validar.
-* @returns Mensajes de error si la longitud no cumple con las reglas, nulo si es válida.
-*/
-const validateLengthResetPass = (newPassword: string): string | null => {
-    return newPassword.length < PASSWORD_MIN_LENGTH ? errorMessages.passwordTooShort : null;
-};
-/**
-* Valida la presencia de al menos una letra mayúscula en la contraseña.
-* @param newPassword - Nueva contraseña a validar.
-* @returns Mensajes de error si no cumple con las reglas, nulo si es válida.
-*/
-const validateUppercaseResetPass = (newPassword: string): string | null => {
-    return PASSWORD_REGEX_UPPERCASE.test(newPassword) ? null : errorMessages.passwordNoUppercase;
-};
-/**
-* Valida la presencia de al menos una letra minúscula en la contraseña.
-* @param newPassword - Nueva contraseña a validar.
-* @returns Mensajes de error si no cumple con las reglas, nulo si es válida.
-*/
-const validateLowercaseResetPass = (newPassword: string): string | null => {
-    return PASSWORD_REGEX_LOWERCASE.test(newPassword) ? null : errorMessages.passwordNoLowercase;
-};
-/**
-* Valida la presencia de al menos un número en la contraseña.
-* @param newPassword - Nueva contraseña a validar.
-* @returns Mensajes de error si no cumple con las reglas, nulo si es válida.
-*/
-const validateNumberResetPass = (newPassword: string): string | null => {
-    return PASSWORD_REGEX_NUMBER.test(newPassword) ? null : errorMessages.passwordNoNumber;
-};
-/**
-* Valida la presencia de al menos un carácter especial en la contraseña.
-* @param newPassword - Nueva contraseña a validar.
-* @returns Mensajes de error si no cumple con las reglas, nulo si es válida.
-*/
-const validateSpecialCharResetPass = (newPassword: string): string | null => {
-    return PASSWORD_REGEX_SPECIAL.test(newPassword) ? null : errorMessages.passwordNoSpecialChar;
-};
-/**
-* Valida la nueva contraseña según las reglas establecidas.
-* @param newPassword - Nueva contraseña a validar.
-* @returns Mensajes de error si la contraseña no cumple con las reglas, nulo si es válida.
-*/
-const validateNewPasswordResetPass = (newPassword: string): string[] => {
-    const errors: string[] = [
-        validateLengthResetPass(newPassword),
-        validateUppercaseResetPass(newPassword),
-        validateLowercaseResetPass(newPassword),
-        validateNumberResetPass(newPassword),
-        validateSpecialCharResetPass(newPassword),
-    ].filter((error) => error !== null) as string[];
-    return errors;
-};
-/**
- * Valida los errores de la contraseña.
- * @param res - Objeto de respuesta.
- * @param newPassword - Nueva contraseña a validar.
- * @returns {string[]} - Array de mensajes de error.
- */
-const validatePasswordErrorsResetPass = (res: Response, newPassword: string): string[] => {
-    const passwordValidationErrors = validateNewPasswordResetPass(newPassword);
-    if (passwordValidationErrors.length > 0) {
-        res.status(400).json({
-            msg: errorMessages.passwordValidationFailed,
-            errors: passwordValidationErrors,  // Include specific error messages
-        });
-        return passwordValidationErrors;
-    } else {
-        return [];  // No errors, return an empty array
-    }
-};
-
-
-
-/////////////////////////////////////////////////////
-/**
- * Actualiza y borra la contraseña del usuario.
- * @param user - Objeto de modelo de usuario.
- * @param verification - Objeto de modelo de verificación.
- * @param newPassword - Nueva contraseña a establecer.
- */
-const updateAndClearPasswordResetPass = async (user: UsuarioModel, verificacion: VerificacionModel | null, newPassword: string): Promise<void> => {
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
-    user.contrasena = hashedPassword;
-    if (verificacion) {
-        verificacion.contrasena_aleatoria = '';
-        verificacion.expiracion_codigo_verificacion = new Date();
-        await verificacion.save();
-    }
-    await user.save();
-};
-/////////////////////////////////////////////////////
 //////////////////////////////////////////////////////
 export const passwordresetPass = async (req: Request, res: Response) => {
     try {
@@ -175,19 +49,5 @@ export const passwordresetPass = async (req: Request, res: Response) => {
     } catch (error) {
         // Manejar errores internos del servidor
         handleServerErrordResetPass(error, res);
-    }
-};
-/** 
- * Maneja errores internos del servidor.
- * @param error El error ocurrido.
- * @param res La respuesta HTTP saliente.
- */
-export const handleServerErrordResetPass = (error: any, res: Response) => {
-    console.error("Error en el controlador passwordResetPass:", error);
-    if (!res.headersSent) {
-        res.status(500).json({
-            msg: error.message || errorMessages.databaseError,
-            error,
-        });
     }
 };
