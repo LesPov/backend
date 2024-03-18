@@ -12,13 +12,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.passwordresetPass = void 0;
 const successMessages_1 = require("../../../../../middleware/successMessages");
 const validationUtils_1 = require("../../../../../utils/singup/validation/validationUtils");
-const passwordRecoveryController_1 = require("../passwordRecoveryController/passwordRecoveryController");
 const checkVerificationStatus_1 = require("../../../../../utils/acceso/login/checkVerificationStatus/checkVerificationStatus");
 const userVerification_1 = require("../../../../../utils/acceso/login/userVerification/userVerification");
 const chekLoginBlockAcount_1 = require("../../../../../utils/acceso/login/chekLoginBlockAcount/chekLoginBlockAcount");
 const validateFields_1 = require("../../../../../utils/acceso/passwordRest/passwordResetController/validateFields/validateFields");
 const validateNewPassword_1 = require("../../../../../utils/acceso/passwordRest/passwordResetController/validateNewPassword/validateNewPassword");
 const updatePassword_1 = require("../../../../../utils/acceso/passwordRest/passwordResetController/updatePassword/updatePassword");
+const searchUser_1 = require("../../../../../utils/acceso/passwordRest/passwordRecoveryController/searchUser/searchUser");
 //////////////////////////////////////////////////////
 const passwordresetPass = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -27,11 +27,11 @@ const passwordresetPass = (req, res) => __awaiter(void 0, void 0, void 0, functi
         const inputValidationErrors = (0, validateFields_1.validateVerificationFieldsResetPass)(usernameOrEmail, contrasena_aleatoria, newPassword);
         (0, validationUtils_1.handleInputValidationErrors)(inputValidationErrors, res);
         // Buscar al usuario por nombre de usuario
-        const user = yield (0, passwordRecoveryController_1.findUserByUsernameRecoveryPass)(usernameOrEmail, res);
+        const user = yield (0, searchUser_1.findUserByUsernameRecoveryPass)(usernameOrEmail, res);
         // Verificar la propiedad de verificación del usuario
         (0, checkVerificationStatus_1.checkUserVerificationStatusLogin)(user, res);
         // Buscar o crear un registro de verificación para el usuario
-        const verification = yield (0, passwordRecoveryController_1.findOrCreateVerificationRecoveryPass)(user.usuario_id);
+        const verification = yield (0, searchUser_1.findOrCreateVerificationRecoveryPass)(user.usuario_id);
         // Verificar la contraseña del usuario
         yield (0, userVerification_1.verifyUserPasswordelogin)(contrasena_aleatoria, user, res);
         // Verificar si el usuario ha excedido el número máximo de intentos de inicio de sesión y manejar el bloqueo de la cuenta

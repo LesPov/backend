@@ -1,13 +1,13 @@
 import { Request, Response } from 'express';
 import { successMessages } from '../../../../../middleware/successMessages';
 import { handleInputValidationErrors } from '../../../../../utils/singup/validation/validationUtils';
-import { findOrCreateVerificationRecoveryPass, findUserByUsernameRecoveryPass } from '../passwordRecoveryController/passwordRecoveryController';
 import { checkUserVerificationStatusLogin } from '../../../../../utils/acceso/login/checkVerificationStatus/checkVerificationStatus';
 import { verifyUserPasswordelogin } from '../../../../../utils/acceso/login/userVerification/userVerification';
 import { checkLoginAttemptsAndBlockAccountlogin } from '../../../../../utils/acceso/login/chekLoginBlockAcount/chekLoginBlockAcount';
 import { handleServerErrordResetPass, validateVerificationFieldsResetPass } from '../../../../../utils/acceso/passwordRest/passwordResetController/validateFields/validateFields';
 import { validatePasswordErrorsResetPass } from '../../../../../utils/acceso/passwordRest/passwordResetController/validateNewPassword/validateNewPassword';
 import { updateAndClearPasswordResetPass } from '../../../../../utils/acceso/passwordRest/passwordResetController/updatePassword/updatePassword';
+import { findOrCreateVerificationRecoveryPass, findUserByUsernameRecoveryPass } from '../../../../../utils/acceso/passwordRest/passwordRecoveryController/searchUser/searchUser';
 
 
 
