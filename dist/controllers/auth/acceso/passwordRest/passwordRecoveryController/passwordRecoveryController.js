@@ -9,8 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.handleServerErrorRecoveryPass = exports.passwordRecoveryPass = void 0;
-const errorMessages_1 = require("../../../../../middleware/errorMessages");
+exports.passwordRecoveryPass = void 0;
 const validationUtils_1 = require("../../../../../utils/singup/validation/validationUtils");
 const emailUtils_1 = require("../../../../../utils/singup/emailsend/emailUtils");
 const successMessages_1 = require("../../../../../middleware/successMessages");
@@ -44,22 +43,7 @@ const passwordRecoveryPass = (req, res) => __awaiter(void 0, void 0, void 0, fun
     }
     catch (error) {
         // Manejar errores internos del servidor
-        (0, exports.handleServerErrorRecoveryPass)(error, res);
+        (0, validateFields_1.handleServerErrorRecoveryPass)(error, res);
     }
 });
 exports.passwordRecoveryPass = passwordRecoveryPass;
-/**
- * Maneja errores internos del servidor.
- * @param error El error ocurrido.
- * @param res La respuesta HTTP saliente.
- */
-const handleServerErrorRecoveryPass = (error, res) => {
-    console.error("Error en el controlador passwordRecoveryPass:", error);
-    if (!res.headersSent) {
-        res.status(400).json({
-            msg: error.message || errorMessages_1.errorMessages.databaseError,
-            error,
-        });
-    }
-};
-exports.handleServerErrorRecoveryPass = handleServerErrorRecoveryPass;

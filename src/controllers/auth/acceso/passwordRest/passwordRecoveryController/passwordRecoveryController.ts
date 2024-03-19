@@ -4,7 +4,7 @@ import { handleInputValidationErrors } from '../../../../../utils/singup/validat
 import { sendPasswordResetEmail } from '../../../../../utils/singup/emailsend/emailUtils';
 import { successMessages } from '../../../../../middleware/successMessages';
 import { checkUserVerificationStatusLogin } from '../../../../../utils/acceso/login/checkVerificationStatus/checkVerificationStatus';
-import { validateVerificationFieldsRecoveryPass } from '../../../../../utils/acceso/passwordRest/passwordRecoveryController/validateFields/validateFields';
+import { handleServerErrorRecoveryPass, validateVerificationFieldsRecoveryPass } from '../../../../../utils/acceso/passwordRest/passwordRecoveryController/validateFields/validateFields';
 import { findOrCreateVerificationRecoveryPass, findUserByUsernameRecoveryPass } from '../../../../../utils/acceso/passwordRest/passwordRecoveryController/searchUser/searchUser';
 import { generateRandomVerificationDataRecoveryPass } from '../../../../../utils/acceso/passwordRest/passwordRecoveryController/generateRandomPassword/generateRandomPassword';
 import { updateVerificationCodeInfoRecoveryPass } from '../../../../../utils/acceso/passwordRest/passwordRecoveryController/updatePassRandom/updatePassRandom';
@@ -44,20 +44,5 @@ export const passwordRecoveryPass = async (req: Request, res: Response) => {
     } catch (error) {
         // Manejar errores internos del servidor
         handleServerErrorRecoveryPass(error, res);
-    }
-};
-
-/** 
- * Maneja errores internos del servidor.
- * @param error El error ocurrido.
- * @param res La respuesta HTTP saliente.
- */
-export const handleServerErrorRecoveryPass = (error: any, res: Response) => {
-    console.error("Error en el controlador passwordRecoveryPass:", error);
-    if (!res.headersSent) {
-        res.status(400).json({
-            msg: error.message || errorMessages.databaseError,
-            error,
-        });
     }
 };

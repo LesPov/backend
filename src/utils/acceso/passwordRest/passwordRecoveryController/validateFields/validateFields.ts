@@ -1,4 +1,5 @@
 import { errorMessages } from "../../../../../middleware/errorMessages";
+import { Request, Response } from 'express';
 
 const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
@@ -19,4 +20,18 @@ export const validateVerificationFieldsRecoveryPass = (usernameOrEmail: string):
     }
 
     return errors;
+};
+/** 
+* Maneja errores internos del servidor.
+* @param error El error ocurrido.
+* @param res La respuesta HTTP saliente.
+*/
+export const handleServerErrorRecoveryPass = (error: any, res: Response) => {
+   console.error("Error en el controlador passwordRecoveryPass:", error);
+   if (!res.headersSent) {
+       res.status(400).json({
+           msg: error.message || errorMessages.databaseError,
+           error,
+       });
+   }
 };
